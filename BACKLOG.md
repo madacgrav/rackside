@@ -41,6 +41,7 @@ design and plan.
 | 16 | Reorder workout entries via edit mode | PRD §5.3 P1 | `.onMove` is wired but no `EditButton` exists | [#18](https://github.com/madacgrav/trainme/issues/18) |
 | 17 | Session notes on Schedule and client-detail rows | PRD §5.5 | Notes visible only inside the run screen | [#19](https://github.com/madacgrav/trainme/issues/19) |
 | 33 | Snapshot tests for themed screens (swift-snapshot-testing, CI baseline) | UI refresh verification | Previews + manual screenshots only; see `thoughts/qrspi/2026-10-26-ui-refresh-and-icon/screenshots/` | — |
+| 34 | Quick timers for exercises: rest countdown between sets, countdown for timed sets that prefills duration | PRD §4.1 / §5.5 (requested 2026-10-29) | `SetTableView` has only a numeric duration stepper (15 s steps); no timer code | [#38](https://github.com/madacgrav/trainme/issues/38) |
 
 ## Deferred by owner decision
 
