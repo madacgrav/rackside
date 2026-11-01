@@ -370,3 +370,36 @@ private func makeSessionEnv(metrics: MetricSet = [.weight, .reps]) async throws 
     #expect(env.vm.errorMessage == nil)
     #expect(env.vm.lastLoggedSetId != nil)
 }
+
+// MARK: - Medical clearance (intake)
+
+@MainActor
+@Test func clearanceFlagLoaded() async throws {
+    let container = try PersistenceController.makeContainer(inMemory: true)
+    let sessions = SwiftDataSessionRepository(modelContainer: container)
+    let health = SwiftDataHealthScreeningRepository(modelContainer: container)
+    let clientId = UUID()
+    let dto = SessionDTO(
+        id: UUID(), clientId: clientId, startAt: .now, endAt: .now.addingTimeInterval(3600),
+        status: .scheduled, notes: nil, instances: [], seriesId: nil, recurrence: nil,
+        eventIdentifier: nil, createdAt: .now, updatedAt: .now
+    )
+    try await sessions.schedule(dto, attaching: [])
+    try await health.upsert(HealthScreeningDTO(
+        id: UUID(), clientId: clientId, completedOn: .now, answers: [.chestPain],
+        conditions: nil, surgeries: nil, medications: nil, familyHeartHistory: false, symptoms: nil,
+        sleepHours: nil, stressLevel: nil, tobacco: false, alcoholPerWeek: nil, activityLevel: nil,
+        clearanceReceivedOn: nil, notes: nil, createdAt: .now, updatedAt: .now
+    ))
+    let vm = SessionRunViewModel(
+        sessionRepo: sessions,
+        exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
+        clientRepo: SwiftDataClientRepository(modelContainer: container),
+        calendar: FakeCalendar(), session: dto, clientName: "C",
+        healthRepo: health
+    )
+
+    await vm.load()
+
+    #expect(vm.clearanceNeeded)
+}

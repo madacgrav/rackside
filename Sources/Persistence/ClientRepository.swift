@@ -57,6 +57,9 @@ actor SwiftDataClientRepository: ClientRepository {
 
     func delete(id: UUID) async throws {
         guard let existing = try fetch(id: id) else { return }
+        // Intake rows link by clientId, not a relationship, so the delete is
+        // explicit (same as SetRecords in SessionRepository).
+        try modelContext.delete(model: HealthScreening.self, where: #Predicate { $0.clientId == id })
         modelContext.delete(existing)
         try modelContext.save()
     }

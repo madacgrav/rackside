@@ -16,6 +16,7 @@ enum ArchiveV2 {
         var workouts: [WorkoutDTO]
         var sessions: [SessionDTO]
         var setRecords: [SetRecordDTO]
+        var healthScreenings: [HealthScreeningDTO]
     }
 
     static func migrate(_ v1: ArchiveV1.Envelope) -> Envelope {
@@ -26,7 +27,8 @@ enum ArchiveV2 {
             exercises: v1.exercises,
             workouts: v1.workouts,
             sessions: v1.sessions,
-            setRecords: v1.setRecords
+            setRecords: v1.setRecords,
+            healthScreenings: []
         )
     }
 }

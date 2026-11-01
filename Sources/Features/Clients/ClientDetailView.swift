@@ -4,6 +4,13 @@ struct ClientDetailView: View {
     @State var viewModel: ClientDetailViewModel
     @State private var showingEdit = false
     @State private var confirmingArchive = false
+    @State private var screeningSheet: ScreeningSheet?
+
+    /// Which screening the sheet edits (nil = a new one).
+    private struct ScreeningSheet: Identifiable {
+        let id = UUID()
+        let existing: HealthScreeningDTO?
+    }
 
     var body: some View {
         List {
@@ -55,6 +62,25 @@ struct ClientDetailView: View {
                 }
                 .themedRows()
             }
+            Section("Health & Clearance") {
+                ClearanceBadge(status: viewModel.clearance)
+                if viewModel.screeningReviewDue {
+                    Label("Screening is over 12 months old — review it", systemImage: "clock.badge.exclamationmark")
+                        .foregroundStyle(Theme.Colors.warning)
+                }
+                if let latest = viewModel.screenings.first {
+                    Button {
+                        screeningSheet = ScreeningSheet(existing: latest)
+                    } label: {
+                        LabeledContent("Latest screening", value: latest.completedOn.formatted(date: .abbreviated, time: .omitted))
+                    }
+                    .foregroundStyle(.primary)
+                }
+                Button("New screening", systemImage: "plus") {
+                    screeningSheet = ScreeningSheet(existing: nil)
+                }
+            }
+            .themedRows()
             Section("Upcoming Sessions") {
                 if viewModel.upcomingSessions.isEmpty {
                     Text("Nothing scheduled").foregroundStyle(.secondary)
@@ -129,6 +155,15 @@ struct ClientDetailView: View {
                 Task { await viewModel.reload() }
             }
         }
+        .sheet(item: $screeningSheet) { sheet in
+            HealthScreeningEditView(
+                repo: viewModel.intake.health,
+                clientId: viewModel.client.id,
+                existing: sheet.existing
+            ) {
+                Task { await viewModel.reload() }
+            }
+        }
         .task { await viewModel.reload() }
     }
 
@@ -156,6 +191,7 @@ struct ClientDetailView: View {
                 clientName: viewModel.client.name,
                 clientPhone: viewModel.client.phoneE164,
                 clientInjuries: viewModel.client.injuries,
+                healthRepo: viewModel.intake.health,
                 onStatusChanged: { await viewModel.reload() }
             ))
         } label: {
@@ -173,6 +209,7 @@ struct ClientDetailView: View {
             sessionRepo: repos.sessions,
             reporting: repos.reporting,
             reminders: repos.reminders,
+            intake: repos.intake,
             client: PreviewFixtures.client
         ))
     }

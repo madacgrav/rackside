@@ -9,6 +9,7 @@ final class ScheduleViewModel {
     let workoutRepo: any WorkoutRepository
     let exerciseRepo: any ExerciseRepository
     let reminders: ReminderCoordinator
+    let healthRepo: (any HealthScreeningRepository)?
     private let defaults: UserDefaults
     private let calendar: Calendar
 
@@ -37,6 +38,7 @@ final class ScheduleViewModel {
         workoutRepo: any WorkoutRepository,
         exerciseRepo: any ExerciseRepository,
         reminders: ReminderCoordinator,
+        healthRepo: (any HealthScreeningRepository)? = nil,
         defaults: UserDefaults = .standard,
         calendar: Calendar = .current
     ) {
@@ -45,6 +47,7 @@ final class ScheduleViewModel {
         self.workoutRepo = workoutRepo
         self.exerciseRepo = exerciseRepo
         self.reminders = reminders
+        self.healthRepo = healthRepo
         self.defaults = defaults
         self.calendar = calendar
         mode = ScheduleMode(rawValue: defaults.string(forKey: Self.modeKey) ?? "") ?? .day

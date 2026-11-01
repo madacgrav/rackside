@@ -41,16 +41,25 @@ struct SessionRunView: View {
     }
     @State private var pendingDeleteSet: SetRecordDTO?
 
+    private var hasInjuries: Bool { !(viewModel.clientInjuries ?? "").isEmpty }
+
     var body: some View {
         List {
             ErrorBanner(message: viewModel.errorMessage)
-            if let injuries = viewModel.clientInjuries, !injuries.isEmpty {
+            if hasInjuries || viewModel.clearanceNeeded {
                 Section {
-                    Label(injuries, systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(Theme.Colors.warning)
-                        .font(.callout)
+                    if viewModel.clearanceNeeded {
+                        Label("Medical clearance recommended", systemImage: "cross.case.fill")
+                            .foregroundStyle(Theme.Colors.warning)
+                            .font(.callout)
+                    }
+                    if let injuries = viewModel.clientInjuries, hasInjuries {
+                        Label(injuries, systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Theme.Colors.warning)
+                            .font(.callout)
+                    }
                 } header: {
-                    Text("Injuries / limitations")
+                    Text("Health & limitations")
                 }
             }
 

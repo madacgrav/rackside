@@ -564,8 +564,8 @@ struct IntakeRepositories: Sendable {
 
 ### Verification
 #### Automated
-- [ ] Test command passes.
-- [ ] `HealthScreeningTests` (6 tests) pass, and the updated `SchemaTests`/`MigrationTests` pass.
+- [x] Test command passes.
+- [x] `HealthScreeningTests` (6 tests) pass, and the updated `SchemaTests`/`MigrationTests` pass.
 #### Manual
 - [ ] Add a screening with one YES. Client detail shows "Medical clearance recommended", and opening
   one of the client's sessions shows the same warning.

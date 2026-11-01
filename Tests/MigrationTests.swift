@@ -25,6 +25,7 @@ import Testing
     #expect(clients.first?.injuries == "Knee")
     #expect(clients.first?.emergencyName == nil)
     #expect(clients.first?.dateOfBirth == nil)
+    #expect(try ModelContext(v3).fetch(FetchDescriptor<HealthScreening>()).isEmpty)
 }
 
 /// Separate function so the V2 container is released before V3 opens the file.

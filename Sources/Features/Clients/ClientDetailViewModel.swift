@@ -9,12 +9,18 @@ final class ClientDetailViewModel {
     let sessionRepo: any SessionRepository
     let reporting: any ReportingQueries
     let reminders: ReminderCoordinator
+    let intake: IntakeRepositories
     var client: ClientDTO
     /// Scheduled sessions that have not started yet, soonest first.
     var upcomingSessions: [SessionDTO] = []
     /// Everything else (past or resolved), most recent first.
     var recentSessions: [SessionDTO] = []
+    /// Newest first; the first one drives clearance and the review prompt.
+    var screenings: [HealthScreeningDTO] = []
     var errorMessage: String?
+
+    var clearance: ClearanceStatus { HealthScreeningDTO.clearance(for: screenings.first) }
+    var screeningReviewDue: Bool { HealthScreeningDTO.reviewDue(screenings.first, now: .now) }
 
     static let recentLimit = 10
 
@@ -24,6 +30,7 @@ final class ClientDetailViewModel {
         sessionRepo: any SessionRepository,
         reporting: any ReportingQueries,
         reminders: ReminderCoordinator,
+        intake: IntakeRepositories,
         client: ClientDTO
     ) {
         self.repository = repo
@@ -31,6 +38,7 @@ final class ClientDetailViewModel {
         self.sessionRepo = sessionRepo
         self.reporting = reporting
         self.reminders = reminders
+        self.intake = intake
         self.client = client
     }
 
@@ -53,6 +61,12 @@ final class ClientDetailViewModel {
         let split = Self.splitSessions(all, now: now)
         upcomingSessions = split.upcoming
         recentSessions = split.recent
+        do {
+            screenings = try await intake.health.forClient(client.id)
+        } catch {
+            Log.ui.debug("client screenings load failed: \(error.localizedDescription)")
+            screenings = []
+        }
         // Status changes made from this screen must re-plan trainer alerts too.
         await reminders.refresh()
     }

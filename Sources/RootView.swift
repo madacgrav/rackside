@@ -11,9 +11,11 @@ struct RootView: View {
     @State private var exportDue = false
     @State private var seedFailed = false
     @State private var reminders: ReminderCoordinator
+    private let intake: IntakeRepositories
 
     init(container: ModelContainer) {
         self.container = container
+        intake = IntakeRepositories(container: container)
         _reminders = State(initialValue: ReminderCoordinator(
             sessionRepo: SwiftDataSessionRepository(modelContainer: container),
             clientRepo: SwiftDataClientRepository(modelContainer: container),
@@ -34,7 +36,8 @@ struct RootView: View {
                         clientRepo: SwiftDataClientRepository(modelContainer: container),
                         workoutRepo: SwiftDataWorkoutRepository(modelContainer: container),
                         exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
-                        reminders: reminders
+                        reminders: reminders,
+                        healthRepo: intake.health
                     ),
                     openSettings: { selectedTab = 4 }
                 )
@@ -45,7 +48,8 @@ struct RootView: View {
                     exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
                     sessionRepo: SwiftDataSessionRepository(modelContainer: container),
                     reporting: SwiftDataReportingQueries(modelContainer: container),
-                    reminders: reminders
+                    reminders: reminders,
+                    intake: intake
                 ))
             }
             Tab("Workouts", systemImage: "list.clipboard.fill", value: 2) {

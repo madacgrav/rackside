@@ -17,6 +17,7 @@ struct ClientListView: View {
                         sessionRepo: viewModel.sessionRepo,
                         reporting: viewModel.reporting,
                         reminders: viewModel.reminders,
+                        intake: viewModel.intake,
                         client: client
                     ))
                 } label: {
@@ -78,6 +79,7 @@ struct ClientListView: View {
         exerciseRepo: repos.exercises,
         sessionRepo: repos.sessions,
         reporting: repos.reporting,
-        reminders: repos.reminders
+        reminders: repos.reminders,
+        intake: repos.intake
     ))
 }

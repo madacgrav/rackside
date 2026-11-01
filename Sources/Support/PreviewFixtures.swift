@@ -19,6 +19,14 @@ enum PreviewFixtures {
         occupation: "Nurse (12-hour shifts)"
     )
 
+    /// One YES (joint problem), no clearance yet.
+    static let screening = HealthScreeningDTO(
+        id: UUID(), clientId: clientId, completedOn: .now, answers: [.boneJointSoftTissue],
+        conditions: nil, surgeries: "Left knee scope (2021)", medications: nil, familyHeartHistory: false,
+        symptoms: nil, sleepHours: 6.5, stressLevel: 3, tobacco: false, alcoholPerWeek: 2,
+        activityLevel: .light, clearanceReceivedOn: nil, notes: nil, createdAt: .now, updatedAt: .now
+    )
+
     static let bench = ExerciseDTO(
         id: benchId, name: "Bench Press", category: .strength,
         metrics: [.weight, .reps, .sets], defaultUnit: .lb, isCustom: false, createdAt: .now, updatedAt: .now
@@ -123,6 +131,7 @@ enum PreviewFixtures {
         let reporting: SwiftDataReportingQueries
         let archive: DataArchiveActor
         let reminders: ReminderCoordinator
+        let intake: IntakeRepositories
     }
 
     static func repositories(seedingWeek: Bool = false) -> Repositories {
@@ -139,7 +148,8 @@ enum PreviewFixtures {
             archive: DataArchiveActor(modelContainer: container),
             reminders: ReminderCoordinator(
                 sessionRepo: sessions, clientRepo: clients, notifications: LocalNotificationService()
-            )
+            ),
+            intake: IntakeRepositories(container: container)
         )
     }
 
@@ -148,6 +158,7 @@ enum PreviewFixtures {
         let container = try! PersistenceController.makeContainer(inMemory: true)
         let ctx = ModelContext(container)
         ctx.insert(client.toModel())
+        ctx.insert(screening.toModel())
         ctx.insert(bench.toModel())
         ctx.insert(squat.toModel())
         ctx.insert(workout.toModel())
