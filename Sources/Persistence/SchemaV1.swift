@@ -4,7 +4,7 @@ import SwiftData
 /// First versioned schema: a frozen snapshot of the models exactly as shipped in
 /// 1.0. SwiftData needs each version's model classes to differ (identical classes
 /// produce "duplicate version checksums"), so these copies live here and are never
-/// edited; the live classes in Sources/Models form `SchemaV2`.
+/// edited; the live classes in Sources/Models form the current schema.
 enum SchemaV1: VersionedSchema {
     static var versionIdentifier: Schema.Version { Schema.Version(1, 0, 0) }
     static var models: [any PersistentModel.Type] {
@@ -214,8 +214,9 @@ enum SchemaV1: VersionedSchema {
 }
 
 enum TrainMeMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [SchemaV1.self, SchemaV2.self] }
+    static var schemas: [any VersionedSchema.Type] { [SchemaV1.self, SchemaV2.self, SchemaV3.self] }
     static var stages: [MigrationStage] {
-        [.lightweight(fromVersion: SchemaV1.self, toVersion: SchemaV2.self)]
+        [.lightweight(fromVersion: SchemaV1.self, toVersion: SchemaV2.self),
+         .lightweight(fromVersion: SchemaV2.self, toVersion: SchemaV3.self)]
     }
 }

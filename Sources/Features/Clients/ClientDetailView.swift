@@ -24,6 +24,37 @@ struct ClientDetailView: View {
                 }
             }
             .themedRows()
+            if viewModel.client.hasProfile {
+                Section("Profile") {
+                    if let dob = viewModel.client.dateOfBirth {
+                        LabeledContent("Age", value: Self.ageText(dob))
+                    }
+                    if let occupation = viewModel.client.occupation {
+                        LabeledContent("Occupation", value: occupation)
+                    }
+                    if let history = viewModel.client.trainingHistory {
+                        LabeledContent("Training history", value: history)
+                    }
+                    if let availability = viewModel.client.availability {
+                        LabeledContent("Availability", value: availability)
+                    }
+                    if let emergency = Self.contactText(
+                        name: viewModel.client.emergencyName,
+                        detail: viewModel.client.emergencyRelationship,
+                        phone: viewModel.client.emergencyPhoneE164
+                    ) {
+                        LabeledContent("Emergency", value: emergency)
+                    }
+                    if let physician = Self.contactText(
+                        name: viewModel.client.physicianName,
+                        detail: nil,
+                        phone: viewModel.client.physicianPhoneE164
+                    ) {
+                        LabeledContent("Physician", value: physician)
+                    }
+                }
+                .themedRows()
+            }
             Section("Upcoming Sessions") {
                 if viewModel.upcomingSessions.isEmpty {
                     Text("Nothing scheduled").foregroundStyle(.secondary)
@@ -99,6 +130,20 @@ struct ClientDetailView: View {
             }
         }
         .task { await viewModel.reload() }
+    }
+
+    /// "34 (Mar 4, 1991)".
+    static func ageText(_ dob: Date, now: Date = .now) -> String {
+        let years = Calendar.current.dateComponents([.year], from: dob, to: now).year ?? 0
+        return "\(years) (\(dob.formatted(date: .abbreviated, time: .omitted)))"
+    }
+
+    /// "Alex Lee (Spouse) · +15551234567", or nil when nothing is set.
+    static func contactText(name: String?, detail: String?, phone: String?) -> String? {
+        var head = name ?? ""
+        if let detail { head += head.isEmpty ? detail : " (\(detail))" }
+        let parts = [head, phone ?? ""].filter { !$0.isEmpty }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
     private func sessionLink(_ session: SessionDTO) -> some View {

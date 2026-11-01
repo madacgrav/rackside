@@ -13,26 +13,7 @@ struct ClientEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(viewModel.isSelf ? "Your profile" : "Contact") {
-                    TextField("Name", text: $viewModel.name)
-                    if !viewModel.isSelf {
-                        TextField("Mobile phone", text: $viewModel.phoneRaw)
-                            .keyboardType(.phonePad)
-                        if !viewModel.phoneRaw.isEmpty && !viewModel.phoneValid {
-                            Text("Enter a valid phone number")
-                                .font(.caption)
-                                .foregroundStyle(Theme.Colors.danger)
-                        }
-                    }
-                }
-                Section("Training") {
-                    TextField("Primary goal", text: $viewModel.goal)
-                    TextField("Injuries / limitations", text: $viewModel.injuries, axis: .vertical)
-                }
-                Section("Notes") {
-                    TextField("Notes", text: $viewModel.notes, axis: .vertical)
-                        .lineLimit(3...8)
-                }
+                ClientFormContent(viewModel: viewModel)
                 ErrorBanner(message: viewModel.errorMessage)
             }
             .navigationTitle(viewModel.isSelf ? "About You" : (viewModel.isEditing ? "Edit Client" : "New Client"))
@@ -55,6 +36,66 @@ struct ClientEditView: View {
                 }
             }
         }
+    }
+}
+
+/// The client form's sections, shared by the edit sheet and the intake flow.
+struct ClientFormContent: View {
+    @Bindable var viewModel: ClientEditViewModel
+
+    var body: some View {
+        Section(viewModel.isSelf ? "Your profile" : "Contact") {
+            TextField("Name", text: $viewModel.name)
+            if !viewModel.isSelf {
+                TextField("Mobile phone", text: $viewModel.phoneRaw)
+                    .keyboardType(.phonePad)
+                if !viewModel.phoneRaw.isEmpty && !viewModel.phoneValid {
+                    Text("Enter a valid phone number")
+                        .font(.caption)
+                        .foregroundStyle(Theme.Colors.danger)
+                }
+            }
+        }
+        Section("Training") {
+            TextField("Primary goal", text: $viewModel.goal)
+            TextField("Injuries / limitations", text: $viewModel.injuries, axis: .vertical)
+        }
+        Section("Profile") {
+            Toggle("Date of birth", isOn: $viewModel.hasDateOfBirth)
+            if viewModel.hasDateOfBirth {
+                DatePicker("Born", selection: $viewModel.dateOfBirth, in: ...Date.now, displayedComponents: .date)
+            }
+            TextField("Occupation", text: $viewModel.occupation)
+            TextField("Training history", text: $viewModel.trainingHistory, axis: .vertical)
+            TextField("Availability", text: $viewModel.availability, axis: .vertical)
+        }
+        Section("Emergency contact") {
+            TextField("Name", text: $viewModel.emergencyName)
+            TextField("Relationship", text: $viewModel.emergencyRelationship)
+            TextField("Phone", text: $viewModel.emergencyPhoneRaw)
+                .keyboardType(.phonePad)
+            if !viewModel.emergencyPhoneValid {
+                invalidPhoneCaption
+            }
+        }
+        Section("Physician") {
+            TextField("Name", text: $viewModel.physicianName)
+            TextField("Phone", text: $viewModel.physicianPhoneRaw)
+                .keyboardType(.phonePad)
+            if !viewModel.physicianPhoneValid {
+                invalidPhoneCaption
+            }
+        }
+        Section("Notes") {
+            TextField("Notes", text: $viewModel.notes, axis: .vertical)
+                .lineLimit(3...8)
+        }
+    }
+
+    private var invalidPhoneCaption: some View {
+        Text("Enter a valid phone number")
+            .font(.caption)
+            .foregroundStyle(Theme.Colors.danger)
     }
 }
 

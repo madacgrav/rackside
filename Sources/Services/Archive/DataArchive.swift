@@ -86,14 +86,16 @@ actor DataArchiveActor: DataArchiving {
         guard let probe = try? decoder.decode(VersionProbe.self, from: data) else {
             throw ArchiveError.unreadable
         }
-        guard probe.schemaVersion <= ArchiveV1.schemaVersion else {
+        guard probe.schemaVersion <= ArchiveV2.schemaVersion else {
             throw ArchiveError.newerThanApp(probe.schemaVersion)
         }
-        // Version 1 is the only version so far; older versions will decode +
-        // migrate through the chain once they exist.
+        // Older versions decode with their frozen envelope, then migrate forward.
         let envelope: CurrentArchive
         do {
-            envelope = try decoder.decode(CurrentArchive.self, from: data)
+            switch probe.schemaVersion {
+            case ...1: envelope = ArchiveV2.migrate(try decoder.decode(ArchiveV1.Envelope.self, from: data))
+            default: envelope = try decoder.decode(ArchiveV2.Envelope.self, from: data)
+            }
         } catch {
             Log.archive.error("Envelope decode failed: \(error.localizedDescription)")
             throw ArchiveError.decodeFailed

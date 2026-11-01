@@ -13,7 +13,10 @@ enum PreviewFixtures {
     static let client = ClientDTO(
         id: clientId, name: "Sam Rivera", phoneE164: "+15551234567",
         goal: "Add 20 lb to bench", injuries: "Left knee — avoid deep squats",
-        notes: nil, isArchived: false, createdAt: .now, updatedAt: .now
+        notes: nil, isArchived: false, createdAt: .now, updatedAt: .now,
+        dateOfBirth: Calendar.current.date(byAdding: .year, value: -34, to: .now),
+        emergencyName: "Alex Rivera", emergencyRelationship: "Spouse", emergencyPhoneE164: "+15557654321",
+        occupation: "Nurse (12-hour shifts)"
     )
 
     static let bench = ExerciseDTO(

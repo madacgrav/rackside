@@ -172,3 +172,39 @@ private func populate(_ env: Env) async throws {
     #expect(sets.count == 2)
     #expect(sets.map(\.weight) == [185, 195])
 }
+
+@Test func profileFieldsRoundTrip() async throws {
+    let source = try makeEnv()
+    // Whole seconds: the archive's ISO 8601 dates drop fractions.
+    let dob = Date(timeIntervalSince1970: 650_000_000)
+    let client = ClientDTO(
+        id: UUID(), name: "Pat", phoneE164: "+15551230000",
+        goal: nil, injuries: nil, notes: nil,
+        isArchived: false, createdAt: dob, updatedAt: dob,
+        dateOfBirth: dob, emergencyName: "Lee", emergencyRelationship: "Partner",
+        emergencyPhoneE164: "+15551239999", physicianName: "Dr. Ng", physicianPhoneE164: "+15551238888",
+        occupation: "Chef", trainingHistory: "Ran a marathon in 2019", availability: "Mornings"
+    )
+    try await source.clients.upsert(client)
+    let data = try await source.archive.exportData()
+
+    let dest = try makeEnv()
+    try await dest.archive.importData(data, mode: .replace)
+    let restored = try #require(try await dest.clients.all().first)
+    #expect(restored.dateOfBirth == dob)
+    #expect(restored.emergencyName == "Lee")
+    #expect(restored.emergencyRelationship == "Partner")
+    #expect(restored.emergencyPhoneE164 == "+15551239999")
+    #expect(restored.physicianName == "Dr. Ng")
+    #expect(restored.physicianPhoneE164 == "+15551238888")
+    #expect(restored.occupation == "Chef")
+    #expect(restored.trainingHistory == "Ran a marathon in 2019")
+    #expect(restored.availability == "Mornings")
+}
+
+@Test func exportWritesSchemaVersion2() async throws {
+    let env = try makeEnv()
+    let data = try await env.archive.exportData()
+    let decoder = JSONDecoder()
+    #expect(try decoder.decode(VersionProbe.self, from: data).schemaVersion == 2)
+}
