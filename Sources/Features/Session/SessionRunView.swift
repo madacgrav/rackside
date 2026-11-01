@@ -11,6 +11,34 @@ struct SessionRunView: View {
     @State private var showingEdit = false
     @State private var confirmingDelete = false
     @State private var calendarWarning: String?
+    /// A delete succeeded with a calendar warning: dismiss once it is read.
+    @State private var dismissAfterWarning = false
+    /// Series occurrence awaiting a "this only / following" choice.
+    @State private var scopePrompt: ScopePrompt?
+
+    /// Scope chosen for the edit sheet of a series occurrence.
+    @State private var editScope: SeriesScope?
+
+    private enum ScopePrompt: Identifiable {
+        case edit, cancel, delete
+        var id: Self { self }
+
+        var title: String {
+            switch self {
+            case .edit: "Edit repeating session"
+            case .cancel: "Cancel repeating session"
+            case .delete: "Delete repeating session"
+            }
+        }
+
+        var message: String {
+            switch self {
+            case .edit: "Changing following sessions moves them to a new series at the new time."
+            case .cancel: "Completed sessions and sessions with logged sets aren't changed."
+            case .delete: "Logged sets are deleted with a session. Later sessions that already have logged sets are kept and leave the series."
+            }
+        }
+    }
     @State private var pendingDeleteSet: SetRecordDTO?
 
     var body: some View {
@@ -28,6 +56,11 @@ struct SessionRunView: View {
 
             Section {
                 LabeledContent("Time", value: viewModel.session.startAt.formatted(date: .abbreviated, time: .shortened))
+                if viewModel.isSeries {
+                    Label("Repeats weekly", systemImage: "repeat")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 LabeledContent("Status", value: statusLabel)
             }
 
@@ -70,19 +103,11 @@ struct SessionRunView: View {
                         pendingStatus = .completed
                     }
                     Button("Cancelled", systemImage: "xmark.circle", role: .destructive) {
-                        pendingStatus = .cancelled
+                        if viewModel.isSeries { scopePrompt = .cancel } else { pendingStatus = .cancelled }
                     }
                     Button("No-show", systemImage: "person.fill.xmark", role: .destructive) {
                         pendingStatus = .noShow
                     }
-                }
-            }
-
-            if !viewModel.canEdit {
-                Section {
-                    Text("Part of a repeating series — editing individual occurrences isn't available yet.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -107,22 +132,25 @@ struct SessionRunView: View {
                     }
                 }
                 Menu {
-                    if viewModel.canEdit {
-                        Button("Edit session", systemImage: "pencil") { showingEdit = true }
+                    Button("Edit session", systemImage: "pencil") {
+                        if viewModel.isSeries { scopePrompt = .edit } else { showingEdit = true }
                     }
-                    Button("Delete session", systemImage: "trash", role: .destructive) { confirmingDelete = true }
+                    Button("Delete session", systemImage: "trash", role: .destructive) {
+                        if viewModel.isSeries { scopePrompt = .delete } else { confirmingDelete = true }
+                    }
                 } label: {
                     Label("More", systemImage: "ellipsis.circle").labelStyle(.iconOnly)
                 }
                 .accessibilityLabel("More actions")
             }
         }
-        .sheet(isPresented: $showingEdit) {
+        .sheet(isPresented: $showingEdit, onDismiss: { editScope = nil }) {
             SessionEditView(
                 sessionRepo: viewModel.sessionRepo,
                 clientRepo: viewModel.clientRepo,
                 workoutRepo: workoutRepo,
                 existing: viewModel.session,
+                scope: editScope,
                 initialDate: viewModel.session.startAt
             ) { warning in
                 calendarWarning = warning
@@ -131,25 +159,27 @@ struct SessionRunView: View {
         }
         .alert(
             "Calendar",
-            isPresented: Binding(get: { calendarWarning != nil }, set: { if !$0 { calendarWarning = nil } })
+            isPresented: Binding(
+                get: { (calendarWarning ?? viewModel.calendarWarning) != nil },
+                set: { if !$0 { clearCalendarWarning() } }
+            )
         ) {
-            Button("OK") { calendarWarning = nil }
+            Button("OK") { clearCalendarWarning() }
         } message: {
-            Text(calendarWarning ?? "")
+            Text(calendarWarning ?? viewModel.calendarWarning ?? "")
         }
         .alert("Delete this session?", isPresented: $confirmingDelete) {
             Button("Delete", role: .destructive) {
                 Task {
-                    if await viewModel.delete() {
-                        dismiss()
-                    }
+                    guard await viewModel.delete() else { return }
+                    if viewModel.calendarWarning == nil { dismiss() } else { dismissAfterWarning = true }
                 }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(viewModel.canEdit
+            Text(!viewModel.isSeries
                  ? "Logged sets for this session are deleted too. This cannot be undone."
-                 : "Only this occurrence is deleted; the rest of the series stays.")
+                 : "Only this occurrence is deleted and removed from your calendar; the rest of the series stays.")
         }
         .sheet(isPresented: $showingTextReminder) {
             if let phone = viewModel.clientPhone {
@@ -178,6 +208,19 @@ struct SessionRunView: View {
                  : "This can't be changed back from the app.")
         }
         .confirmationDialog(
+            scopePrompt?.title ?? "",
+            isPresented: Binding(get: { scopePrompt != nil }, set: { if !$0 { scopePrompt = nil } }),
+            titleVisibility: .visible,
+            presenting: scopePrompt
+        ) { prompt in
+            let role: ButtonRole? = prompt == .edit ? nil : .destructive
+            Button("This session only", role: role) { run(prompt, scope: .thisOnly) }
+            Button("This and following sessions", role: role) { run(prompt, scope: .following) }
+            Button(prompt == .edit ? "Cancel" : "Keep", role: .cancel) {}
+        } message: { prompt in
+            Text(prompt.message)
+        }
+        .confirmationDialog(
             "Delete this set?",
             isPresented: Binding(get: { pendingDeleteSet != nil }, set: { if !$0 { pendingDeleteSet = nil } }),
             titleVisibility: .visible
@@ -189,6 +232,34 @@ struct SessionRunView: View {
             Button("Cancel", role: .cancel) { pendingDeleteSet = nil }
         }
         .task { await viewModel.load() }
+    }
+
+    private func run(_ prompt: ScopePrompt, scope: SeriesScope) {
+        if prompt == .edit {
+            editScope = scope
+            showingEdit = true
+            return
+        }
+        Task {
+            switch prompt {
+            case .edit:
+                break
+            case .cancel:
+                await viewModel.setStatus(.cancelled, scope: scope)
+            case .delete:
+                guard await viewModel.delete(scope: scope) else { return }
+                if viewModel.calendarWarning == nil { dismiss() } else { dismissAfterWarning = true }
+            }
+        }
+    }
+
+    private func clearCalendarWarning() {
+        calendarWarning = nil
+        viewModel.calendarWarning = nil
+        if dismissAfterWarning {
+            dismissAfterWarning = false
+            dismiss()
+        }
     }
 
     private var statusAlertTitle: String {

@@ -31,6 +31,22 @@ func makeEKRecurrenceRule(_ rule: AppRecurrence) -> EKRecurrenceRule {
     )
 }
 
+/// Picks the occurrence of a recurring event whose original date matches
+/// `target`. EventKit keeps `occurrenceDate` at the original start even after an
+/// occurrence is moved, so this is stable for detached occurrences. Tolerates a
+/// one-hour skew (DST) and prefers the closest. Pure function for testing.
+func pickOccurrence(
+    _ candidates: [(eventIdentifier: String?, occurrenceDate: Date?)],
+    eventIdentifier: String,
+    target: Date
+) -> Int? {
+    candidates.indices
+        .filter { candidates[$0].eventIdentifier == eventIdentifier }
+        .compactMap { i in candidates[i].occurrenceDate.map { (i, abs($0.timeIntervalSince(target))) } }
+        .filter { $0.1 <= 3600 }
+        .min { $0.1 < $1.1 }?.0
+}
+
 enum CalendarError: Error, Equatable {
     /// No default calendar and no calendar that allows modifications.
     case noWritableCalendar
@@ -47,6 +63,12 @@ protocol CalendarSyncing: Sendable {
     /// without calendar access.
     func update(eventIdentifier: String, _ session: SessionDTO, clientName: String) async throws -> String?
     func remove(eventIdentifier: String) async throws
+    /// Removes one occurrence of a recurring event (EKSpan.thisEvent). No-op
+    /// when the event or occurrence is gone.
+    func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws
+    /// Ends a recurring event before the given occurrence (EKSpan.futureEvents
+    /// on that occurrence). On the first occurrence this removes the whole event.
+    func endSeries(eventIdentifier: String, before occurrenceStart: Date) async throws
 }
 
 actor EventKitCalendarService: CalendarSyncing {
@@ -108,5 +130,32 @@ actor EventKitCalendarService: CalendarSyncing {
     func remove(eventIdentifier: String) async throws {
         guard let event = store.event(withIdentifier: eventIdentifier) else { return }
         try store.remove(event, span: .futureEvents, commit: true)
+    }
+
+    func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws {
+        guard let event = occurrence(eventIdentifier, at: occurrenceStart) else { return }
+        try store.remove(event, span: .thisEvent, commit: true)
+    }
+
+    func endSeries(eventIdentifier: String, before occurrenceStart: Date) async throws {
+        guard let event = occurrence(eventIdentifier, at: occurrenceStart) else { return }
+        try store.remove(event, span: .futureEvents, commit: true)
+    }
+
+    /// Searches a day either side of the date: `event(withIdentifier:)` returns
+    /// the first occurrence of a recurring event, not this one.
+    private func occurrence(_ eventIdentifier: String, at start: Date) -> EKEvent? {
+        let window = store.predicateForEvents(
+            withStart: start.addingTimeInterval(-86_400),
+            end: start.addingTimeInterval(86_400),
+            calendars: nil
+        )
+        let events = store.events(matching: window)
+        let pick = pickOccurrence(
+            events.map { ($0.eventIdentifier, $0.occurrenceDate) },
+            eventIdentifier: eventIdentifier,
+            target: start
+        )
+        return pick.map { events[$0] }
     }
 }

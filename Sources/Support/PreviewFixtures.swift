@@ -47,6 +47,18 @@ enum PreviewFixtures {
         seriesId: nil, recurrence: nil, eventIdentifier: nil, createdAt: .now, updatedAt: .now
     )
 
+    /// `scheduledSession` as one occurrence of a weekly series (preview only).
+    static let seriesSession: SessionDTO = {
+        var session = scheduledSession
+        session.seriesId = UUID()
+        session.recurrence = AppRecurrence(
+            frequency: .weekly, interval: 1,
+            weekdays: [Calendar.current.component(.weekday, from: session.startAt)],
+            endDate: nil, occurrenceCount: nil
+        )
+        return session
+    }()
+
     static let loggedSets: [SetRecordDTO] = [
         SetRecordDTO(
             id: UUID(), workoutInstanceId: instanceId, exerciseId: benchId, setIndex: 0,
