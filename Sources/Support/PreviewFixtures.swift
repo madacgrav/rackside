@@ -27,6 +27,25 @@ enum PreviewFixtures {
         activityLevel: .light, clearanceReceivedOn: nil, notes: nil, createdAt: .now, updatedAt: .now
     )
 
+    /// Newest first: knee-inward (right) resolved since last month; 2 kg lighter.
+    static let assessments: [AssessmentDTO] = [
+        AssessmentDTO(
+            id: UUID(), clientId: clientId, performedOn: .now, sections: .all,
+            measurements: Measurements(restingHR: 64, systolic: 118, diastolic: 76, heightCm: 175, weightKg: 80,
+                                       waistCm: 84, hipCm: 98, bodyFatPct: 21, pushUps: 22, plankSeconds: 75),
+            ohsAnteriorLeft: [.footTurnsOut], ohsLateral: [.excessiveForwardLean], ohsHeelsElevated: [.feet],
+            slsRight: [.hipDrop], createdAt: .now, updatedAt: .now
+        ),
+        AssessmentDTO(
+            id: UUID(), clientId: clientId, performedOn: Calendar.current.date(byAdding: .month, value: -1, to: .now)!,
+            sections: .all,
+            measurements: Measurements(restingHR: 68, heightCm: 175, weightKg: 82, waistCm: 86, hipCm: 99,
+                                       bodyFatPct: 22.5, pushUps: 18, plankSeconds: 60),
+            ohsAnteriorRight: [.kneeMovesInward], ohsAnteriorLeft: [.footTurnsOut], ohsLateral: [.excessiveForwardLean],
+            slsRight: [.hipDrop, .kneeMovesInward], createdAt: .now, updatedAt: .now
+        ),
+    ]
+
     static let bench = ExerciseDTO(
         id: benchId, name: "Bench Press", category: .strength,
         metrics: [.weight, .reps, .sets], defaultUnit: .lb, isCustom: false, createdAt: .now, updatedAt: .now
@@ -159,6 +178,7 @@ enum PreviewFixtures {
         let ctx = ModelContext(container)
         ctx.insert(client.toModel())
         ctx.insert(screening.toModel())
+        assessments.forEach { ctx.insert($0.toModel()) }
         ctx.insert(bench.toModel())
         ctx.insert(squat.toModel())
         ctx.insert(workout.toModel())

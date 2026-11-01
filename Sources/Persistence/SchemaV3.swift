@@ -8,7 +8,7 @@ enum SchemaV3: VersionedSchema {
     static var models: [any PersistentModel.Type] {
         [Client.self, Exercise.self, Workout.self, WorkoutEntry.self,
          Session.self, WorkoutInstance.self, PlannedEntry.self, SetRecord.self,
-         HealthScreening.self]
+         HealthScreening.self, Assessment.self]
     }
     /// Stable string for StoreBackup's defaults key ("3.0.0").
     static var versionString: String {

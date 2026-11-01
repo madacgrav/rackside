@@ -49,7 +49,8 @@ actor DataArchiveActor: DataArchiving {
             workouts: try modelContext.fetch(FetchDescriptor<Workout>()).map(WorkoutDTO.init),
             sessions: try modelContext.fetch(FetchDescriptor<Session>()).map(SessionDTO.init),
             setRecords: try modelContext.fetch(FetchDescriptor<SetRecord>()).map(SetRecordDTO.init),
-            healthScreenings: try modelContext.fetch(FetchDescriptor<HealthScreening>()).map(HealthScreeningDTO.init)
+            healthScreenings: try modelContext.fetch(FetchDescriptor<HealthScreening>()).map(HealthScreeningDTO.init),
+            assessments: try modelContext.fetch(FetchDescriptor<Assessment>()).map(AssessmentDTO.init)
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -121,6 +122,7 @@ actor DataArchiveActor: DataArchiving {
 
     private func deleteAll() throws {
         try modelContext.delete(model: HealthScreening.self)
+        try modelContext.delete(model: Assessment.self)
         try modelContext.delete(model: SetRecord.self)
         try modelContext.delete(model: Session.self)
         try modelContext.delete(model: Workout.self)
@@ -177,6 +179,13 @@ actor DataArchiveActor: DataArchiving {
         for dto in envelope.healthScreenings {
             let id = dto.id
             if let existing = try first(FetchDescriptor<HealthScreening>(predicate: #Predicate { $0.id == id })) {
+                modelContext.delete(existing)
+            }
+            modelContext.insert(dto.toModel())
+        }
+        for dto in envelope.assessments {
+            let id = dto.id
+            if let existing = try first(FetchDescriptor<Assessment>(predicate: #Predicate { $0.id == id })) {
                 modelContext.delete(existing)
             }
             modelContext.insert(dto.toModel())

@@ -60,6 +60,7 @@ actor SwiftDataClientRepository: ClientRepository {
         // Intake rows link by clientId, not a relationship, so the delete is
         // explicit (same as SetRecords in SessionRepository).
         try modelContext.delete(model: HealthScreening.self, where: #Predicate { $0.clientId == id })
+        try modelContext.delete(model: Assessment.self, where: #Predicate { $0.clientId == id })
         modelContext.delete(existing)
         try modelContext.save()
     }

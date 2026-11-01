@@ -797,7 +797,7 @@ previous assessment, and an `onEdit` closure.
 
 ### Verification
 #### Automated
-- [ ] Test command passes. The 10 new `AssessmentTests` pass.
+- [x] Test command passes. The 10 new `AssessmentTests` pass.
 #### Manual
 - [ ] Create two assessments for a client, a month apart, with one compensation removed. The second
   one's detail shows it under "resolved", plus a weight delta.

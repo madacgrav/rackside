@@ -5,6 +5,16 @@ struct ClientDetailView: View {
     @State private var showingEdit = false
     @State private var confirmingArchive = false
     @State private var screeningSheet: ScreeningSheet?
+    @State private var assessmentSheet: AssessmentSheet?
+    @AppStorage("defaultWeightUnit") private var defaultWeightUnit: String = Unit.lb.rawValue
+
+    private var weightUnit: Unit { Unit(rawValue: defaultWeightUnit) ?? .lb }
+
+    /// Which assessment the sheet edits (nil = a new one).
+    private struct AssessmentSheet: Identifiable {
+        let id = UUID()
+        let existing: AssessmentDTO?
+    }
 
     /// Which screening the sheet edits (nil = a new one).
     private struct ScreeningSheet: Identifiable {
@@ -78,6 +88,28 @@ struct ClientDetailView: View {
                 }
                 Button("New screening", systemImage: "plus") {
                     screeningSheet = ScreeningSheet(existing: nil)
+                }
+            }
+            .themedRows()
+            Section("Assessments") {
+                Button("New assessment", systemImage: "plus") {
+                    assessmentSheet = AssessmentSheet(existing: nil)
+                }
+                ForEach(Array(viewModel.assessments.enumerated()), id: \.element.id) { index, assessment in
+                    let previous = viewModel.assessments.indices.contains(index + 1) ? viewModel.assessments[index + 1] : nil
+                    NavigationLink {
+                        AssessmentDetailView(
+                            assessment: assessment,
+                            previous: previous,
+                            weightUnit: weightUnit,
+                            onEdit: { assessmentSheet = AssessmentSheet(existing: assessment) }
+                        )
+                    } label: {
+                        TitleCaptionRow(
+                            title: assessment.performedOn.formatted(date: .abbreviated, time: .omitted),
+                            caption: assessment.sections.caption
+                        )
+                    }
                 }
             }
             .themedRows()
@@ -160,6 +192,16 @@ struct ClientDetailView: View {
                 repo: viewModel.intake.health,
                 clientId: viewModel.client.id,
                 existing: sheet.existing
+            ) {
+                Task { await viewModel.reload() }
+            }
+        }
+        .sheet(item: $assessmentSheet) { sheet in
+            AssessmentEditView(
+                repo: viewModel.intake.assessments,
+                clientId: viewModel.client.id,
+                existing: sheet.existing,
+                weightUnit: weightUnit
             ) {
                 Task { await viewModel.reload() }
             }

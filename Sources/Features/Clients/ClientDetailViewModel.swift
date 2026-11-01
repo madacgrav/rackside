@@ -17,6 +17,8 @@ final class ClientDetailViewModel {
     var recentSessions: [SessionDTO] = []
     /// Newest first; the first one drives clearance and the review prompt.
     var screenings: [HealthScreeningDTO] = []
+    /// Newest first.
+    var assessments: [AssessmentDTO] = []
     var errorMessage: String?
 
     var clearance: ClearanceStatus { HealthScreeningDTO.clearance(for: screenings.first) }
@@ -66,6 +68,12 @@ final class ClientDetailViewModel {
         } catch {
             Log.ui.debug("client screenings load failed: \(error.localizedDescription)")
             screenings = []
+        }
+        do {
+            assessments = try await intake.assessments.forClient(client.id)
+        } catch {
+            Log.ui.debug("client assessments load failed: \(error.localizedDescription)")
+            assessments = []
         }
         // Status changes made from this screen must re-plan trainer alerts too.
         await reminders.refresh()
