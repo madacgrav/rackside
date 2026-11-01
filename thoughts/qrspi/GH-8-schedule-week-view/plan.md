@@ -499,7 +499,7 @@ Fill in the PR number when the PR exists (step 8-pr).
   a fresh id, because those ids are `@Attribute(.unique)`. A straight copy of `scheduledSession` would have upserted
   one instance across all the sessions. Its values are captured before the nested builder, which is nonisolated
   under Swift 6.
-- BACKLOG.md uses `#NN` placeholders for the PR number. Fill them in at step 8-pr.
+- BACKLOG.md links PR [#40](https://github.com/madacgrav/trainme/pull/40).
 
 ## Device pass (2026-11-01)
 

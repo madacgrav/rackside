@@ -21,7 +21,7 @@ Series edit/cancel (row 5) was addressed in
 see the [Done](#done) table and `thoughts/qrspi/GH-7-series-edit-cancel-calendar/` for the
 design and plan.
 
-Week view on Schedule (row 6) was addressed in [#NN](https://github.com/madacgrav/trainme/pull/NN);
+Week view on Schedule (row 6) was addressed in [#40](https://github.com/madacgrav/trainme/pull/40);
 see the [Done](#done) table and `thoughts/qrspi/GH-8-schedule-week-view/` for the design and
 plan.
 
@@ -98,7 +98,7 @@ Addressed in [#39](https://github.com/madacgrav/trainme/pull/39) (one commit per
 |---|------|------------|-------|
 | 5 | Series edit/cancel and shared calendar event update/removal | "This session only" / "This and following" for edit, cancel and delete (`SeriesActions`); one-session edits detach from the series with their own event; "following" ends the recurring event before the date and edits start a new series segment; occurrences with logged sets keep their own event; no schema change | [#7](https://github.com/madacgrav/trainme/issues/7) |
 
-Addressed in [#NN](https://github.com/madacgrav/trainme/pull/NN) (one commit per phase).
+Addressed in [#40](https://github.com/madacgrav/trainme/pull/40) (one commit per phase).
 
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|
