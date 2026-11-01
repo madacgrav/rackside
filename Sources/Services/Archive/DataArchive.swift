@@ -48,7 +48,11 @@ actor DataArchiveActor: DataArchiving {
             exercises: try modelContext.fetch(FetchDescriptor<Exercise>()).map(ExerciseDTO.init),
             workouts: try modelContext.fetch(FetchDescriptor<Workout>()).map(WorkoutDTO.init),
             sessions: try modelContext.fetch(FetchDescriptor<Session>()).map(SessionDTO.init),
-            setRecords: try modelContext.fetch(FetchDescriptor<SetRecord>()).map(SetRecordDTO.init)
+            setRecords: try modelContext.fetch(FetchDescriptor<SetRecord>()).map(SetRecordDTO.init),
+            healthScreenings: try modelContext.fetch(FetchDescriptor<HealthScreening>()).map(HealthScreeningDTO.init),
+            assessments: try modelContext.fetch(FetchDescriptor<Assessment>()).map(AssessmentDTO.init),
+            waiverTemplate: try first(FetchDescriptor<WaiverTemplate>()).map(WaiverTemplateDTO.init),
+            waivers: try modelContext.fetch(FetchDescriptor<WaiverRecord>()).map(WaiverRecordDTO.init)
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -86,14 +90,16 @@ actor DataArchiveActor: DataArchiving {
         guard let probe = try? decoder.decode(VersionProbe.self, from: data) else {
             throw ArchiveError.unreadable
         }
-        guard probe.schemaVersion <= ArchiveV1.schemaVersion else {
+        guard probe.schemaVersion <= ArchiveV2.schemaVersion else {
             throw ArchiveError.newerThanApp(probe.schemaVersion)
         }
-        // Version 1 is the only version so far; older versions will decode +
-        // migrate through the chain once they exist.
+        // Older versions decode with their frozen envelope, then migrate forward.
         let envelope: CurrentArchive
         do {
-            envelope = try decoder.decode(CurrentArchive.self, from: data)
+            switch probe.schemaVersion {
+            case ...1: envelope = ArchiveV2.migrate(try decoder.decode(ArchiveV1.Envelope.self, from: data))
+            default: envelope = try decoder.decode(ArchiveV2.Envelope.self, from: data)
+            }
         } catch {
             Log.archive.error("Envelope decode failed: \(error.localizedDescription)")
             throw ArchiveError.decodeFailed
@@ -117,6 +123,10 @@ actor DataArchiveActor: DataArchiving {
     // MARK: - Private
 
     private func deleteAll() throws {
+        try modelContext.delete(model: HealthScreening.self)
+        try modelContext.delete(model: Assessment.self)
+        try modelContext.delete(model: WaiverRecord.self)
+        try modelContext.delete(model: WaiverTemplate.self)
         try modelContext.delete(model: SetRecord.self)
         try modelContext.delete(model: Session.self)
         try modelContext.delete(model: Workout.self)
@@ -166,6 +176,32 @@ actor DataArchiveActor: DataArchiving {
         for dto in envelope.setRecords {
             let id = dto.id
             if let existing = try first(FetchDescriptor<SetRecord>(predicate: #Predicate { $0.id == id })) {
+                modelContext.delete(existing)
+            }
+            modelContext.insert(dto.toModel())
+        }
+        for dto in envelope.healthScreenings {
+            let id = dto.id
+            if let existing = try first(FetchDescriptor<HealthScreening>(predicate: #Predicate { $0.id == id })) {
+                modelContext.delete(existing)
+            }
+            modelContext.insert(dto.toModel())
+        }
+        for dto in envelope.assessments {
+            let id = dto.id
+            if let existing = try first(FetchDescriptor<Assessment>(predicate: #Predicate { $0.id == id })) {
+                modelContext.delete(existing)
+            }
+            modelContext.insert(dto.toModel())
+        }
+        if let template = envelope.waiverTemplate {
+            // Single-row template: the archive's version replaces the local one.
+            try modelContext.delete(model: WaiverTemplate.self)
+            modelContext.insert(template.toModel())
+        }
+        for dto in envelope.waivers {
+            let id = dto.id
+            if let existing = try first(FetchDescriptor<WaiverRecord>(predicate: #Predicate { $0.id == id })) {
                 modelContext.delete(existing)
             }
             modelContext.insert(dto.toModel())

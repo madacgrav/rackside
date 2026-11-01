@@ -77,7 +77,21 @@ The original notes had "exercise" as a free-text field. That quietly makes progr
 
 ### 4.4 Recommended additions to the Client record (your call)
 
-The original spec had name + phone only. For a tool a trainer relies on, consider adding: primary goal, injuries/limitations (surfaces at session time so the trainer trains safely), and free-form notes. These are cheap to add now and awkward to retrofit. Health/PAR-Q intake is deferred with billing.
+The original spec had name + phone only. For a tool a trainer relies on, consider adding: primary goal, injuries/limitations (surfaces at session time so the trainer trains safely), and free-form notes. These are cheap to add now and awkward to retrofit.
+
+**Client intake (shipped 2026-11).** Built from the trainer's NASM assessment form, configured per client:
+- **Profile:** date of birth, emergency contact, physician, occupation, training history and availability.
+- **Health screening:** dated, using the app's own plain-language yes/no questions. These are not PAR-Q+ text and are not a diagnosis. It also records medical history and lifestyle. Any YES flags "medical clearance recommended" on the client and in sessions until a clearance date is recorded, and screenings are prompted for review every 12 months.
+- **Assessments:** dated, with toggled sections:
+  - measurements
+  - NASM page-1 Overhead Squat, including the heels-elevated and arms-down retests
+  - Single Leg Squat
+
+  Each assessment shows the changes since the previous one.
+- **Liability waiver:** a versioned template that the trainer edits in Settings, with a not-legal-advice notice. It is sent as an unsigned PDF through the share sheet and marked when it is signed and returned. Each send keeps a snapshot of the text that was sent.
+- **Guided intake:** offered after a client is created, and also from the client's page.
+
+Billing remains deferred.
 
 ### 4.5 Units and metrics
 
@@ -170,7 +184,7 @@ The trainer owns this format, so define it deliberately and version it from day 
 
 ## 10. Security & privacy
 
-The app stores client PII (names, phone numbers) and, if §4.4 is adopted, health/injury notes. Requirements: biometric app lock (Face ID / Touch ID) with passcode fallback on launch; rely on iOS Data Protection so on-device storage is encrypted at rest; no analytics/PII leaves the device (consistent with local-only); phone numbers stored normalized and used only for the compose sheets in §6/§7. If the app is later commercialized, a privacy policy and explicit client-consent capture for messaging will be required — noted for v2.
+The app stores client PII (names, phone numbers) and, if §4.4 is adopted, health/injury notes. Requirements: biometric app lock (Face ID / Touch ID) with passcode fallback on launch; rely on iOS Data Protection so on-device storage is encrypted at rest; no analytics/PII leaves the device (consistent with local-only); phone numbers stored normalized and used only for the compose sheets in §6/§7. Intake health data is stored in the on-device SwiftData store under iOS default Data Protection (complete until first unlock), behind the Face ID app lock. Waiver PDFs are temporary files with complete protection, deleted after sharing. If the app is later commercialized, a privacy policy and explicit client-consent capture for messaging will be required — noted for v2.
 
 ---
 

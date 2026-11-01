@@ -16,6 +16,9 @@ final class SessionRunViewModel {
     var clientPhone: String?
     /// Surfaced at the top of the run screen so the trainer trains safely (PRD §4.4).
     var clientInjuries: String?
+    /// Latest health screening has a YES with no clearance recorded.
+    var clearanceNeeded = false
+    private let healthRepo: (any HealthScreeningRepository)?
     var notesDraft: String
     var exercises: [UUID: ExerciseDTO] = [:]
     var recordedSets: [UUID: [SetRecordDTO]] = [:]  // keyed by instance id
@@ -58,6 +61,7 @@ final class SessionRunViewModel {
         clientName: String,
         clientPhone: String? = nil,
         clientInjuries: String? = nil,
+        healthRepo: (any HealthScreeningRepository)? = nil,
         onStatusChanged: @escaping @MainActor () async -> Void = {}
     ) {
         self.sessionRepo = sessionRepo
@@ -68,6 +72,7 @@ final class SessionRunViewModel {
         self.clientName = clientName
         self.clientPhone = clientPhone
         self.clientInjuries = clientInjuries
+        self.healthRepo = healthRepo
         self.notesDraft = session.notes ?? ""
         self.onStatusChanged = onStatusChanged
     }
@@ -85,6 +90,10 @@ final class SessionRunViewModel {
         let exerciseIds = Set(session.instances.flatMap(\.plannedEntries).map(\.exerciseId))
         for id in exerciseIds {
             if let last = await lastSet(exerciseId: id) { previousSets[id] = last }
+        }
+        if let healthRepo {
+            let latest = try? await healthRepo.latest(clientId: session.clientId)
+            clearanceNeeded = HealthScreeningDTO.clearance(for: latest) == .needed
         }
         await refreshSession()
     }

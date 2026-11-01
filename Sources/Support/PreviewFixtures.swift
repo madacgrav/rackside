@@ -13,8 +13,38 @@ enum PreviewFixtures {
     static let client = ClientDTO(
         id: clientId, name: "Sam Rivera", phoneE164: "+15551234567",
         goal: "Add 20 lb to bench", injuries: "Left knee — avoid deep squats",
-        notes: nil, isArchived: false, createdAt: .now, updatedAt: .now
+        notes: nil, isArchived: false, createdAt: .now, updatedAt: .now,
+        dateOfBirth: Calendar.current.date(byAdding: .year, value: -34, to: .now),
+        emergencyName: "Alex Rivera", emergencyRelationship: "Spouse", emergencyPhoneE164: "+15557654321",
+        occupation: "Nurse (12-hour shifts)"
     )
+
+    /// One YES (joint problem), no clearance yet.
+    static let screening = HealthScreeningDTO(
+        id: UUID(), clientId: clientId, completedOn: .now, answers: [.boneJointSoftTissue],
+        conditions: nil, surgeries: "Left knee scope (2021)", medications: nil, familyHeartHistory: false,
+        symptoms: nil, sleepHours: 6.5, stressLevel: 3, tobacco: false, alcoholPerWeek: 2,
+        activityLevel: .light, clearanceReceivedOn: nil, notes: nil, createdAt: .now, updatedAt: .now
+    )
+
+    /// Newest first: knee-inward (right) resolved since last month; 2 kg lighter.
+    static let assessments: [AssessmentDTO] = [
+        AssessmentDTO(
+            id: UUID(), clientId: clientId, performedOn: .now, sections: .all,
+            measurements: Measurements(restingHR: 64, systolic: 118, diastolic: 76, heightCm: 175, weightKg: 80,
+                                       waistCm: 84, hipCm: 98, bodyFatPct: 21, pushUps: 22, plankSeconds: 75),
+            ohsAnteriorLeft: [.footTurnsOut], ohsLateral: [.excessiveForwardLean], ohsHeelsElevated: [.feet],
+            slsRight: [.hipDrop], createdAt: .now, updatedAt: .now
+        ),
+        AssessmentDTO(
+            id: UUID(), clientId: clientId, performedOn: Calendar.current.date(byAdding: .month, value: -1, to: .now)!,
+            sections: .all,
+            measurements: Measurements(restingHR: 68, heightCm: 175, weightKg: 82, waistCm: 86, hipCm: 99,
+                                       bodyFatPct: 22.5, pushUps: 18, plankSeconds: 60),
+            ohsAnteriorRight: [.kneeMovesInward], ohsAnteriorLeft: [.footTurnsOut], ohsLateral: [.excessiveForwardLean],
+            slsRight: [.hipDrop, .kneeMovesInward], createdAt: .now, updatedAt: .now
+        ),
+    ]
 
     static let bench = ExerciseDTO(
         id: benchId, name: "Bench Press", category: .strength,
@@ -120,6 +150,7 @@ enum PreviewFixtures {
         let reporting: SwiftDataReportingQueries
         let archive: DataArchiveActor
         let reminders: ReminderCoordinator
+        let intake: IntakeRepositories
     }
 
     static func repositories(seedingWeek: Bool = false) -> Repositories {
@@ -136,7 +167,8 @@ enum PreviewFixtures {
             archive: DataArchiveActor(modelContainer: container),
             reminders: ReminderCoordinator(
                 sessionRepo: sessions, clientRepo: clients, notifications: LocalNotificationService()
-            )
+            ),
+            intake: IntakeRepositories(container: container)
         )
     }
 
@@ -145,6 +177,8 @@ enum PreviewFixtures {
         let container = try! PersistenceController.makeContainer(inMemory: true)
         let ctx = ModelContext(container)
         ctx.insert(client.toModel())
+        ctx.insert(screening.toModel())
+        assessments.forEach { ctx.insert($0.toModel()) }
         ctx.insert(bench.toModel())
         ctx.insert(squat.toModel())
         ctx.insert(workout.toModel())

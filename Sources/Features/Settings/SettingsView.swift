@@ -7,6 +7,7 @@ import UserNotifications
 struct SettingsView: View {
     let archive: any DataArchiving
     let reminders: ReminderCoordinator
+    let waivers: any WaiverRepository
     var calendar: any CalendarSyncing = EventKitCalendarService()
 
     @State private var calendarStatus: EKAuthorizationStatus = .notDetermined
@@ -59,6 +60,16 @@ struct SettingsView: View {
                     Text("Units")
                 } footer: {
                     Text("Each exercise keeps its own unit; change it from the Exercises tab. Existing weights are never converted.")
+                }
+
+                Section {
+                    NavigationLink("Liability waiver template") {
+                        WaiverTemplateEditView(repo: waivers)
+                    }
+                } header: {
+                    Text("Client intake")
+                } footer: {
+                    Text("Sent to new clients as a PDF to sign and return.")
                 }
 
                 Section {
@@ -218,5 +229,5 @@ struct PermissionRow: View {
 
 #Preview("Settings") {
     let repos = PreviewFixtures.repositories()
-    SettingsView(archive: repos.archive, reminders: repos.reminders)
+    SettingsView(archive: repos.archive, reminders: repos.reminders, waivers: repos.intake.waivers)
 }

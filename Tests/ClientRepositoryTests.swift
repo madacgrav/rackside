@@ -134,3 +134,17 @@ private func dto(id: UUID = UUID(), name: String, phone: String = "+15551234567"
     #expect(decoded.isSelf == false)
     #expect(decoded.name == "Me")
 }
+
+@Test func exportIncludesProfileFields() throws {
+    var client = dto(name: "Pat")
+    client.emergencyName = "Lee"
+    client.occupation = "Chef"
+
+    let data = try JSONEncoder().encode(client)
+    let object = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+    #expect(object["emergencyName"] as? String == "Lee")
+
+    let decoded = try JSONDecoder().decode(ClientDTO.self, from: data)
+    #expect(decoded.emergencyName == "Lee")
+    #expect(decoded.occupation == "Chef")
+}
