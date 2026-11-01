@@ -480,7 +480,7 @@ Fill in the PR number when the PR exists (step 8-pr).
 
 ### Verification
 #### Automated
-- [ ] The test command passes, and the test count is 152.
+- [x] The test command passes, and the test count is 152.
 - [ ] The device build, install and launch commands from the Overview succeed.
 
 #### Manual (madphone)
@@ -489,3 +489,15 @@ Fill in the PR number when the PR exists (step 8-pr).
 - [ ] From the week list, open a series session, choose Cancel, then "This session only". On return, only that row shows Cancelled.
 - [ ] Add a session from Week mode, and it appears in the right section.
 - [ ] Relaunch the app, and it reopens in the last-used mode.
+
+---
+
+## Implementation notes (2026-11-01)
+
+- Phases 1–3 landed one commit each. The simulator test run is green with 152 `@Test`s.
+- Phase 3 deviation: `PreviewFixtures.weekSessions` gives every copied `WorkoutInstance` and `PlannedEntry`
+  a fresh id, because those ids are `@Attribute(.unique)`. A straight copy of `scheduledSession` would have upserted
+  one instance across all the sessions. Its values are captured before the nested builder, which is nonisolated
+  under Swift 6.
+- BACKLOG.md uses `#NN` placeholders for the PR number. Fill them in at step 8-pr.
+- Not done yet: the simulator manual checks, and the madphone device build and checklist. The "Device pass" section still needs adding.
