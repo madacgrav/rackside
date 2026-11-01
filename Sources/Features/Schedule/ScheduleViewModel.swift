@@ -10,9 +10,13 @@ final class ScheduleViewModel {
     let exerciseRepo: any ExerciseRepository
     let reminders: ReminderCoordinator
     private let defaults: UserDefaults
+    private let calendar: Calendar
 
     var selectedDate: Date = .now
     var sessionsForDay: [SessionDTO] = []
+    var mode: ScheduleMode = .day
+    var week: [ScheduleDay] = []
+    var weekInterval: DateInterval { ScheduleWeek.weekInterval(containing: selectedDate, calendar: calendar) }
     var clientNames: [UUID: String] = [:]
     var clientPhones: [UUID: String] = [:]
     var clientInjuries: [UUID: String?] = [:]
@@ -29,7 +33,8 @@ final class ScheduleViewModel {
         workoutRepo: any WorkoutRepository,
         exerciseRepo: any ExerciseRepository,
         reminders: ReminderCoordinator,
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = .standard,
+        calendar: Calendar = .current
     ) {
         self.sessionRepo = sessionRepo
         self.clientRepo = clientRepo
@@ -37,15 +42,22 @@ final class ScheduleViewModel {
         self.exerciseRepo = exerciseRepo
         self.reminders = reminders
         self.defaults = defaults
+        self.calendar = calendar
     }
 
     func load() async {
         isLoading = true
         defer { isLoading = false }
-        let calendar = Calendar.current
-        let dayStart = calendar.startOfDay(for: selectedDate)
-        let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
-        sessionsForDay = (try? await sessionRepo.sessions(from: dayStart, to: dayEnd)) ?? []
+        switch mode {
+        case .day:
+            let dayStart = calendar.startOfDay(for: selectedDate)
+            let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
+            sessionsForDay = (try? await sessionRepo.sessions(from: dayStart, to: dayEnd)) ?? []
+        case .week:
+            let interval = weekInterval
+            let sessions = (try? await sessionRepo.sessions(from: interval.start, to: interval.end)) ?? []
+            week = ScheduleWeek.group(sessions, into: ScheduleWeek.days(in: interval, calendar: calendar), calendar: calendar)
+        }
 
         let clients = (try? await clientRepo.allIncludingArchived()) ?? []
         clientNames = Dictionary(uniqueKeysWithValues: clients.map { ($0.id, $0.name) })

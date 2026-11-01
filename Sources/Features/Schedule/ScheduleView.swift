@@ -35,35 +35,33 @@ struct ScheduleView: View {
                     .background(Theme.Colors.warning.opacity(0.12))
                 }
 
-                DatePicker("Date", selection: $viewModel.selectedDate, displayedComponents: .date)
-                    .datePickerStyle(.graphical)
-                    .padding(.horizontal)
+                Picker("View", selection: $viewModel.mode) {
+                    ForEach(ScheduleMode.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.vertical, Theme.Spacing.sm)
 
-                List(viewModel.sessionsForDay) { session in
-                    NavigationLink {
-                        SessionRunView(viewModel: SessionRunViewModel(
-                            sessionRepo: viewModel.sessionRepo,
-                            exerciseRepo: viewModel.exerciseRepo,
-                            clientRepo: viewModel.clientRepo,
-                            session: session,
-                            clientName: viewModel.clientNames[session.clientId] ?? "Client",
-                            clientPhone: viewModel.clientPhones[session.clientId],
-                            clientInjuries: viewModel.clientInjuries[session.clientId] ?? nil,
-                            onStatusChanged: { await viewModel.load() }
-                        ), workoutRepo: viewModel.workoutRepo)
-                    } label: {
-                        SessionRow(session: session, clientName: viewModel.clientNames[session.clientId] ?? "Client")
+                switch viewModel.mode {
+                case .day:
+                    DatePicker("Date", selection: $viewModel.selectedDate, displayedComponents: .date)
+                        .datePickerStyle(.graphical)
+                        .padding(.horizontal)
+
+                    List(viewModel.sessionsForDay) { session in
+                        sessionLink(session)
                     }
-                    .themedRows()
-                }
-                .overlay {
-                    if viewModel.isLoading && viewModel.sessionsForDay.isEmpty {
-                        ProgressView()
-                    } else if viewModel.sessionsForDay.isEmpty {
-                        EmptyState(title: "No sessions this day", systemImage: "calendar")
+                    .overlay {
+                        if viewModel.isLoading && viewModel.sessionsForDay.isEmpty {
+                            ProgressView()
+                        } else if viewModel.sessionsForDay.isEmpty {
+                            EmptyState(title: "No sessions this day", systemImage: "calendar")
+                        }
                     }
+                    .themedScreen()
+                case .week:
+                    weekList
                 }
-                .themedScreen()
             }
             .navigationTitle("Schedule")
             .toolbar {
@@ -92,7 +90,47 @@ struct ScheduleView: View {
             .onChange(of: viewModel.selectedDate) {
                 Task { await viewModel.load() }
             }
+            .onChange(of: viewModel.mode) { Task { await viewModel.load() } }
         }
+    }
+
+    private func sessionLink(_ session: SessionDTO) -> some View {
+        NavigationLink {
+            SessionRunView(viewModel: SessionRunViewModel(
+                sessionRepo: viewModel.sessionRepo,
+                exerciseRepo: viewModel.exerciseRepo,
+                clientRepo: viewModel.clientRepo,
+                session: session,
+                clientName: viewModel.clientNames[session.clientId] ?? "Client",
+                clientPhone: viewModel.clientPhones[session.clientId],
+                clientInjuries: viewModel.clientInjuries[session.clientId] ?? nil,
+                onStatusChanged: { await viewModel.load() }
+            ), workoutRepo: viewModel.workoutRepo)
+        } label: {
+            SessionRow(session: session, clientName: viewModel.clientNames[session.clientId] ?? "Client")
+        }
+        .themedRows()
+    }
+
+    private var weekList: some View {
+        List {
+            ForEach(viewModel.week) { day in
+                Section(day.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())) {
+                    if day.sessions.isEmpty {
+                        Text("No sessions")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .themedRows()
+                    } else {
+                        ForEach(day.sessions) { sessionLink($0) }
+                    }
+                }
+            }
+        }
+        .overlay {
+            if viewModel.isLoading && viewModel.week.isEmpty { ProgressView() }
+        }
+        .themedScreen()
     }
 }
 
