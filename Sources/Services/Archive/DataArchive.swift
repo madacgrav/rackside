@@ -50,7 +50,9 @@ actor DataArchiveActor: DataArchiving {
             sessions: try modelContext.fetch(FetchDescriptor<Session>()).map(SessionDTO.init),
             setRecords: try modelContext.fetch(FetchDescriptor<SetRecord>()).map(SetRecordDTO.init),
             healthScreenings: try modelContext.fetch(FetchDescriptor<HealthScreening>()).map(HealthScreeningDTO.init),
-            assessments: try modelContext.fetch(FetchDescriptor<Assessment>()).map(AssessmentDTO.init)
+            assessments: try modelContext.fetch(FetchDescriptor<Assessment>()).map(AssessmentDTO.init),
+            waiverTemplate: try first(FetchDescriptor<WaiverTemplate>()).map(WaiverTemplateDTO.init),
+            waivers: try modelContext.fetch(FetchDescriptor<WaiverRecord>()).map(WaiverRecordDTO.init)
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -123,6 +125,8 @@ actor DataArchiveActor: DataArchiving {
     private func deleteAll() throws {
         try modelContext.delete(model: HealthScreening.self)
         try modelContext.delete(model: Assessment.self)
+        try modelContext.delete(model: WaiverRecord.self)
+        try modelContext.delete(model: WaiverTemplate.self)
         try modelContext.delete(model: SetRecord.self)
         try modelContext.delete(model: Session.self)
         try modelContext.delete(model: Workout.self)
@@ -186,6 +190,18 @@ actor DataArchiveActor: DataArchiving {
         for dto in envelope.assessments {
             let id = dto.id
             if let existing = try first(FetchDescriptor<Assessment>(predicate: #Predicate { $0.id == id })) {
+                modelContext.delete(existing)
+            }
+            modelContext.insert(dto.toModel())
+        }
+        if let template = envelope.waiverTemplate {
+            // Single-row template: the archive's version replaces the local one.
+            try modelContext.delete(model: WaiverTemplate.self)
+            modelContext.insert(template.toModel())
+        }
+        for dto in envelope.waivers {
+            let id = dto.id
+            if let existing = try first(FetchDescriptor<WaiverRecord>(predicate: #Predicate { $0.id == id })) {
                 modelContext.delete(existing)
             }
             modelContext.insert(dto.toModel())

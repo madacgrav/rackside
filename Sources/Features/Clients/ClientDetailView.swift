@@ -6,6 +6,8 @@ struct ClientDetailView: View {
     @State private var confirmingArchive = false
     @State private var screeningSheet: ScreeningSheet?
     @State private var assessmentSheet: AssessmentSheet?
+    /// Created once in `.task`, so share-sheet state survives reloads.
+    @State private var waiverViewModel: ClientWaiverViewModel?
     @AppStorage("defaultWeightUnit") private var defaultWeightUnit: String = Unit.lb.rawValue
 
     private var weightUnit: Unit { Unit(rawValue: defaultWeightUnit) ?? .lb }
@@ -91,6 +93,10 @@ struct ClientDetailView: View {
                 }
             }
             .themedRows()
+            if let waiverViewModel {
+                ClientWaiverSection(viewModel: waiverViewModel)
+                    .themedRows()
+            }
             Section("Assessments") {
                 Button("New assessment", systemImage: "plus") {
                     assessmentSheet = AssessmentSheet(existing: nil)
@@ -206,7 +212,14 @@ struct ClientDetailView: View {
                 Task { await viewModel.reload() }
             }
         }
-        .task { await viewModel.reload() }
+        .task {
+            if waiverViewModel == nil {
+                waiverViewModel = ClientWaiverViewModel(
+                    repo: viewModel.intake.waivers, clientRepo: viewModel.repository, client: viewModel.client
+                )
+            }
+            await viewModel.reload()
+        }
     }
 
     /// "34 (Mar 4, 1991)".

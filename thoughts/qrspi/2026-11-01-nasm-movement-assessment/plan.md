@@ -1057,7 +1057,7 @@ struct ActivityShareSheet: UIViewControllerRepresentable {
 
 ### Verification
 #### Automated
-- [ ] Test command passes, including the 9 `WaiverTests`.
+- [x] Test command passes, including the 9 `WaiverTests`.
 #### Manual
 - [ ] Settings → Liability waiver template: edit and save, and the header shows v2. The notice is
   visible.
