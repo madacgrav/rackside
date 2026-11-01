@@ -21,11 +21,14 @@ Series edit/cancel (row 5) was addressed in
 see the [Done](#done) table and `thoughts/qrspi/GH-7-series-edit-cancel-calendar/` for the
 design and plan.
 
+Week view on Schedule (row 6) was addressed in [#40](https://github.com/madacgrav/trainme/pull/40);
+see the [Done](#done) table and `thoughts/qrspi/GH-8-schedule-week-view/` for the design and
+plan.
+
 ## P1 — features
 
 | # | Item | Why / PRD ref | Evidence | Issue |
 |---|------|---------------|----------|-------|
-| 6 | Week view on Schedule | PRD §5.4 | `ScheduleView` is a month picker plus one-day list | [#8](https://github.com/madacgrav/trainme/issues/8) |
 | 7 | Inline "create exercise" from the workout picker | PRD §4.3 | `ExercisePickerView` has no create action | [#9](https://github.com/madacgrav/trainme/issues/9) |
 | 8 | Browse and unarchive archived clients | PRD §5.1 | No list uses `allIncludingArchived`; unarchive only from an open detail screen | [#10](https://github.com/madacgrav/trainme/issues/10) |
 
@@ -94,3 +97,9 @@ Addressed in [#39](https://github.com/madacgrav/trainme/pull/39) (one commit per
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|
 | 5 | Series edit/cancel and shared calendar event update/removal | "This session only" / "This and following" for edit, cancel and delete (`SeriesActions`); one-session edits detach from the series with their own event; "following" ends the recurring event before the date and edits start a new series segment; occurrences with logged sets keep their own event; no schema change | [#7](https://github.com/madacgrav/trainme/issues/7) |
+
+Addressed in [#40](https://github.com/madacgrav/trainme/pull/40) (one commit per phase).
+
+| # | Item | Resolution | Issue |
+|---|------|------------|-------|
+| 6 | Week view on Schedule | Day/Week segmented toggle; week of `selectedDate` (locale first weekday) as 7 day sections with `SessionRow`; chevrons + Today; mode persisted; `ScheduleViewModel` takes an injected `Calendar`; `ScheduleViewModelTests` | [#8](https://github.com/madacgrav/trainme/issues/8) |
