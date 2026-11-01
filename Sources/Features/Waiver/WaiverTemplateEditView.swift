@@ -10,38 +10,50 @@ struct WaiverTemplateEditView: View {
 
     private var isChanged: Bool { template.map { $0.body != draft } ?? false }
 
+    // Deliberately not a Form: a TextEditor (itself a scroll view) inside a List
+    // hung the app on device in a safe-area layout loop, so the editor is the
+    // screen's only scroll view.
     var body: some View {
-        Form {
-            Section {
-                Label(
-                    "This template is not legal advice. Waiver rules vary by state — have it reviewed by your attorney or insurer before use.",
-                    systemImage: "exclamationmark.shield.fill"
-                )
-                .foregroundStyle(Theme.Colors.warning)
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Label(
+                "This template is not legal advice. Waiver rules vary by state — have it reviewed by your attorney or insurer before use.",
+                systemImage: "exclamationmark.shield.fill"
+            )
+            .font(.callout)
+            .foregroundStyle(Theme.Colors.warning)
+            Text(template.map { "Template v\($0.version)" } ?? "Template")
+                .font(.headline)
+            TextEditor(text: $draft)
+                .font(.callout)
+                .scrollContentBackground(.hidden)
+                .padding(Theme.Spacing.sm)
+                .background(Theme.Colors.surfaceRaised, in: RoundedRectangle(cornerRadius: Theme.Radius.row))
+                .frame(maxHeight: .infinity)
+            Text("Lines in ALL CAPS become headings; start a line with !! to make it bold; lines starting with # are hidden.")
+                .font(.footnote.monospaced())
+                .foregroundStyle(.secondary)
+            if let errorMessage {
+                Label(errorMessage, systemImage: "exclamationmark.octagon.fill")
+                    .foregroundStyle(Theme.Colors.danger)
             }
-            Section {
-                TextEditor(text: $draft)
-                    .frame(minHeight: 360)
-                    .font(.callout)
-            } header: {
-                Text(template.map { "Template v\($0.version)" } ?? "Template")
-            } footer: {
-                Text("Lines in ALL CAPS become headings; start a line with !! to make it bold; lines starting with # are hidden.")
-                    .font(.footnote.monospaced())
-            }
-            Section {
-                Button("Reset to starter text", role: .destructive) { confirmingReset = true }
-            }
-            ErrorBanner(message: errorMessage)
         }
+        .padding(.horizontal, Theme.Spacing.lg)
+        .padding(.vertical, Theme.Spacing.sm)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .themedScreen()
         .navigationTitle("Liability Waiver")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            Button("Save") {
-                Task { await save() }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    Task { await save() }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!isChanged)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(!isChanged)
+            ToolbarItem(placement: .secondaryAction) {
+                Button("Reset to starter text", role: .destructive) { confirmingReset = true }
+            }
         }
         .confirmationDialog("Replace the text with the starter template?", isPresented: $confirmingReset, titleVisibility: .visible) {
             Button("Reset", role: .destructive) { draft = SwiftDataWaiverRepository.starterText() }
