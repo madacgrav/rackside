@@ -59,6 +59,42 @@ enum PreviewFixtures {
         return session
     }()
 
+    /// Four sessions across the current week for the week preview. Instance and entry ids are fresh
+    /// because they are unique in the store.
+    static let weekSessions: [SessionDTO] = {
+        let calendar = Calendar.current
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: .now)!.start
+        let base = scheduledSession
+        let recurrence = seriesSession.recurrence
+        func make(day: Int, hour: Int, minute: Int = 0, status: SessionStatus, series: Bool = false) -> SessionDTO {
+            let dayStart = calendar.date(byAdding: .day, value: day, to: weekStart)!
+            let start = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: dayStart)!
+            return SessionDTO(
+                id: UUID(), clientId: base.clientId, startAt: start,
+                endAt: start.addingTimeInterval(3600), status: status, notes: base.notes,
+                instances: base.instances.map { instance in
+                    WorkoutInstanceDTO(
+                        id: UUID(), sourceWorkoutId: instance.sourceWorkoutId, name: instance.name,
+                        plannedEntries: instance.plannedEntries.map {
+                            PlannedEntryDTO(
+                                id: UUID(), exerciseId: $0.exerciseId, order: $0.order, targetSets: $0.targetSets,
+                                targetReps: $0.targetReps, targetWeight: $0.targetWeight, targetDuration: $0.targetDuration
+                            )
+                        }
+                    )
+                },
+                seriesId: series ? UUID() : nil, recurrence: series ? recurrence : nil,
+                eventIdentifier: nil, createdAt: .now, updatedAt: .now
+            )
+        }
+        return [
+            make(day: 1, hour: 7, status: .completed),
+            make(day: 1, hour: 17, minute: 30, status: .scheduled, series: true),
+            make(day: 3, hour: 9, status: .scheduled),
+            make(day: 4, hour: 6, status: .cancelled),
+        ]
+    }()
+
     static let loggedSets: [SetRecordDTO] = [
         SetRecordDTO(
             id: UUID(), workoutInstanceId: instanceId, exerciseId: benchId, setIndex: 0,
@@ -86,8 +122,8 @@ enum PreviewFixtures {
         let reminders: ReminderCoordinator
     }
 
-    static func repositories() -> Repositories {
-        let container = container()
+    static func repositories(seedingWeek: Bool = false) -> Repositories {
+        let container = container(seedingWeek: seedingWeek)
         let sessions = SwiftDataSessionRepository(modelContainer: container)
         let clients = SwiftDataClientRepository(modelContainer: container)
         return Repositories(
@@ -105,7 +141,7 @@ enum PreviewFixtures {
     }
 
     /// A seeded in-memory container. Each call builds a fresh store.
-    static func container() -> ModelContainer {
+    static func container(seedingWeek: Bool = false) -> ModelContainer {
         let container = try! PersistenceController.makeContainer(inMemory: true)
         let ctx = ModelContext(container)
         ctx.insert(client.toModel())
@@ -114,6 +150,7 @@ enum PreviewFixtures {
         ctx.insert(workout.toModel())
         ctx.insert(scheduledSession.toModel())
         for set in loggedSets { ctx.insert(set.toModel()) }
+        if seedingWeek { weekSessions.forEach { ctx.insert($0.toModel()) } }
         try! ctx.save()
         return container
     }

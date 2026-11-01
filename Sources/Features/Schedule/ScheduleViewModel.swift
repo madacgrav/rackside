@@ -14,7 +14,9 @@ final class ScheduleViewModel {
 
     var selectedDate: Date = .now
     var sessionsForDay: [SessionDTO] = []
-    var mode: ScheduleMode = .day
+    var mode: ScheduleMode = .day {
+        didSet { defaults.set(mode.rawValue, forKey: Self.modeKey) }
+    }
     var week: [ScheduleDay] = []
     var weekInterval: DateInterval { ScheduleWeek.weekInterval(containing: selectedDate, calendar: calendar) }
     var weekTitle: String { ScheduleWeek.weekTitle(weekInterval, calendar: calendar) }
@@ -25,6 +27,7 @@ final class ScheduleViewModel {
     var isExportReminderDue = false
     var isLoading = false
 
+    private static let modeKey = "scheduleMode"
     private static let dismissedKey = "exportBannerDismissedAt"
     private static let dismissalWindow: TimeInterval = 3 * 86_400
 
@@ -44,6 +47,7 @@ final class ScheduleViewModel {
         self.reminders = reminders
         self.defaults = defaults
         self.calendar = calendar
+        mode = ScheduleMode(rawValue: defaults.string(forKey: Self.modeKey) ?? "") ?? .day
     }
 
     func load() async {

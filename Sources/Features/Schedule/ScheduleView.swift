@@ -192,6 +192,20 @@ struct SessionRow: View {
     ))
 }
 
+#Preview("Schedule — Week") {
+    let repos = PreviewFixtures.repositories(seedingWeek: true)
+    let viewModel = ScheduleViewModel(
+        sessionRepo: repos.sessions,
+        clientRepo: repos.clients,
+        workoutRepo: repos.workouts,
+        exerciseRepo: repos.exercises,
+        reminders: repos.reminders,
+        defaults: UserDefaults(suiteName: "ScheduleWeekPreview")!
+    )
+    viewModel.mode = .week
+    return ScheduleView(viewModel: viewModel)
+}
+
 #Preview("Session row") {
     List {
         SessionRow(session: PreviewFixtures.scheduledSession, clientName: "Sam Rivera")

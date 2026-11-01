@@ -146,3 +146,22 @@ private func makeViewModel(calendar: Calendar, defaults: UserDefaults? = nil) th
     let interval = ScheduleWeek.weekInterval(containing: date(cal, 2026, 11, 4, 12), calendar: cal)
     #expect(ScheduleWeek.lastDay(of: interval, calendar: cal) == date(cal, 2026, 11, 7))
 }
+
+@MainActor
+@Test func modePersistsAcrossInstances() throws {
+    let cal = calendar(firstWeekday: 1)
+    let defaults = UserDefaults(suiteName: "ScheduleViewModelTests-\(UUID().uuidString)")!
+    let (vm, _) = try makeViewModel(calendar: cal, defaults: defaults)
+    vm.mode = .week
+    #expect(defaults.string(forKey: "scheduleMode") == "week")
+    let (second, _) = try makeViewModel(calendar: cal, defaults: defaults)
+    #expect(second.mode == .week)
+}
+
+@MainActor
+@Test func invalidStoredModeFallsBackToDay() throws {
+    let defaults = UserDefaults(suiteName: "ScheduleViewModelTests-\(UUID().uuidString)")!
+    defaults.set("month", forKey: "scheduleMode")
+    let (vm, _) = try makeViewModel(calendar: calendar(firstWeekday: 1), defaults: defaults)
+    #expect(vm.mode == .day)
+}

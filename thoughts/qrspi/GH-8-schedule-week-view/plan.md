@@ -446,8 +446,8 @@ mode = ScheduleMode(rawValue: defaults.string(forKey: Self.modeKey) ?? "") ?? .d
 
 ### Verification
 #### Automated
-- [ ] The test command passes.
-- [ ] `grep -r "@Test" Tests | wc -l` gives 152.
+- [x] The test command passes.
+- [x] `grep -r "@Test" Tests | wc -l` gives 152.
 
 #### Manual
 - [ ] The "Schedule — Week" preview renders, in light and dark, with filled days, empty days, a repeat icon, and Completed and Cancelled chips.
