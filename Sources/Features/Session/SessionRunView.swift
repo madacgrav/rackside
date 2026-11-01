@@ -30,6 +30,11 @@ struct SessionRunView: View {
 
             Section {
                 LabeledContent("Time", value: viewModel.session.startAt.formatted(date: .abbreviated, time: .shortened))
+                if viewModel.isSeries {
+                    Label("Repeats weekly", systemImage: "repeat")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 LabeledContent("Status", value: statusLabel)
             }
 
@@ -79,14 +84,6 @@ struct SessionRunView: View {
                     }
                 }
             }
-
-            if !viewModel.canEdit {
-                Section {
-                    Text("Part of a repeating series — editing individual occurrences isn't available yet.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
         }
         .themedScreen()
         .navigationTitle(viewModel.clientName)
@@ -109,9 +106,7 @@ struct SessionRunView: View {
                     }
                 }
                 Menu {
-                    if viewModel.canEdit {
-                        Button("Edit session", systemImage: "pencil") { showingEdit = true }
-                    }
+                    Button("Edit session", systemImage: "pencil") { showingEdit = true }
                     Button("Delete session", systemImage: "trash", role: .destructive) { confirmingDelete = true }
                 } label: {
                     Label("More", systemImage: "ellipsis.circle").labelStyle(.iconOnly)
@@ -151,7 +146,7 @@ struct SessionRunView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(viewModel.canEdit
+            Text(!viewModel.isSeries
                  ? "Logged sets for this session are deleted too. This cannot be undone."
                  : "Only this occurrence is deleted and removed from your calendar; the rest of the series stays.")
         }

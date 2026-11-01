@@ -27,6 +27,10 @@ protocol SessionRepository: Sendable {
     func update(_ dto: SessionDTO) async throws
     func setEventIdentifier(id: UUID, _ eventIdentifier: String?) async throws
     func setEventIdentifierForSeries(_ seriesId: UUID, _ eventIdentifier: String?) async throws
+    /// Takes one session out of its series: clears `seriesId` and the shared
+    /// event identifier (the caller pushes a standalone event). Keeps
+    /// `recurrenceData` as history; nothing reads it for a non-series row.
+    func detach(id: UUID) async throws
     func updateNotes(id: UUID, _ notes: String?) async throws
     func delete(id: UUID) async throws
     /// Sessions marked completed after `since` (all of them when nil). Drives
@@ -212,6 +216,14 @@ actor SwiftDataSessionRepository: SessionRepository {
             session.eventIdentifier = eventIdentifier
             session.updatedAt = .now
         }
+        try modelContext.save()
+    }
+
+    func detach(id: UUID) async throws {
+        guard let session = try fetch(id: id) else { return }
+        session.seriesId = nil
+        session.eventIdentifier = nil
+        session.updatedAt = .now
         try modelContext.save()
     }
 

@@ -87,7 +87,7 @@ private final class Flag {
         clientName: "Sam",
         onStatusChanged: { reloaded.raised = true }
     )
-    #expect(vm.canEdit)
+    #expect(!vm.isSeries)
 
     await vm.delete()
 
@@ -144,6 +144,7 @@ actor FailingSessionRepo: SessionRepository {
     func setEventIdentifierForSeries(_ seriesId: UUID, _ eventIdentifier: String?) async throws {
         try await inner.setEventIdentifierForSeries(seriesId, eventIdentifier)
     }
+    func detach(id: UUID) async throws { try await inner.detach(id: id) }
     func updateNotes(id: UUID, _ notes: String?) async throws { try await inner.updateNotes(id: id, notes) }
     func completedCount(since: Date?) async throws -> Int { try await inner.completedCount(since: since) }
     func deleteSet(id: UUID) async throws { try await inner.deleteSet(id: id) }

@@ -116,6 +116,12 @@ struct SessionRow: View {
                 }
             }
             Spacer()
+            if session.seriesId != nil {
+                Image(systemName: "repeat")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Repeating")
+            }
             StatusChip(status: session.status)
         }
     }
@@ -137,5 +143,6 @@ struct SessionRow: View {
         SessionRow(session: PreviewFixtures.scheduledSession, clientName: "Sam Rivera")
         SessionRow(session: { var s = PreviewFixtures.scheduledSession; s.status = .completed; return s }(), clientName: "Sam Rivera")
         SessionRow(session: { var s = PreviewFixtures.scheduledSession; s.status = .noShow; return s }(), clientName: "Sam Rivera")
+        SessionRow(session: PreviewFixtures.seriesSession, clientName: "Sam Rivera")
     }
 }

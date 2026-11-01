@@ -207,3 +207,27 @@ private func sessionDTO(clientId: UUID = UUID(), startAt: Date = .now) -> Sessio
     #expect(try await repos.sessions.completedCount(since: nil) == 2)
     #expect(try await repos.sessions.completedCount(since: mid) == 1)
 }
+
+@Test func detachClearsSeriesAndEventOnlyForThatRow() async throws {
+    let repos = try makeRepos()
+    let start = Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: .now.addingTimeInterval(86_400))!
+    let rule = AppRecurrence(
+        frequency: .weekly, interval: 1,
+        weekdays: [Calendar.current.component(.weekday, from: start)],
+        endDate: nil, occurrenceCount: nil
+    )
+    let series = try await repos.sessions.scheduleSeries(
+        sessionDTO(startAt: start), recurrence: rule, attaching: [], horizonWeeks: 3
+    )
+    try await repos.sessions.setEventIdentifierForSeries(series.seriesId, "evt-s")
+    let before = try await repos.sessions.sessions(from: .distantPast, to: .distantFuture)
+
+    try await repos.sessions.detach(id: before[1].id)
+
+    let after = try await repos.sessions.sessions(from: .distantPast, to: .distantFuture)
+    #expect(after[1].seriesId == nil)
+    #expect(after[1].eventIdentifier == nil)
+    #expect(after[1].recurrence == rule)
+    #expect(after[0].seriesId == series.seriesId && after[0].eventIdentifier == "evt-s")
+    #expect(after[2].seriesId == series.seriesId && after[2].eventIdentifier == "evt-s")
+}

@@ -43,9 +43,9 @@ final class SessionRunViewModel {
 
     var progress: Double { plannedSetCount == 0 ? 0 : Double(loggedSetCount) / Double(plannedSetCount) }
 
-    /// Series occurrences share one recurring calendar event and are created in
-    /// bulk, so per-occurrence editing is not offered yet (see BACKLOG.md).
-    var canEdit: Bool { session.seriesId == nil }
+    /// Part of a repeating series. Editing one occurrence detaches it first
+    /// (`SeriesActions.detach`); cancel and delete touch only its calendar date.
+    var isSeries: Bool { session.seriesId != nil }
 
     private var series: SeriesActions { SeriesActions(sessionRepo: sessionRepo, calendar: calendar) }
 

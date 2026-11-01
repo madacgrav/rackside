@@ -167,7 +167,22 @@ struct SessionEditView: View {
         errorMessage = nil
         calendarWarning = nil
         if let existing {
-            return await saveEdit(of: existing, clientId: clientId)
+            var base = existing
+            if existing.seriesId != nil {
+                // A series row is never edited in place: it leaves the series
+                // first, with its own calendar event, then the normal edit runs.
+                let clientName = clients.first { $0.id == existing.clientId }?.name ?? "Client"
+                do {
+                    let (detached, outcome) = try await SeriesActions(sessionRepo: sessionRepo, calendar: calendar)
+                        .detach(existing, clientName: clientName)
+                    base = detached
+                    calendarWarning = outcome.calendarWarning
+                } catch {
+                    errorMessage = "Couldn't save the session. Please try again."
+                    return false
+                }
+            }
+            return await saveEdit(of: base, clientId: clientId)
         }
         let dto = SessionDTO(
             id: UUID(),

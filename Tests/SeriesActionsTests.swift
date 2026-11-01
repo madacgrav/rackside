@@ -119,3 +119,47 @@ private func makeSeries(weeks: Int, eventId: String?) async throws -> SeriesEnv 
     #expect(pickOccurrence(candidates, eventIdentifier: "evt", target: target) == 3)
     #expect(pickOccurrence(Array(candidates.prefix(3)), eventIdentifier: "evt", target: target) == nil)
 }
+
+// MARK: - Detach (Phase 2)
+
+private func actions(_ env: SeriesEnv) -> SeriesActions {
+    SeriesActions(sessionRepo: env.sessions, calendar: env.calendar)
+}
+
+@Test func detachPushesStandaloneAndRemovesOccurrence() async throws {
+    let env = try await makeSeries(weeks: 3, eventId: "evt-s")
+    await env.calendar.configure(push: .success("evt-solo"))
+    let week2 = env.occurrences[1]
+
+    let (detached, outcome) = try await actions(env).detach(week2, clientName: "Sam")
+
+    #expect(detached.seriesId == nil)
+    #expect(detached.eventIdentifier == "evt-solo")
+    #expect(outcome.calendarWarning == nil)
+    #expect(await env.calendar.removedOccurrences == [FakeCalendar.key("evt-s", week2.startAt)])
+    let after = try await env.reload()
+    #expect(after[0].seriesId == env.seriesId && after[0].eventIdentifier == "evt-s")
+    #expect(after[2].seriesId == env.seriesId && after[2].eventIdentifier == "evt-s")
+}
+
+@Test func detachWithoutSeriesEventMakesNoCalendarCalls() async throws {
+    let env = try await makeSeries(weeks: 2, eventId: nil)
+
+    let (detached, outcome) = try await actions(env).detach(env.occurrences[0], clientName: "Sam")
+
+    #expect(detached.seriesId == nil)
+    #expect(detached.eventIdentifier == nil)
+    #expect(outcome.calendarWarning == nil)
+    #expect(await env.calendar.removedOccurrences.isEmpty)
+}
+
+@Test func detachPushFailureWarns() async throws {
+    let env = try await makeSeries(weeks: 2, eventId: "evt-s")
+    await env.calendar.configure(push: .failure(Boom()))
+
+    let (detached, outcome) = try await actions(env).detach(env.occurrences[0], clientName: "Sam")
+
+    #expect(detached.seriesId == nil)
+    #expect(detached.eventIdentifier == nil)
+    #expect(outcome.calendarWarning == SeriesActions.pushWarning)
+}

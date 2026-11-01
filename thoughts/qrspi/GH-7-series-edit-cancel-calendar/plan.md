@@ -252,11 +252,11 @@ Tests:
       `seriesId == nil` now appears in `canEdit` and that guard only.
 
 #### Manual (device spike — gate for the rest of the plan)
-- [ ] Build/install on madphone. Create a 3-week weekly series with "Add to iPhone calendar".
-- [ ] Cancel week 2 in the app → iPhone Calendar shows weeks 1 and 3 only.
-- [ ] Delete week 3 in the app → Calendar shows week 1 only; app keeps week 1 scheduled, week 2 cancelled.
-- [ ] Turn off calendar access in Settings, cancel an occurrence → no crash, no warning (no-op).
-- [ ] **If occurrence lookup fails on device, stop and revisit design decision 6 before Phase 2.**
+- [x] Build/install on madphone. Create a 3-week weekly series with "Add to iPhone calendar".
+- [x] Cancel week 2 in the app → iPhone Calendar shows weeks 1 and 3 only.
+- [x] Delete week 3 in the app → Calendar shows week 1 only; app keeps week 1 scheduled, week 2 cancelled.
+- [x] Turn off calendar access in Settings, cancel an occurrence → no crash, no warning (no-op).
+- [x] **If occurrence lookup fails on device, stop and revisit design decision 6 before Phase 2.** — Passed on madphone (user confirmed 2026-11-01).
 
 ---
 
@@ -413,8 +413,8 @@ series of 3 with `evt-s`; detach week 2 → week 2 `seriesId == nil`, `eventIden
 
 ### Verification
 #### Automated
-- [ ] Test command passes; `@Test` count ≥ 124.
-- [ ] `grep -rn "canEdit\|isn't available yet" Sources` → no matches.
+- [x] Test command passes; `@Test` count ≥ 124. (124 passed.)
+- [x] `grep -rn "canEdit\|isn't available yet" Sources` → no matches.
 
 #### Manual
 - [ ] Xcode canvas: "Session row" preview shows the repeat glyph on the series row (light + dark).
