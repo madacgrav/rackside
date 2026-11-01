@@ -11,6 +11,8 @@ struct SessionRunView: View {
     @State private var showingEdit = false
     @State private var confirmingDelete = false
     @State private var calendarWarning: String?
+    /// A delete succeeded with a calendar warning: dismiss once it is read.
+    @State private var dismissAfterWarning = false
     @State private var pendingDeleteSet: SetRecordDTO?
 
     var body: some View {
@@ -131,25 +133,27 @@ struct SessionRunView: View {
         }
         .alert(
             "Calendar",
-            isPresented: Binding(get: { calendarWarning != nil }, set: { if !$0 { calendarWarning = nil } })
+            isPresented: Binding(
+                get: { (calendarWarning ?? viewModel.calendarWarning) != nil },
+                set: { if !$0 { clearCalendarWarning() } }
+            )
         ) {
-            Button("OK") { calendarWarning = nil }
+            Button("OK") { clearCalendarWarning() }
         } message: {
-            Text(calendarWarning ?? "")
+            Text(calendarWarning ?? viewModel.calendarWarning ?? "")
         }
         .alert("Delete this session?", isPresented: $confirmingDelete) {
             Button("Delete", role: .destructive) {
                 Task {
-                    if await viewModel.delete() {
-                        dismiss()
-                    }
+                    guard await viewModel.delete() else { return }
+                    if viewModel.calendarWarning == nil { dismiss() } else { dismissAfterWarning = true }
                 }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(viewModel.canEdit
                  ? "Logged sets for this session are deleted too. This cannot be undone."
-                 : "Only this occurrence is deleted; the rest of the series stays.")
+                 : "Only this occurrence is deleted and removed from your calendar; the rest of the series stays.")
         }
         .sheet(isPresented: $showingTextReminder) {
             if let phone = viewModel.clientPhone {
@@ -189,6 +193,15 @@ struct SessionRunView: View {
             Button("Cancel", role: .cancel) { pendingDeleteSet = nil }
         }
         .task { await viewModel.load() }
+    }
+
+    private func clearCalendarWarning() {
+        calendarWarning = nil
+        viewModel.calendarWarning = nil
+        if dismissAfterWarning {
+            dismissAfterWarning = false
+            dismiss()
+        }
     }
 
     private var statusAlertTitle: String {

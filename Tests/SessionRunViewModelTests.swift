@@ -7,6 +7,8 @@ import Testing
 actor FakeCalendar: CalendarSyncing {
     private(set) var removed: [String] = []
     private(set) var updated: [String] = []
+    /// `key(eventIdentifier, occurrenceStart)` per removed occurrence.
+    private(set) var removedOccurrences: [String] = []
     private var pushResult: Result<String?, any Error> = .success("evt-new")
     /// nil → echo the identifier back, like a successful in-place update.
     private var updateResult: Result<String?, any Error>?
@@ -42,6 +44,17 @@ actor FakeCalendar: CalendarSyncing {
     func remove(eventIdentifier: String) async throws {
         if let removeError { throw removeError }
         removed.append(eventIdentifier)
+    }
+
+    func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws {
+        if let removeError { throw removeError }
+        removedOccurrences.append(Self.key(eventIdentifier, occurrenceStart))
+    }
+
+    /// Stable string for an (event, occurrence date) pair, so recorded calls
+    /// stay `Sendable` and `Equatable` without a new type.
+    static func key(_ eventIdentifier: String, _ date: Date) -> String {
+        "\(eventIdentifier)@\(date.timeIntervalSince1970)"
     }
 }
 

@@ -21,6 +21,8 @@ final class SessionRunViewModel {
     var recordedSets: [UUID: [SetRecordDTO]] = [:]  // keyed by instance id
     /// Set when a mutation fails; rendered at the top of the run screen.
     var errorMessage: String?
+    /// Set when the store change succeeded but the calendar step did not.
+    var calendarWarning: String?
     /// Most recent set per exercise across the client's history, captured once at
     /// load so the "Prev" column does not shift as sets are logged this session.
     var previousSets: [UUID: SetRecordDTO] = [:]
@@ -42,8 +44,10 @@ final class SessionRunViewModel {
     var progress: Double { plannedSetCount == 0 ? 0 : Double(loggedSetCount) / Double(plannedSetCount) }
 
     /// Series occurrences share one recurring calendar event and are created in
-    /// bulk, so per-occurrence editing is not offered (see BACKLOG.md).
+    /// bulk, so per-occurrence editing is not offered yet (see BACKLOG.md).
     var canEdit: Bool { session.seriesId == nil }
+
+    private var series: SeriesActions { SeriesActions(sessionRepo: sessionRepo, calendar: calendar) }
 
     init(
         sessionRepo: any SessionRepository,
@@ -98,7 +102,20 @@ final class SessionRunViewModel {
     /// the presenter should not dismiss in that case.
     func delete() async -> Bool {
         errorMessage = nil
-        if session.seriesId == nil, let eventId = session.eventIdentifier {
+        calendarWarning = nil
+        if session.seriesId != nil {
+            // Store first, then drop just this date from the shared event.
+            do {
+                calendarWarning = try await series.deleteOccurrence(session).calendarWarning
+            } catch {
+                Log.ui.error("delete session failed: \(error.localizedDescription)")
+                errorMessage = "Couldn't delete the session. Please try again."
+                return false
+            }
+            await onStatusChanged()
+            return true
+        }
+        if let eventId = session.eventIdentifier {
             do {
                 try await calendar.remove(eventIdentifier: eventId)
             } catch {
@@ -204,16 +221,20 @@ final class SessionRunViewModel {
 
     func setStatus(_ status: SessionStatus) async {
         errorMessage = nil
+        calendarWarning = nil
         do {
-            try await sessionRepo.setStatus(id: session.id, status)
+            if status == .cancelled, session.seriesId != nil {
+                calendarWarning = try await series.cancelOccurrence(session).calendarWarning
+            } else {
+                try await sessionRepo.setStatus(id: session.id, status)
+            }
         } catch {
             Log.ui.error("setStatus failed: \(error.localizedDescription)")
             errorMessage = "Couldn't update the session status."
             return
         }
         // Cancelled sessions leave the system calendar (one-way push cleanup).
-        // Series occurrences share one recurring event, so only remove when
-        // this session is not part of a series.
+        // Series occurrences were handled above by removing just their date.
         if status == .cancelled, session.seriesId == nil, let eventId = session.eventIdentifier {
             do {
                 try await calendar.remove(eventIdentifier: eventId)
