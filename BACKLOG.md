@@ -16,7 +16,8 @@ P1 reporting features (rows 1–4, 9, 10) were addressed in
 [#34](https://github.com/madacgrav/trainme/pull/34); see the [Done](#done) table and
 `thoughts/qrspi/2026-10-26-p1-reporting/` for the design and plan.
 
-Series edit/cancel (row 5) was addressed for [#7](https://github.com/madacgrav/trainme/issues/7);
+Series edit/cancel (row 5) was addressed in
+[#39](https://github.com/madacgrav/trainme/pull/39);
 see the [Done](#done) table and `thoughts/qrspi/GH-7-series-edit-cancel-calendar/` for the
 design and plan.
 
@@ -87,7 +88,7 @@ Addressed in [#36](https://github.com/madacgrav/trainme/pull/36) (one commit per
 | 31 | Icon appearance variants | Bolder layers, explicit dark and tinted specializations in `icon.json` | [#36](https://github.com/madacgrav/trainme/pull/36) |
 | 32 | Previews for every screen | `PreviewFixtures` (seeded in-memory container) and a `#Preview` per feature screen | [#36](https://github.com/madacgrav/trainme/pull/36) |
 
-Addressed for [#7](https://github.com/madacgrav/trainme/issues/7) (one commit per phase).
+Addressed in [#39](https://github.com/madacgrav/trainme/pull/39) (one commit per phase).
 
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|

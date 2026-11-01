@@ -868,4 +868,4 @@ series for each row and record the result in this plan:
 
 #### Manual
 - [x] Device checklist above complete with notes. — All passed on madphone (user confirmed 2026-11-01); DST not exercised (no boundary in the test series).
-- [x] `BACKLOG.md`: row 5 gone from P1, present in Done (PR link to add when the PR is opened).
+- [x] `BACKLOG.md`: row 5 gone from P1, present in Done (linked to [#39](https://github.com/madacgrav/trainme/pull/39)).
