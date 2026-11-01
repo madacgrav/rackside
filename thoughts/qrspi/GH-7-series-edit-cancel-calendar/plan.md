@@ -843,16 +843,16 @@ if let existing, editsFollowing {
 Build/install on madphone (commands in Overview). With calendar access on, create fresh
 series for each row and record the result in this plan:
 
-- [ ] Edit, this only (Phase 2 checks).
-- [ ] Edit, following — including a series with an earlier cancelled week.
-- [ ] Cancel, this only / following.
-- [ ] Delete, this only / following (from first and from a middle week).
-- [ ] Series created **without** "Add to iPhone calendar": all six actions, Calendar untouched.
-- [ ] Protected occurrence: log one set on a future week, cancel following before it → that
+- [x] Edit, this only (Phase 2 checks).
+- [x] Edit, following — including a series with an earlier cancelled week.
+- [x] Cancel, this only / following.
+- [x] Delete, this only / following (from first and from a middle week).
+- [x] Series created **without** "Add to iPhone calendar": all six actions, Calendar untouched.
+- [x] Protected occurrence: log one set on a future week, cancel following before it → that
       week stays scheduled, gets its own event.
-- [ ] Reminders: after cancel following, Settings → Notifications shows no pending
+- [x] Reminders: after cancel following, Settings → Notifications shows no pending
       alerts for cancelled weeks (or check that no "Session tomorrow" fires for them).
-- [ ] DST: only if a boundary falls inside a test series' range; otherwise note "not exercised".
+- [x] DST: only if a boundary falls inside a test series' range; otherwise note "not exercised".
 
 #### 2. Docs
 **File**: `BACKLOG.md` — **modify**
@@ -867,5 +867,5 @@ series for each row and record the result in this plan:
 - [x] Test command passes. (140 passed.)
 
 #### Manual
-- [ ] Device checklist above complete with notes.
+- [x] Device checklist above complete with notes. — All passed on madphone (user confirmed 2026-11-01); DST not exercised (no boundary in the test series).
 - [x] `BACKLOG.md`: row 5 gone from P1, present in Done (PR link to add when the PR is opened).
