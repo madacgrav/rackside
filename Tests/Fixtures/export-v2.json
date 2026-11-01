@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 2,
+  "exportedAt": "2026-11-01T12:00:00Z",
+  "appVersion": "1.1",
+  "clients": [
+    {
+      "id": "55555555-5555-5555-5555-555555555555",
+      "name": "Jordan Lee",
+      "phoneE164": "+15552223333",
+      "goal": "Run a half marathon",
+      "injuries": "Right ankle sprain (2025)",
+      "isArchived": false,
+      "createdAt": "2026-10-01T09:00:00Z",
+      "updatedAt": "2026-10-01T09:00:00Z",
+      "dateOfBirth": "1990-04-15T00:00:00Z",
+      "emergencyName": "Casey Lee",
+      "emergencyRelationship": "Sibling",
+      "emergencyPhoneE164": "+15554445555",
+      "physicianName": "Dr. Patel",
+      "physicianPhoneE164": "+15556667777",
+      "occupation": "Teacher",
+      "trainingHistory": "Recreational runner, no lifting",
+      "availability": "Weekday evenings"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
+      "name": "Goblet Squat",
+      "category": "strength",
+      "metrics": 7,
+      "defaultUnit": "lb",
+      "isCustom": false,
+      "createdAt": "2026-10-01T09:00:00Z",
+      "updatedAt": "2026-10-01T09:00:00Z"
+    }
+  ],
+  "workouts": [],
+  "sessions": [],
+  "setRecords": [],
+  "healthScreenings": [
+    {
+      "id": "77777777-7777-7777-7777-777777777777",
+      "clientId": "55555555-5555-5555-5555-555555555555",
+      "completedOn": "2026-10-01T10:00:00Z",
+      "answers": 32,
+      "surgeries": "None",
+      "medications": "Ibuprofen as needed",
+      "familyHeartHistory": false,
+      "sleepHours": 7.5,
+      "stressLevel": 3,
+      "tobacco": false,
+      "alcoholPerWeek": 2,
+      "activityLevel": "moderate",
+      "clearanceReceivedOn": "2026-10-08T00:00:00Z",
+      "createdAt": "2026-10-01T10:00:00Z",
+      "updatedAt": "2026-10-08T10:00:00Z"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "88888888-8888-8888-8888-888888888888",
+      "clientId": "55555555-5555-5555-5555-555555555555",
+      "performedOn": "2026-10-01T10:30:00Z",
+      "sections": 7,
+      "measurements": {
+        "restingHR": 62,
+        "systolic": 118,
+        "diastolic": 76,
+        "heightCm": 170,
+        "weightKg": 68.5,
+        "waistCm": 76,
+        "hipCm": 95,
+        "bodyFatPct": 24,
+        "pushUps": 12,
+        "plankSeconds": 45
+      },
+      "ohsAnteriorRight": 2,
+      "ohsAnteriorLeft": 0,
+      "ohsLateral": 1,
+      "ohsPosteriorRight": 0,
+      "ohsPosteriorLeft": 0,
+      "ohsHeelsElevated": 1,
+      "ohsArmsDown": 0,
+      "ohsNotes": "Forward lean eases with heels elevated",
+      "slsRight": 16,
+      "slsLeft": 0,
+      "createdAt": "2026-10-01T10:30:00Z",
+      "updatedAt": "2026-10-01T10:30:00Z"
+    }
+  ],
+  "waiverTemplate": {
+    "id": "99999999-9999-9999-9999-999999999999",
+    "version": 2,
+    "body": "PERSONAL TRAINING WAIVER\n\nASSUMPTION OF RISK\n!! I accept the risks of training.",
+    "updatedAt": "2026-09-30T09:00:00Z"
+  },
+  "waivers": [
+    {
+      "id": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+      "clientId": "55555555-5555-5555-5555-555555555555",
+      "sentOn": "2026-10-01T11:00:00Z",
+      "templateVersion": 2,
+      "templateBody": "PERSONAL TRAINING WAIVER\n\nASSUMPTION OF RISK\n!! I accept the risks of training.",
+      "returnedSignedOn": "2026-10-03T00:00:00Z",
+      "createdAt": "2026-10-01T11:00:00Z",
+      "updatedAt": "2026-10-03T09:00:00Z"
+    }
+  ]
+}

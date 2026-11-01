@@ -2,7 +2,8 @@ import SwiftData
 
 /// Current schema: the live model classes in Sources/Models. Adds client intake
 /// (profile fields, HealthScreening, Assessment, WaiverTemplate, WaiverRecord).
-/// Editable until the intake branch merges; then freeze it like SchemaV2.
+/// Frozen at release: the next model change copies these classes into SchemaV3
+/// as nested types (see SchemaV2) and adds SchemaV4 with a new migration stage.
 enum SchemaV3: VersionedSchema {
     static var versionIdentifier: Schema.Version { Schema.Version(3, 0, 0) }
     static var models: [any PersistentModel.Type] {

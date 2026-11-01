@@ -37,6 +37,8 @@ final class AssessmentEditViewModel {
     var slsNotes: String
     var errorMessage: String?
     private(set) var savedAssessment: AssessmentDTO?
+    /// The DTO as last loaded or saved (timestamps cleared); drives `isDirty`.
+    private var baseline: AssessmentDTO?
 
     init(
         repo: any AssessmentRepository,
@@ -75,6 +77,17 @@ final class AssessmentEditViewModel {
         slsRight = existing?.slsRight ?? []
         slsLeft = existing?.slsLeft ?? []
         slsNotes = existing?.slsNotes ?? ""
+        baseline = comparable
+    }
+
+    /// True when the form differs from what was loaded or last saved.
+    var isDirty: Bool { comparable != baseline }
+
+    private var comparable: AssessmentDTO {
+        var dto = makeDTO()
+        dto.createdAt = .distantPast
+        dto.updatedAt = .distantPast
+        return dto
     }
 
     var isEditing: Bool { existing != nil }
@@ -127,6 +140,7 @@ final class AssessmentEditViewModel {
         do {
             try await repo.upsert(dto)
             savedAssessment = dto
+            baseline = comparable
             return true
         } catch {
             Log.persistence.error("Assessment save failed: \(error.localizedDescription)")

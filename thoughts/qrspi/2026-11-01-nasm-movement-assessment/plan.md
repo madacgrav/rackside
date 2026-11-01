@@ -1255,9 +1255,9 @@ values. After that it is never regenerated.
 
 ### Verification
 #### Automated
-- [ ] Test command passes. `IntakeFlowViewModelTests` (5) and `goldenV2FixtureImports` pass, and
+- [x] Test command passes. `IntakeFlowViewModelTests` (5) and `goldenV2FixtureImports` pass, and
   `goldenV1FixtureImports` still passes.
-- [ ] `grep -rn "SchemaV2.versionString\|ArchiveV1.schemaVersion" Sources` finds no live call sites
+- [x] `grep -rn "SchemaV2.versionString\|ArchiveV1.schemaVersion" Sources` finds no live call sites
   except inside `ArchiveV1.swift` and `SchemaV2.swift`.
 #### Manual
 - [ ] Simulator: add a client, accept "Start intake", and step through every section. Cancel midway

@@ -4,9 +4,18 @@ struct ClientEditView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: ClientEditViewModel
     private let onSaved: () -> Void
+    /// Called with a newly created (non-self) client, e.g. to offer intake.
+    private let onCreated: ((ClientDTO) -> Void)?
 
-    init(repo: any ClientRepository, existing: ClientDTO?, isSelf: Bool = false, onSaved: @escaping () -> Void) {
+    init(
+        repo: any ClientRepository,
+        existing: ClientDTO?,
+        isSelf: Bool = false,
+        onCreated: ((ClientDTO) -> Void)? = nil,
+        onSaved: @escaping () -> Void
+    ) {
         _viewModel = State(initialValue: ClientEditViewModel(repo: repo, existing: existing, isSelf: isSelf))
+        self.onCreated = onCreated
         self.onSaved = onSaved
     }
 
@@ -26,6 +35,9 @@ struct ClientEditView: View {
                     Button("Save") {
                         Task {
                             if await viewModel.save() {
+                                if !viewModel.isEditing, !viewModel.isSelf, let created = viewModel.savedClient {
+                                    onCreated?(created)
+                                }
                                 onSaved()
                                 dismiss()
                             }

@@ -6,6 +6,11 @@ struct ClientListView: View {
     @State private var showingSelf = false
     /// Set by the first-run notice in RootView; consumed once to open the self sheet.
     @AppStorage("wantsSelfClient") private var wantsSelfClient = false
+    @AppStorage("defaultWeightUnit") private var defaultWeightUnit: String = Unit.lb.rawValue
+    /// A client just created from the Add sheet, offered intake once the sheet closes.
+    @State private var pendingIntake: ClientDTO?
+    @State private var showingIntakeOffer = false
+    @State private var intakeClient: ClientDTO?
 
     var body: some View {
         NavigationStack {
@@ -44,10 +49,35 @@ struct ClientListView: View {
             .toolbar {
                 Button("Add", systemImage: "plus") { showingAdd = true }
             }
-            .sheet(isPresented: $showingAdd) {
-                ClientEditView(repo: viewModel.repository, existing: nil) {
+            .sheet(isPresented: $showingAdd, onDismiss: {
+                if pendingIntake != nil { showingIntakeOffer = true }
+            }) {
+                ClientEditView(repo: viewModel.repository, existing: nil, onCreated: { pendingIntake = $0 }) {
                     Task { await viewModel.load() }
                 }
+            }
+            .alert(
+                "Start intake for \(pendingIntake?.name ?? "this client")?",
+                isPresented: $showingIntakeOffer
+            ) {
+                Button("Start intake") {
+                    intakeClient = pendingIntake
+                    pendingIntake = nil
+                }
+                Button("Later", role: .cancel) { pendingIntake = nil }
+            } message: {
+                Text("Profile, health screening, waiver and assessments — each step can also be done later.")
+            }
+            .sheet(item: $intakeClient) { client in
+                IntakeFlowView(
+                    viewModel: IntakeFlowViewModel(
+                        client: client,
+                        clientRepo: viewModel.repository,
+                        intake: viewModel.intake,
+                        weightUnit: Unit(rawValue: defaultWeightUnit) ?? .lb
+                    ),
+                    onFinished: { Task { await viewModel.load() } }
+                )
             }
             .sheet(isPresented: $showingSelf) {
                 ClientEditView(repo: viewModel.repository, existing: nil, isSelf: true) {

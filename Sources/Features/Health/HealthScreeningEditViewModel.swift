@@ -26,6 +26,8 @@ final class HealthScreeningEditViewModel {
     var notes: String
     var errorMessage: String?
     private(set) var savedScreening: HealthScreeningDTO?
+    /// The DTO as last loaded or saved (timestamps cleared); drives `isDirty`.
+    private var baseline: HealthScreeningDTO?
 
     init(repo: any HealthScreeningRepository, clientId: UUID, existing: HealthScreeningDTO?) {
         self.repo = repo
@@ -46,6 +48,17 @@ final class HealthScreeningEditViewModel {
         hasClearance = existing?.clearanceReceivedOn != nil
         clearanceReceivedOn = existing?.clearanceReceivedOn ?? .now
         notes = existing?.notes ?? ""
+        baseline = comparable
+    }
+
+    /// True when the form differs from what was loaded or last saved.
+    var isDirty: Bool { comparable != baseline }
+
+    private var comparable: HealthScreeningDTO {
+        var dto = makeDTO()
+        dto.createdAt = .distantPast
+        dto.updatedAt = .distantPast
+        return dto
     }
 
     var isEditing: Bool { existing != nil }
@@ -88,6 +101,7 @@ final class HealthScreeningEditViewModel {
         do {
             try await repo.upsert(dto)
             savedScreening = dto
+            baseline = comparable
             return true
         } catch {
             Log.persistence.error("Screening save failed: \(error.localizedDescription)")

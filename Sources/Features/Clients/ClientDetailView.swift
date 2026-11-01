@@ -8,6 +8,7 @@ struct ClientDetailView: View {
     @State private var assessmentSheet: AssessmentSheet?
     /// Created once in `.task`, so share-sheet state survives reloads.
     @State private var waiverViewModel: ClientWaiverViewModel?
+    @State private var showingIntake = false
     @AppStorage("defaultWeightUnit") private var defaultWeightUnit: String = Unit.lb.rawValue
 
     private var weightUnit: Unit { Unit(rawValue: defaultWeightUnit) ?? .lb }
@@ -160,6 +161,9 @@ struct ClientDetailView: View {
         .toolbar {
             Menu {
                 Button("Edit") { showingEdit = true }
+                if !viewModel.client.isSelf {
+                    Button("Start intake", systemImage: "list.bullet.clipboard") { showingIntake = true }
+                }
                 Button(
                     viewModel.client.isArchived ? "Unarchive" : "Archive",
                     systemImage: "archivebox"
@@ -201,6 +205,22 @@ struct ClientDetailView: View {
             ) {
                 Task { await viewModel.reload() }
             }
+        }
+        .sheet(isPresented: $showingIntake) {
+            IntakeFlowView(
+                viewModel: IntakeFlowViewModel(
+                    client: viewModel.client,
+                    clientRepo: viewModel.repository,
+                    intake: viewModel.intake,
+                    weightUnit: weightUnit
+                ),
+                onFinished: {
+                    Task {
+                        await viewModel.reload()
+                        await waiverViewModel?.load()
+                    }
+                }
+            )
         }
         .sheet(item: $assessmentSheet) { sheet in
             AssessmentEditView(

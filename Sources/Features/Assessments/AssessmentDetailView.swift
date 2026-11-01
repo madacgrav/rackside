@@ -4,7 +4,8 @@ struct AssessmentDetailView: View {
     let assessment: AssessmentDTO
     let previous: AssessmentDTO?
     let weightUnit: Unit
-    let onEdit: () -> Void
+    /// nil hides the Edit button (read-only, e.g. the intake review).
+    var onEdit: (() -> Void)?
 
     private var usesImperial: Bool { weightUnit == .lb }
     private var diff: AssessmentDiff { AssessmentDTO.diff(assessment, previous: previous) }
@@ -69,7 +70,9 @@ struct AssessmentDetailView: View {
         .themedScreen()
         .navigationTitle(assessment.performedOn.formatted(date: .abbreviated, time: .omitted))
         .toolbar {
-            Button("Edit", action: onEdit)
+            if let onEdit {
+                Button("Edit", action: onEdit)
+            }
         }
     }
 

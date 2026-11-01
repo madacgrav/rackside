@@ -208,3 +208,45 @@ private func populate(_ env: Env) async throws {
     let decoder = JSONDecoder()
     #expect(try decoder.decode(VersionProbe.self, from: data).schemaVersion == 2)
 }
+
+// GOLDEN FIXTURE TEST — the backward-compatibility contract for archive v2.
+// Tests/Fixtures/export-v2.json is a frozen v2 export (client intake data) and
+// must import successfully in every future version of the app. Never regenerate it.
+@Test func goldenV2FixtureImports() async throws {
+    let bundle = Bundle(for: BundleToken.self)
+    let url = try #require(bundle.url(forResource: "export-v2", withExtension: "json"))
+    let data = try Data(contentsOf: url)
+
+    let env = try makeEnv()
+    try await env.archive.importData(data, mode: .replace)
+    let intake = IntakeRepositories(container: env.container)
+
+    let client = try #require(try await env.clients.allIncludingArchived().first)
+    #expect(client.name == "Jordan Lee")
+    #expect(client.dateOfBirth == ISO8601DateFormatter().date(from: "1990-04-15T00:00:00Z"))
+    #expect(client.emergencyName == "Casey Lee")
+    #expect(client.physicianPhoneE164 == "+15556667777")
+    #expect(client.availability == "Weekday evenings")
+
+    let screening = try #require(try await intake.health.latest(clientId: client.id))
+    #expect(screening.answers == [.boneJointSoftTissue])
+    #expect(HealthScreeningDTO.clearance(for: screening)
+        == .received(try #require(ISO8601DateFormatter().date(from: "2026-10-08T00:00:00Z"))))
+    #expect(screening.activityLevel == .moderate)
+
+    let assessment = try #require(try await intake.assessments.forClient(client.id).first)
+    #expect(assessment.sections == .all)
+    #expect(assessment.ohsAnteriorRight == [.kneeMovesInward])
+    #expect(assessment.ohsLateral == [.excessiveForwardLean])
+    #expect(assessment.ohsHeelsElevated == [.feet])
+    #expect(assessment.slsRight == [.hipDrop])
+    #expect(assessment.measurements.weightKg == 68.5)
+    #expect(assessment.measurements.plankSeconds == 45)
+
+    #expect(try await intake.waivers.template().version == 2)
+    let waivers = try await intake.waivers.records(clientId: client.id)
+    #expect(waivers.count == 1)
+    if case .signed = WaiverRecordDTO.status(waivers) {} else {
+        Issue.record("expected the fixture waiver to be signed")
+    }
+}

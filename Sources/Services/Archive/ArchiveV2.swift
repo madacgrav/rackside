@@ -1,7 +1,8 @@
 import Foundation
 
-/// Version 2 of the export archive: adds client intake data. Editable until the
-/// intake branch merges, then FROZEN like ArchiveV1. V1 files decode through
+/// Version 2 of the export archive: adds client intake data. FROZEN once
+/// shipped — never edit after release. Golden fixture: Tests/Fixtures/export-v2.json.
+/// A future breaking change adds ArchiveV3 plus `migrate(_ v2:)`. V1 files decode through
 /// ArchiveV1.Envelope and `migrate` (new arrays empty; new optional ClientDTO
 /// fields decode as nil, guarded by goldenV1FixtureImports).
 enum ArchiveV2 {

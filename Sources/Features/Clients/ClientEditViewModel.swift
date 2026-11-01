@@ -28,6 +28,8 @@ final class ClientEditViewModel {
     var errorMessage: String?
     /// The client as last saved from this form (used to offer intake after create).
     private(set) var savedClient: ClientDTO?
+    /// Form contents as last loaded or saved; drives `isDirty`.
+    private var baseline: [String] = []
 
     init(repo: any ClientRepository, existing: ClientDTO?, isSelf: Bool = false) {
         self.repo = repo
@@ -49,6 +51,17 @@ final class ClientEditViewModel {
         self.emergencyPhoneRaw = existing?.emergencyPhoneE164 ?? ""
         self.physicianName = existing?.physicianName ?? ""
         self.physicianPhoneRaw = existing?.physicianPhoneE164 ?? ""
+        baseline = signature
+    }
+
+    /// True when the form differs from what was loaded or last saved.
+    var isDirty: Bool { signature != baseline }
+
+    /// Raw field values (phones unvalidated), so edits count even before they normalize.
+    private var signature: [String] {
+        [name, phoneRaw, goal, injuries, notes, hasDateOfBirth ? dateOfBirth.ISO8601Format() : "",
+         occupation, trainingHistory, availability, emergencyName, emergencyRelationship,
+         emergencyPhoneRaw, physicianName, physicianPhoneRaw]
     }
 
     var isEditing: Bool { existing != nil }
@@ -97,6 +110,7 @@ final class ClientEditViewModel {
         do {
             try await repo.upsert(dto)
             savedClient = dto
+            baseline = signature
             return true
         } catch {
             errorMessage = "Couldn't save the client. Please try again."
