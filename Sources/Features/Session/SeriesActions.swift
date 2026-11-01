@@ -26,6 +26,32 @@ func partitionFollowing(_ occurrences: [SeriesOccurrence]) -> (affected: [Sessio
     )
 }
 
+/// Moves a date to the given time of day on the same calendar day, seconds zeroed.
+func retime(_ date: Date, hour: Int, minute: Int, calendar: Calendar = .current) -> Date {
+    calendar.date(bySettingHour: hour, minute: minute, second: 0, of: date) ?? date
+}
+
+/// Weekly rule for a new series segment: the old rule's weekdays (or the
+/// weekdays of the given dates when the stored rule is missing), ending on the
+/// last date.
+func segmentRule(from old: AppRecurrence?, dates: [Date], calendar: Calendar = .current) -> AppRecurrence {
+    let stored = old.map(\.weekdays).flatMap { $0.isEmpty ? nil : $0 }
+    let weekdays = stored ?? Array(Set(dates.map { calendar.component(.weekday, from: $0) })).sorted()
+    return AppRecurrence(
+        frequency: .weekly, interval: max(1, old?.interval ?? 1),
+        weekdays: weekdays, endDate: dates.last, occurrenceCount: nil
+    )
+}
+
+/// Dates the new recurring event would generate between the first and last
+/// kept date that have no session (earlier cancellations, protected or deleted
+/// occurrences). They are removed from the new event after it is created.
+func gapDates(rule: AppRecurrence, keep: [Date]) -> [Date] {
+    guard let first = keep.first, let last = keep.last else { return [] }
+    let kept = Set(keep)
+    return expandRecurrence(rule, from: first, to: last).filter { !kept.contains($0) }
+}
+
 /// Orchestrates store and calendar changes for sessions in a recurring series.
 /// Store first, then calendar; calendar failures become a warning and never
 /// undo the store change (same contract as `resolveEventIdentifier`).
@@ -56,6 +82,56 @@ struct SeriesActions: Sendable {
         try await following(from: session, clientName: clientName) { ids in
             try await sessionRepo.delete(ids: ids)
         }
+    }
+
+    /// Moves this and the later scheduled occurrences to a new time, duration
+    /// and notes as a new series segment with its own recurring event.
+    func editFollowing(
+        from session: SessionDTO, hour: Int, minute: Int,
+        duration: TimeInterval, notes: String?, clientName: String
+    ) async throws -> FollowingResult {
+        guard let seriesId = session.seriesId else {
+            return FollowingResult(changed: 0, outcome: SeriesOutcome())
+        }
+        let (affected, protected) = partitionFollowing(
+            try await sessionRepo.seriesOccurrences(seriesId: seriesId, from: session.startAt)
+        )
+        var outcome = SeriesOutcome()
+        // Protected rows leave first so their standalone events keep the old time.
+        for occurrence in protected {
+            let (_, detachOutcome) = try await detach(occurrence, clientName: clientName, removeOccurrence: false)
+            outcome.calendarWarning = outcome.calendarWarning ?? detachOutcome.calendarWarning
+        }
+        let newDates = affected.map { retime($0.startAt, hour: hour, minute: minute) }
+        let rule = segmentRule(from: session.recurrence, dates: newDates)
+        let newSeriesId = UUID()
+        try await sessionRepo.resegment(
+            ids: affected.map(\.id), newSeriesId: newSeriesId, recurrence: rule,
+            hour: hour, minute: minute, duration: duration, notes: notes
+        )
+        guard let oldEventId = session.eventIdentifier else {
+            return FollowingResult(changed: affected.count, outcome: outcome)
+        }
+        // End the old event before pushing the new one: a failed push then
+        // leaves missing sessions plus a warning, not a duplicate series.
+        do {
+            try await calendar.endSeries(eventIdentifier: oldEventId, before: session.startAt)
+            if var anchor = affected.first, let firstDate = newDates.first {
+                anchor.startAt = firstDate
+                anchor.endAt = firstDate.addingTimeInterval(duration)
+                anchor.notes = notes
+                if let newId = try await calendar.push(anchor, clientName: clientName, recurrence: rule) {
+                    for gap in gapDates(rule: rule, keep: newDates) {
+                        try await calendar.removeOccurrence(eventIdentifier: newId, occurrenceStart: gap)
+                    }
+                    try await sessionRepo.setEventIdentifierForSeries(newSeriesId, newId)
+                }
+            }
+        } catch {
+            Log.calendar.error("editFollowing calendar step failed: \(error.localizedDescription)")
+            outcome.calendarWarning = outcome.calendarWarning ?? Self.pushWarning
+        }
+        return FollowingResult(changed: affected.count, outcome: outcome)
     }
 
     /// Store: apply `change` to affected rows, then detach protected rows (each

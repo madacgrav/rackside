@@ -639,10 +639,10 @@ func delete(scope: SeriesScope = .thisOnly) async -> Bool
 - [x] Test command passes; `@Test` count ≥ 132. (132 passed.)
 
 #### Manual
-- [ ] Simulator: 4-week series; on week 2 tap Cancelled → dialog shows both options;
+- [x] Simulator: 4-week series; on week 2 tap Cancelled → dialog shows both options;
       "This and following" → weeks 2–4 cancelled, week 1 scheduled.
-- [ ] Non-series session: Cancelled and Delete still show the original alerts.
-- [ ] Device: same with calendar on → Calendar keeps only week 1; delete following from
+- [x] Non-series session: Cancelled and Delete still show the original alerts.
+- [x] Device: same with calendar on → Calendar keeps only week 1; delete following from
       week 1 of another series → whole event gone.
 
 ---
@@ -824,7 +824,7 @@ if let existing, editsFollowing {
 
 ### Verification
 #### Automated
-- [ ] Test command passes; `@Test` count ≥ 140.
+- [x] Test command passes; `@Test` count ≥ 140. (140 passed.)
 
 #### Manual
 - [ ] Simulator: 4-week series; on week 2 tap Edit → dialog; "This and following" → sheet

@@ -16,9 +16,28 @@ struct SessionRunView: View {
     /// Series occurrence awaiting a "this only / following" choice.
     @State private var scopePrompt: ScopePrompt?
 
+    /// Scope chosen for the edit sheet of a series occurrence.
+    @State private var editScope: SeriesScope?
+
     private enum ScopePrompt: Identifiable {
-        case cancel, delete
+        case edit, cancel, delete
         var id: Self { self }
+
+        var title: String {
+            switch self {
+            case .edit: "Edit repeating session"
+            case .cancel: "Cancel repeating session"
+            case .delete: "Delete repeating session"
+            }
+        }
+
+        var message: String {
+            switch self {
+            case .edit: "Changing following sessions moves them to a new series at the new time."
+            case .cancel: "Completed sessions and sessions with logged sets aren't changed."
+            case .delete: "Logged sets are deleted with a session. Later sessions that already have logged sets are kept and leave the series."
+            }
+        }
     }
     @State private var pendingDeleteSet: SetRecordDTO?
 
@@ -113,7 +132,9 @@ struct SessionRunView: View {
                     }
                 }
                 Menu {
-                    Button("Edit session", systemImage: "pencil") { showingEdit = true }
+                    Button("Edit session", systemImage: "pencil") {
+                        if viewModel.isSeries { scopePrompt = .edit } else { showingEdit = true }
+                    }
                     Button("Delete session", systemImage: "trash", role: .destructive) {
                         if viewModel.isSeries { scopePrompt = .delete } else { confirmingDelete = true }
                     }
@@ -123,12 +144,13 @@ struct SessionRunView: View {
                 .accessibilityLabel("More actions")
             }
         }
-        .sheet(isPresented: $showingEdit) {
+        .sheet(isPresented: $showingEdit, onDismiss: { editScope = nil }) {
             SessionEditView(
                 sessionRepo: viewModel.sessionRepo,
                 clientRepo: viewModel.clientRepo,
                 workoutRepo: workoutRepo,
                 existing: viewModel.session,
+                scope: editScope,
                 initialDate: viewModel.session.startAt
             ) { warning in
                 calendarWarning = warning
@@ -186,18 +208,17 @@ struct SessionRunView: View {
                  : "This can't be changed back from the app.")
         }
         .confirmationDialog(
-            scopePrompt == .delete ? "Delete repeating session" : "Cancel repeating session",
+            scopePrompt?.title ?? "",
             isPresented: Binding(get: { scopePrompt != nil }, set: { if !$0 { scopePrompt = nil } }),
             titleVisibility: .visible,
             presenting: scopePrompt
         ) { prompt in
-            Button("This session only", role: .destructive) { run(prompt, scope: .thisOnly) }
-            Button("This and following sessions", role: .destructive) { run(prompt, scope: .following) }
-            Button("Keep", role: .cancel) {}
+            let role: ButtonRole? = prompt == .edit ? nil : .destructive
+            Button("This session only", role: role) { run(prompt, scope: .thisOnly) }
+            Button("This and following sessions", role: role) { run(prompt, scope: .following) }
+            Button(prompt == .edit ? "Cancel" : "Keep", role: .cancel) {}
         } message: { prompt in
-            Text(prompt == .delete
-                 ? "Logged sets are deleted with a session. Later sessions that already have logged sets are kept and leave the series."
-                 : "Completed sessions and sessions with logged sets aren't changed.")
+            Text(prompt.message)
         }
         .confirmationDialog(
             "Delete this set?",
@@ -214,8 +235,15 @@ struct SessionRunView: View {
     }
 
     private func run(_ prompt: ScopePrompt, scope: SeriesScope) {
+        if prompt == .edit {
+            editScope = scope
+            showingEdit = true
+            return
+        }
         Task {
             switch prompt {
+            case .edit:
+                break
             case .cancel:
                 await viewModel.setStatus(.cancelled, scope: scope)
             case .delete:

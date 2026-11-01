@@ -37,6 +37,13 @@ protocol SessionRepository: Sendable {
     func setStatus(ids: [UUID], _ status: SessionStatus) async throws
     /// Deletes each session and its set records (same rules as `delete(id:)`), one save.
     func delete(ids: [UUID]) async throws
+    /// Moves series rows into a new series segment: new time of day and
+    /// duration on the same dates, new notes, `seriesId` and rule; clears the
+    /// event identifier (the caller links the new event). One save.
+    func resegment(
+        ids: [UUID], newSeriesId: UUID, recurrence: AppRecurrence,
+        hour: Int, minute: Int, duration: TimeInterval, notes: String?
+    ) async throws
     func updateNotes(id: UUID, _ notes: String?) async throws
     func delete(id: UUID) async throws
     /// Sessions marked completed after `since` (all of them when nil). Drives
@@ -274,6 +281,24 @@ actor SwiftDataSessionRepository: SessionRepository {
                 )
             }
             modelContext.delete(session)
+        }
+        try modelContext.save()
+    }
+
+    func resegment(
+        ids: [UUID], newSeriesId: UUID, recurrence: AppRecurrence,
+        hour: Int, minute: Int, duration: TimeInterval, notes: String?
+    ) async throws {
+        let recurrenceData = try? JSONEncoder().encode(recurrence)
+        for id in ids {
+            guard let session = try fetch(id: id) else { continue }
+            session.startAt = retime(session.startAt, hour: hour, minute: minute)
+            session.endAt = session.startAt.addingTimeInterval(duration)
+            session.notes = notes
+            session.seriesId = newSeriesId
+            session.recurrenceData = recurrenceData
+            session.eventIdentifier = nil
+            session.updatedAt = .now
         }
         try modelContext.save()
     }

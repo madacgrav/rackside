@@ -282,3 +282,76 @@ private func occurrence(_ dto: SessionDTO, status: SessionStatus = .scheduled, s
     #expect(await env.calendar.endedSeries.isEmpty)
     #expect(await env.calendar.removedOccurrences.isEmpty)
 }
+
+// MARK: - Edit following (Phase 4)
+
+@Test func editFollowingMovesRestToNewSegment() async throws {
+    let env = try await makeSeries(weeks: 4, eventId: "evt-s")
+    let week2 = env.occurrences[1]
+
+    let result = try await actions(env).editFollowing(
+        from: week2, hour: 8, minute: 30, duration: 45 * 60, notes: "x", clientName: "Sam"
+    )
+
+    #expect(result.changed == 3)
+    #expect(result.outcome.calendarWarning == nil)
+    let after = try await env.reload()
+    #expect(after[0].startAt == env.occurrences[0].startAt)
+    #expect(after[0].seriesId == env.seriesId && after[0].eventIdentifier == "evt-s")
+    let rest = Array(after.dropFirst())
+    let newSeriesId = try #require(rest.first?.seriesId)
+    #expect(newSeriesId != env.seriesId)
+    for (row, old) in zip(rest, env.occurrences.dropFirst()) {
+        #expect(row.seriesId == newSeriesId)
+        #expect(row.eventIdentifier == "evt-new")
+        #expect(row.notes == "x")
+        #expect(row.startAt == retime(old.startAt, hour: 8, minute: 30))
+        #expect(row.endAt.timeIntervalSince(row.startAt) == 45 * 60)
+    }
+    #expect(await env.calendar.endedSeries == [FakeCalendar.key("evt-s", week2.startAt)])
+    #expect(await env.calendar.pushedStarts == [retime(week2.startAt, hour: 8, minute: 30)])
+    let pushedRule = try #require(await env.calendar.pushedRecurrences.first ?? nil)
+    #expect(pushedRule.weekdays == week2.recurrence?.weekdays)
+    #expect(await env.calendar.removedOccurrences.isEmpty)
+}
+
+@Test func editFollowingRemovesGapsFromNewEvent() async throws {
+    let env = try await makeSeries(weeks: 4, eventId: "evt-s")
+    _ = try await actions(env).cancelOccurrence(env.occurrences[2])
+
+    _ = try await actions(env).editFollowing(
+        from: env.occurrences[1], hour: 8, minute: 30, duration: 3600, notes: nil, clientName: "Sam"
+    )
+
+    let gap = FakeCalendar.key("evt-new", retime(env.occurrences[2].startAt, hour: 8, minute: 30))
+    #expect(await env.calendar.removedOccurrences.contains(gap))
+    // Week 3 stays cancelled on the old series and old time.
+    let week3 = try #require(try await env.sessions.get(id: env.occurrences[2].id))
+    #expect(week3.status == .cancelled && week3.seriesId == env.seriesId)
+}
+
+@Test func editFollowingWithoutEventMakesNoCalendarCalls() async throws {
+    let env = try await makeSeries(weeks: 3, eventId: nil)
+
+    _ = try await actions(env).editFollowing(
+        from: env.occurrences[0], hour: 8, minute: 0, duration: 3600, notes: nil, clientName: "Sam"
+    )
+
+    #expect(await env.calendar.pushedStarts.isEmpty)
+    #expect(await env.calendar.endedSeries.isEmpty)
+    #expect(try await env.reload().allSatisfy { $0.eventIdentifier == nil })
+}
+
+@Test func editFollowingCalendarFailureWarns() async throws {
+    let env = try await makeSeries(weeks: 3, eventId: "evt-s")
+    await env.calendar.configure(push: .failure(Boom()))
+
+    let result = try await actions(env).editFollowing(
+        from: env.occurrences[1], hour: 8, minute: 0, duration: 3600, notes: nil, clientName: "Sam"
+    )
+
+    #expect(result.outcome.calendarWarning == SeriesActions.pushWarning)
+    let after = try await env.reload()
+    #expect(after[1].startAt == retime(env.occurrences[1].startAt, hour: 8, minute: 0))
+    #expect(after[1].eventIdentifier == nil)
+}

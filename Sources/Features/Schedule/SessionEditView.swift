@@ -27,6 +27,9 @@ struct SessionEditView: View {
     private let workoutRepo: (any WorkoutRepository)?
     private let calendar: any CalendarSyncing
     private let existing: SessionDTO?
+    /// For a series occurrence: `.following` edits this and later sessions;
+    /// anything else edits this session alone (it leaves the series).
+    private let scope: SeriesScope?
 
     init(
         sessionRepo: any SessionRepository,
@@ -34,6 +37,7 @@ struct SessionEditView: View {
         workoutRepo: (any WorkoutRepository)? = nil,
         calendar: any CalendarSyncing = EventKitCalendarService(),
         existing: SessionDTO? = nil,
+        scope: SeriesScope? = nil,
         initialDate: Date,
         onSaved: @escaping (String?) -> Void
     ) {
@@ -42,6 +46,7 @@ struct SessionEditView: View {
         self.workoutRepo = workoutRepo
         self.calendar = calendar
         self.existing = existing
+        self.scope = scope
         self.onSaved = onSaved
         if let existing {
             _selectedClientId = State(initialValue: existing.clientId)
@@ -58,6 +63,8 @@ struct SessionEditView: View {
 
     private var isEditing: Bool { existing != nil }
 
+    private var editsFollowing: Bool { scope == .following && existing?.seriesId != nil }
+
     private var canSave: Bool { selectedClientId != nil }
 
     private static let weekdaySymbols = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -65,6 +72,7 @@ struct SessionEditView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if !editsFollowing {
                 Section("Client") {
                     Picker("Client", selection: $selectedClientId) {
                         Text("Select…").tag(UUID?.none)
@@ -73,9 +81,20 @@ struct SessionEditView: View {
                         }
                     }
                 }
-                Section("When") {
-                    DatePicker("Starts", selection: $startAt)
+                }
+                Section {
+                    if editsFollowing {
+                        DatePicker("Starts", selection: $startAt, displayedComponents: .hourAndMinute)
+                    } else {
+                        DatePicker("Starts", selection: $startAt)
+                    }
                     Stepper("Duration: \(durationMinutes) min", value: $durationMinutes, in: 15...240, step: 15)
+                } header: {
+                    Text("When")
+                } footer: {
+                    if editsFollowing {
+                        Text("Changes this session and the scheduled sessions after it.")
+                    }
                 }
                 if !isEditing {
                 Section("Workouts") {
@@ -126,13 +145,15 @@ struct SessionEditView: View {
                     TextField("Notes", text: $notes, axis: .vertical)
                 }
                 ErrorBanner(message: errorMessage)
+                if !editsFollowing {
                 Section {
                     Toggle(isEditing ? "Keep in iPhone calendar" : "Add to iPhone calendar", isOn: $addToCalendar)
                 } footer: {
                     Text("Pushes the session to your default calendar (syncs to Google Calendar if that's your default account).")
                 }
+                }
             }
-            .navigationTitle(isEditing ? "Edit Session" : "New Session")
+            .navigationTitle(editsFollowing ? "Edit Following Sessions" : isEditing ? "Edit Session" : "New Session")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -166,6 +187,22 @@ struct SessionEditView: View {
         guard let clientId = selectedClientId else { return false }
         errorMessage = nil
         calendarWarning = nil
+        if let existing, editsFollowing {
+            let time = Calendar.current.dateComponents([.hour, .minute], from: startAt)
+            let clientName = clients.first { $0.id == existing.clientId }?.name ?? "Client"
+            do {
+                let result = try await SeriesActions(sessionRepo: sessionRepo, calendar: calendar).editFollowing(
+                    from: existing, hour: time.hour ?? 9, minute: time.minute ?? 0,
+                    duration: TimeInterval(durationMinutes * 60),
+                    notes: notes.isEmpty ? nil : notes, clientName: clientName
+                )
+                calendarWarning = result.outcome.calendarWarning
+                return true
+            } catch {
+                errorMessage = "Couldn't save the sessions. Please try again."
+                return false
+            }
+        }
         if let existing {
             var base = existing
             if existing.seriesId != nil {
