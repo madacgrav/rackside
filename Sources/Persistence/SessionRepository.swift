@@ -31,6 +31,12 @@ protocol SessionRepository: Sendable {
     /// event identifier (the caller pushes a standalone event). Keeps
     /// `recurrenceData` as history; nothing reads it for a non-series row.
     func detach(id: UUID) async throws
+    /// Occurrences in the series starting at or after `from`, ascending, each
+    /// with whether any sets were logged against it.
+    func seriesOccurrences(seriesId: UUID, from: Date) async throws -> [SeriesOccurrence]
+    func setStatus(ids: [UUID], _ status: SessionStatus) async throws
+    /// Deletes each session and its set records (same rules as `delete(id:)`), one save.
+    func delete(ids: [UUID]) async throws
     func updateNotes(id: UUID, _ notes: String?) async throws
     func delete(id: UUID) async throws
     /// Sessions marked completed after `since` (all of them when nil). Drives
@@ -44,6 +50,12 @@ protocol SessionRepository: Sendable {
     /// Most recent set this client performed for the exercise, across sessions —
     /// powers "repeat last set".
     func lastSet(clientId: UUID, exerciseId: UUID) async throws -> SetRecordDTO?
+}
+
+/// A series occurrence plus whether any sets were logged against it.
+struct SeriesOccurrence: Sendable, Equatable {
+    let session: SessionDTO
+    let hasLoggedSets: Bool
 }
 
 /// Result of scheduling a recurring series.
@@ -224,6 +236,45 @@ actor SwiftDataSessionRepository: SessionRepository {
         session.seriesId = nil
         session.eventIdentifier = nil
         session.updatedAt = .now
+        try modelContext.save()
+    }
+
+    func seriesOccurrences(seriesId: UUID, from: Date) async throws -> [SeriesOccurrence] {
+        let rows = try modelContext.fetch(FetchDescriptor<Session>(
+            predicate: #Predicate { $0.seriesId == seriesId && $0.startAt >= from },
+            sortBy: [SortDescriptor(\.startAt)]
+        ))
+        return try rows.map { row in
+            let instanceIds = row.instances.map(\.id)
+            let logged = instanceIds.isEmpty ? 0 : try modelContext.fetchCount(FetchDescriptor<SetRecord>(
+                predicate: #Predicate { instanceIds.contains($0.workoutInstanceId) }
+            ))
+            return SeriesOccurrence(session: SessionDTO(row), hasLoggedSets: logged > 0)
+        }
+    }
+
+    func setStatus(ids: [UUID], _ status: SessionStatus) async throws {
+        for id in ids {
+            guard let session = try fetch(id: id) else { continue }
+            session.statusRaw = status.rawValue
+            session.updatedAt = .now
+        }
+        try modelContext.save()
+    }
+
+    func delete(ids: [UUID]) async throws {
+        for id in ids {
+            guard let session = try fetch(id: id) else { continue }
+            // Same as delete(id:): set records are linked by id, not relationship.
+            let instanceIds = session.instances.map(\.id)
+            if !instanceIds.isEmpty {
+                try modelContext.delete(
+                    model: SetRecord.self,
+                    where: #Predicate { instanceIds.contains($0.workoutInstanceId) }
+                )
+            }
+            modelContext.delete(session)
+        }
         try modelContext.save()
     }
 

@@ -100,13 +100,16 @@ final class SessionRunViewModel {
     /// calendar event, then lets the presenter reload and re-plan alerts.
     /// Returns false (with `errorMessage` set) when the store delete failed;
     /// the presenter should not dismiss in that case.
-    func delete() async -> Bool {
+    func delete(scope: SeriesScope = .thisOnly) async -> Bool {
         errorMessage = nil
         calendarWarning = nil
         if session.seriesId != nil {
-            // Store first, then drop just this date from the shared event.
+            // Store first, then drop this date (or this and later dates) from
+            // the shared event.
             do {
-                calendarWarning = try await series.deleteOccurrence(session).calendarWarning
+                calendarWarning = scope == .following
+                    ? try await series.deleteFollowing(from: session, clientName: clientName).outcome.calendarWarning
+                    : try await series.deleteOccurrence(session).calendarWarning
             } catch {
                 Log.ui.error("delete session failed: \(error.localizedDescription)")
                 errorMessage = "Couldn't delete the session. Please try again."
@@ -219,12 +222,16 @@ final class SessionRunViewModel {
         }
     }
 
-    func setStatus(_ status: SessionStatus) async {
+    /// `scope` matters only for cancelling a series occurrence; completed and
+    /// no-show always apply to this session alone.
+    func setStatus(_ status: SessionStatus, scope: SeriesScope = .thisOnly) async {
         errorMessage = nil
         calendarWarning = nil
         do {
             if status == .cancelled, session.seriesId != nil {
-                calendarWarning = try await series.cancelOccurrence(session).calendarWarning
+                calendarWarning = scope == .following
+                    ? try await series.cancelFollowing(from: session, clientName: clientName).outcome.calendarWarning
+                    : try await series.cancelOccurrence(session).calendarWarning
             } else {
                 try await sessionRepo.setStatus(id: session.id, status)
             }

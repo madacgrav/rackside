@@ -9,6 +9,8 @@ actor FakeCalendar: CalendarSyncing {
     private(set) var updated: [String] = []
     /// `key(eventIdentifier, occurrenceStart)` per removed occurrence.
     private(set) var removedOccurrences: [String] = []
+    /// `key(eventIdentifier, occurrenceStart)` per `endSeries` call.
+    private(set) var endedSeries: [String] = []
     private var pushResult: Result<String?, any Error> = .success("evt-new")
     /// nil → echo the identifier back, like a successful in-place update.
     private var updateResult: Result<String?, any Error>?
@@ -49,6 +51,11 @@ actor FakeCalendar: CalendarSyncing {
     func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws {
         if let removeError { throw removeError }
         removedOccurrences.append(Self.key(eventIdentifier, occurrenceStart))
+    }
+
+    func endSeries(eventIdentifier: String, before occurrenceStart: Date) async throws {
+        if let removeError { throw removeError }
+        endedSeries.append(Self.key(eventIdentifier, occurrenceStart))
     }
 
     /// Stable string for an (event, occurrence date) pair, so recorded calls
@@ -145,6 +152,11 @@ actor FailingSessionRepo: SessionRepository {
         try await inner.setEventIdentifierForSeries(seriesId, eventIdentifier)
     }
     func detach(id: UUID) async throws { try await inner.detach(id: id) }
+    func seriesOccurrences(seriesId: UUID, from: Date) async throws -> [SeriesOccurrence] {
+        try await inner.seriesOccurrences(seriesId: seriesId, from: from)
+    }
+    func setStatus(ids: [UUID], _ status: SessionStatus) async throws { try await inner.setStatus(ids: ids, status) }
+    func delete(ids: [UUID]) async throws { try await inner.delete(ids: ids) }
     func updateNotes(id: UUID, _ notes: String?) async throws { try await inner.updateNotes(id: id, notes) }
     func completedCount(since: Date?) async throws -> Int { try await inner.completedCount(since: since) }
     func deleteSet(id: UUID) async throws { try await inner.deleteSet(id: id) }

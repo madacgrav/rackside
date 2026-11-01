@@ -8,6 +8,24 @@ struct SeriesOutcome: Equatable, Sendable {
     var calendarWarning: String?
 }
 
+/// Result of a "this and following" action.
+struct FollowingResult: Equatable, Sendable {
+    /// Occurrences cancelled or deleted (protected ones are detached, not counted).
+    var changed: Int
+    var outcome: SeriesOutcome
+}
+
+/// Splits "this and following" occurrences: `affected` are still scheduled with
+/// no logged sets; `protected` are scheduled but already have sets. Completed,
+/// cancelled and no-show occurrences are left out entirely.
+func partitionFollowing(_ occurrences: [SeriesOccurrence]) -> (affected: [SessionDTO], protected: [SessionDTO]) {
+    let scheduled = occurrences.filter { $0.session.status == .scheduled }
+    return (
+        scheduled.filter { !$0.hasLoggedSets }.map(\.session),
+        scheduled.filter { $0.hasLoggedSets }.map(\.session)
+    )
+}
+
 /// Orchestrates store and calendar changes for sessions in a recurring series.
 /// Store first, then calendar; calendar failures become a warning and never
 /// undo the store change (same contract as `resolveEventIdentifier`).
@@ -26,6 +44,50 @@ struct SeriesActions: Sendable {
     func deleteOccurrence(_ session: SessionDTO) async throws -> SeriesOutcome {
         try await sessionRepo.delete(id: session.id)
         return await removeFromEvent(session)
+    }
+
+    func cancelFollowing(from session: SessionDTO, clientName: String) async throws -> FollowingResult {
+        try await following(from: session, clientName: clientName) { ids in
+            try await sessionRepo.setStatus(ids: ids, .cancelled)
+        }
+    }
+
+    func deleteFollowing(from session: SessionDTO, clientName: String) async throws -> FollowingResult {
+        try await following(from: session, clientName: clientName) { ids in
+            try await sessionRepo.delete(ids: ids)
+        }
+    }
+
+    /// Store: apply `change` to affected rows, then detach protected rows (each
+    /// gets its own event). Calendar: end the old event at this occurrence.
+    /// Ending happens after the protected pushes, so a failed end leaves
+    /// duplicates in the calendar rather than missing sessions.
+    private func following(
+        from session: SessionDTO,
+        clientName: String,
+        change: ([UUID]) async throws -> Void
+    ) async throws -> FollowingResult {
+        guard let seriesId = session.seriesId else {
+            return FollowingResult(changed: 0, outcome: SeriesOutcome())
+        }
+        let (affected, protected) = partitionFollowing(
+            try await sessionRepo.seriesOccurrences(seriesId: seriesId, from: session.startAt)
+        )
+        try await change(affected.map(\.id))
+        var outcome = SeriesOutcome()
+        for occurrence in protected {
+            let (_, detachOutcome) = try await detach(occurrence, clientName: clientName, removeOccurrence: false)
+            outcome.calendarWarning = outcome.calendarWarning ?? detachOutcome.calendarWarning
+        }
+        if let eventId = session.eventIdentifier {
+            do {
+                try await calendar.endSeries(eventIdentifier: eventId, before: session.startAt)
+            } catch {
+                Log.calendar.error("endSeries failed: \(error.localizedDescription)")
+                outcome.calendarWarning = outcome.calendarWarning ?? Self.removeWarning
+            }
+        }
+        return FollowingResult(changed: affected.count, outcome: outcome)
     }
 
     /// Store first (detach), then calendar: drop the date from the shared event

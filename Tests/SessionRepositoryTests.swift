@@ -231,3 +231,42 @@ private func sessionDTO(clientId: UUID = UUID(), startAt: Date = .now) -> Sessio
     #expect(after[0].seriesId == series.seriesId && after[0].eventIdentifier == "evt-s")
     #expect(after[2].seriesId == series.seriesId && after[2].eventIdentifier == "evt-s")
 }
+
+@Test func seriesOccurrencesReportsLoggedSetsAndBulkWrites() async throws {
+    let repos = try makeRepos()
+    let exerciseId = UUID()
+    let template = WorkoutDTO(
+        id: UUID(), name: "Legs",
+        entries: [WorkoutEntryDTO(id: UUID(), exerciseId: exerciseId, order: 0, targetSets: 3, targetReps: 5, targetWeight: 185, targetDuration: nil)],
+        createdAt: .now, updatedAt: .now
+    )
+    try await repos.workouts.upsert(template)
+    let start = Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: .now.addingTimeInterval(86_400))!
+    let rule = AppRecurrence(
+        frequency: .weekly, interval: 1,
+        weekdays: [Calendar.current.component(.weekday, from: start)],
+        endDate: nil, occurrenceCount: nil
+    )
+    let series = try await repos.sessions.scheduleSeries(
+        sessionDTO(startAt: start), recurrence: rule, attaching: [template.id], horizonWeeks: 3
+    )
+    let rows = try await repos.sessions.sessions(from: .distantPast, to: .distantFuture)
+    let instanceId = try #require(rows[1].instances.first?.id)
+    try await repos.sessions.recordSet(SetRecordDTO(
+        id: UUID(), workoutInstanceId: instanceId, exerciseId: exerciseId, setIndex: 0,
+        weight: 185, reps: 5, duration: nil, distance: nil, rpe: nil,
+        performedAt: .now, createdAt: .now, updatedAt: .now
+    ))
+
+    let following = try await repos.sessions.seriesOccurrences(seriesId: series.seriesId, from: rows[1].startAt)
+    #expect(following.map(\.session.id) == [rows[1].id, rows[2].id])
+    #expect(following.map(\.hasLoggedSets) == [true, false])
+
+    try await repos.sessions.setStatus(ids: [rows[0].id, rows[2].id], .cancelled)
+    try await repos.sessions.delete(ids: [rows[1].id])
+
+    let after = try await repos.sessions.sessions(from: .distantPast, to: .distantFuture)
+    #expect(after.map(\.id) == [rows[0].id, rows[2].id])
+    #expect(after.allSatisfy { $0.status == .cancelled })
+    #expect(try await repos.sessions.setsFor(instanceId: instanceId).isEmpty)
+}

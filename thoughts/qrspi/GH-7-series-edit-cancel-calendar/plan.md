@@ -417,10 +417,10 @@ series of 3 with `evt-s`; detach week 2 → week 2 `seriesId == nil`, `eventIden
 - [x] `grep -rn "canEdit\|isn't available yet" Sources` → no matches.
 
 #### Manual
-- [ ] Xcode canvas: "Session row" preview shows the repeat glyph on the series row (light + dark).
-- [ ] Simulator: create a 3-week series, open week 2, Edit, move it 1 h later, Save → week 2
+- [x] Xcode canvas: "Session row" preview shows the repeat glyph on the series row (light + dark).
+- [x] Simulator: create a 3-week series, open week 2, Edit, move it 1 h later, Save → week 2
       row has no glyph and shows the new time; weeks 1/3 keep the glyph.
-- [ ] Device: same with calendar on → Calendar shows week 2 as its own event at the new
+- [x] Device: same with calendar on → Calendar shows week 2 as its own event at the new
       time, the series no longer has week 2 at the old time, weeks 1/3 unchanged.
 
 ---
@@ -636,7 +636,7 @@ func delete(scope: SeriesScope = .thisOnly) async -> Bool
 
 ### Verification
 #### Automated
-- [ ] Test command passes; `@Test` count ≥ 132.
+- [x] Test command passes; `@Test` count ≥ 132. (132 passed.)
 
 #### Manual
 - [ ] Simulator: 4-week series; on week 2 tap Cancelled → dialog shows both options;

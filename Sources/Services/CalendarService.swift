@@ -66,6 +66,9 @@ protocol CalendarSyncing: Sendable {
     /// Removes one occurrence of a recurring event (EKSpan.thisEvent). No-op
     /// when the event or occurrence is gone.
     func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws
+    /// Ends a recurring event before the given occurrence (EKSpan.futureEvents
+    /// on that occurrence). On the first occurrence this removes the whole event.
+    func endSeries(eventIdentifier: String, before occurrenceStart: Date) async throws
 }
 
 actor EventKitCalendarService: CalendarSyncing {
@@ -132,6 +135,11 @@ actor EventKitCalendarService: CalendarSyncing {
     func removeOccurrence(eventIdentifier: String, occurrenceStart: Date) async throws {
         guard let event = occurrence(eventIdentifier, at: occurrenceStart) else { return }
         try store.remove(event, span: .thisEvent, commit: true)
+    }
+
+    func endSeries(eventIdentifier: String, before occurrenceStart: Date) async throws {
+        guard let event = occurrence(eventIdentifier, at: occurrenceStart) else { return }
+        try store.remove(event, span: .futureEvents, commit: true)
     }
 
     /// Searches a day either side of the date: `event(withIdentifier:)` returns
