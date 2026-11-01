@@ -1128,3 +1128,8 @@ Add to the P2 table: "Snapshot tests for themed screens (swift-snapshot-testing,
 - Never regenerate `Tests/Fixtures/export-v1.json`.
 - If XcodeGen fails to pick up `Sources/Features/Components/`, check `createIntermediateGroups: true` in `project.yml` and re-run `xcodegen generate`; the `sources: [Sources]` glob needs no edit.
 - Screenshots live under `thoughts/qrspi/2026-10-26-ui-refresh-and-icon/screenshots/` and are attached to the PR in step 8.
+
+## Merge record
+
+- 2026-10-26: PR opened as [#36](https://github.com/madacgrav/trainme/pull/36).
+- 2026-10-26: CI green on #36 (`test` check); merged into main as 0c7a624.

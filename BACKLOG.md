@@ -74,12 +74,12 @@ Addressed in [#34](https://github.com/madacgrav/trainme/pull/34) (one commit per
 | 9 | Report as PNG image | `ReportExporter.render` writes PDF and PNG at 3×; Share menu on both screens | [#11](https://github.com/madacgrav/trainme/issues/11) |
 | 10 | Total-reps progression chart | `ProgressPoint.totalReps`; third chart on the exercise screen and page | [#12](https://github.com/madacgrav/trainme/issues/12) |
 
-Addressed in the UI refresh branch `2026-10-26-ui-refresh-and-icon` (one commit per phase).
+Addressed in [#36](https://github.com/madacgrav/trainme/pull/36) (one commit per phase).
 
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|
-| 28 | Theme tokens and shared components | `Sources/Support/Theme.swift`, `Sources/Features/Components/`; dark-first colorsets with light values | — |
-| 29 | Inline set table | `SetTableView`, `MetricStepper`, `SetDraft`; one-tap logging with haptic and progress bar | — |
-| 30 | Self-use client | `Client.isSelf`, `SchemaV2` lightweight migration (SchemaV1 keeps a frozen model snapshot), "About You" sheet | — |
-| 31 | Icon appearance variants | Bolder layers, explicit dark and tinted specializations in `icon.json` | — |
-| 32 | Previews for every screen | `PreviewFixtures` (seeded in-memory container) and a `#Preview` per feature screen | — |
+| 28 | Theme tokens and shared components | `Sources/Support/Theme.swift`, `Sources/Features/Components/`; dark-first colorsets with light values | [#36](https://github.com/madacgrav/trainme/pull/36) |
+| 29 | Inline set table | `SetTableView`, `MetricStepper`, `SetDraft`; one-tap logging with haptic and progress bar | [#36](https://github.com/madacgrav/trainme/pull/36) |
+| 30 | Self-use client | `Client.isSelf`, `SchemaV2` lightweight migration (SchemaV1 keeps a frozen model snapshot), "About You" sheet | [#36](https://github.com/madacgrav/trainme/pull/36) |
+| 31 | Icon appearance variants | Bolder layers, explicit dark and tinted specializations in `icon.json` | [#36](https://github.com/madacgrav/trainme/pull/36) |
+| 32 | Previews for every screen | `PreviewFixtures` (seeded in-memory container) and a `#Preview` per feature screen | [#36](https://github.com/madacgrav/trainme/pull/36) |
