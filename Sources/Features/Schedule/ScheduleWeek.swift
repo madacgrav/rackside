@@ -47,4 +47,17 @@ enum ScheduleWeek {
             ScheduleDay(date: day, sessions: (buckets[day] ?? []).sorted { $0.startAt < $1.startAt })
         }
     }
+
+    /// The last day of the week (`interval.end` is exclusive).
+    static func lastDay(of interval: DateInterval, calendar: Calendar) -> Date {
+        calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: interval.end)) ?? interval.start
+    }
+
+    static func weekTitle(_ interval: DateInterval, calendar: Calendar) -> String {
+        let style = Date.IntervalFormatStyle(
+            date: .abbreviated, time: .omitted,
+            locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
+        )
+        return style.format(interval.start..<lastDay(of: interval, calendar: calendar))
+    }
 }

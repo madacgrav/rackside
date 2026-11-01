@@ -60,6 +60,7 @@ struct ScheduleView: View {
                     }
                     .themedScreen()
                 case .week:
+                    weekHeader
                     weekList
                 }
             }
@@ -110,6 +111,21 @@ struct ScheduleView: View {
             SessionRow(session: session, clientName: viewModel.clientNames[session.clientId] ?? "Client")
         }
         .themedRows()
+    }
+
+    private var weekHeader: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            IconButton(title: "Previous week", systemImage: "chevron.left") { viewModel.showPreviousWeek() }
+            Text(viewModel.weekTitle)
+                .font(Theme.Fonts.display())
+                .frame(maxWidth: .infinity)
+            IconButton(title: "Next week", systemImage: "chevron.right") { viewModel.showNextWeek() }
+            Button("Today") { viewModel.showToday() }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(viewModel.isShowingWeek())
+        }
+        .padding(.horizontal)
     }
 
     private var weekList: some View {

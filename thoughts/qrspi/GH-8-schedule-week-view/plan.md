@@ -365,8 +365,8 @@ private var weekHeader: some View {
 
 ### Verification
 #### Automated
-- [ ] The test command passes.
-- [ ] `grep -r "@Test" Tests | wc -l` gives 150.
+- [x] The test command passes.
+- [x] `grep -r "@Test" Tests | wc -l` gives 150.
 
 #### Manual
 - [ ] In Week mode the header reads, for example, "Nov 1 – 7, 2026". The exact text depends on the locale.

@@ -17,6 +17,7 @@ final class ScheduleViewModel {
     var mode: ScheduleMode = .day
     var week: [ScheduleDay] = []
     var weekInterval: DateInterval { ScheduleWeek.weekInterval(containing: selectedDate, calendar: calendar) }
+    var weekTitle: String { ScheduleWeek.weekTitle(weekInterval, calendar: calendar) }
     var clientNames: [UUID: String] = [:]
     var clientPhones: [UUID: String] = [:]
     var clientInjuries: [UUID: String?] = [:]
@@ -66,6 +67,15 @@ final class ScheduleViewModel {
 
         await reminders.refresh()
         await refreshExportReminder()
+    }
+
+    func showPreviousWeek() { moveWeek(by: -7) }
+    func showNextWeek() { moveWeek(by: 7) }
+    func showToday(now: Date = .now) { selectedDate = now }
+    func isShowingWeek(containing now: Date = .now) -> Bool { weekInterval.contains(now) }
+
+    private func moveWeek(by days: Int) {
+        selectedDate = calendar.date(byAdding: .day, value: days, to: selectedDate) ?? selectedDate
     }
 
     private func refreshExportReminder() async {

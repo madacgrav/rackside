@@ -110,3 +110,39 @@ private func makeViewModel(calendar: Calendar, defaults: UserDefaults? = nil) th
     await vm.load()
     #expect(vm.sessionsForDay.count == 2)
 }
+
+@MainActor
+@Test func nextWeekCrossesYear() throws {
+    let cal = calendar(firstWeekday: 1)
+    let (vm, _) = try makeViewModel(calendar: cal)
+    vm.selectedDate = date(cal, 2026, 12, 30, 12)
+    vm.showNextWeek()
+    #expect(vm.selectedDate == date(cal, 2027, 1, 6, 12))
+    #expect(vm.weekInterval.start == date(cal, 2027, 1, 3))
+}
+
+@MainActor
+@Test func previousWeekCrossesMonth() throws {
+    let cal = calendar(firstWeekday: 1)
+    let (vm, _) = try makeViewModel(calendar: cal)
+    vm.selectedDate = date(cal, 2026, 11, 4, 12)
+    vm.showPreviousWeek()
+    #expect(vm.weekInterval.start == date(cal, 2026, 10, 25))
+}
+
+@MainActor
+@Test func showTodayJumpsToWeekOfNow() throws {
+    let cal = calendar(firstWeekday: 1)
+    let (vm, _) = try makeViewModel(calendar: cal)
+    vm.selectedDate = date(cal, 2026, 1, 7)
+    let now = date(cal, 2026, 11, 4, 12)
+    vm.showToday(now: now)
+    #expect(vm.isShowingWeek(containing: now))
+    #expect(vm.weekInterval.start == date(cal, 2026, 11, 1))
+}
+
+@Test func lastDayIsInclusive() {
+    let cal = calendar(firstWeekday: 1)
+    let interval = ScheduleWeek.weekInterval(containing: date(cal, 2026, 11, 4, 12), calendar: cal)
+    #expect(ScheduleWeek.lastDay(of: interval, calendar: cal) == date(cal, 2026, 11, 7))
+}
