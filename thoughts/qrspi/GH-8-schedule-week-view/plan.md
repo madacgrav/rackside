@@ -481,14 +481,14 @@ Fill in the PR number when the PR exists (step 8-pr).
 ### Verification
 #### Automated
 - [x] The test command passes, and the test count is 152.
-- [ ] The device build, install and launch commands from the Overview succeed.
+- [x] The device build, install and launch commands from the Overview succeed.
 
 #### Manual (madphone)
-- [ ] The Day and Week toggle works, and both modes look right with the export banner showing and hidden, in light and dark.
-- [ ] Chevrons and Today work, and the week of 2026-11-01 (DST change) shows 7 days with sessions on the right days.
-- [ ] From the week list, open a series session, choose Cancel, then "This session only". On return, only that row shows Cancelled.
-- [ ] Add a session from Week mode, and it appears in the right section.
-- [ ] Relaunch the app, and it reopens in the last-used mode.
+- [x] The Day and Week toggle works, and both modes look right with the export banner showing and hidden, in light and dark.
+- [x] Chevrons and Today work, and the week of 2026-11-01 (DST change) shows 7 days with sessions on the right days.
+- [x] From the week list, open a series session, choose Cancel, then "This session only". On return, only that row shows Cancelled.
+- [x] Add a session from Week mode, and it appears in the right section.
+- [x] Relaunch the app, and it reopens in the last-used mode.
 
 ---
 
@@ -500,4 +500,9 @@ Fill in the PR number when the PR exists (step 8-pr).
   one instance across all the sessions. Its values are captured before the nested builder, which is nonisolated
   under Swift 6.
 - BACKLOG.md uses `#NN` placeholders for the PR number. Fill them in at step 8-pr.
-- Not done yet: the simulator manual checks, and the madphone device build and checklist. The "Device pass" section still needs adding.
+
+## Device pass (2026-11-01)
+
+- Built from branch `GH-8-schedule-week-view` with the device commands in the Overview, then installed and launched on madphone (iPhone 16 Pro Max).
+- The user ran the Phase 4 checklist on the device and reported every item passing: Day/Week toggle, chevrons and Today, the 2026-11-01 DST week,
+  series cancel "This session only" from the week list, add from Week mode, and the mode persisting across relaunch.
