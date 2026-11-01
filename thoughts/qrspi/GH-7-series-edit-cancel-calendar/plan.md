@@ -827,10 +827,10 @@ if let existing, editsFollowing {
 - [x] Test command passes; `@Test` count ≥ 140. (140 passed.)
 
 #### Manual
-- [ ] Simulator: 4-week series; on week 2 tap Edit → dialog; "This and following" → sheet
+- [x] Simulator: 4-week series; on week 2 tap Edit → dialog; "This and following" → sheet
       shows time-only picker, no client/calendar sections; set 08:30 → weeks 2–4 at 08:30,
       week 1 unchanged.
-- [ ] Device: same with calendar on → Calendar shows week 1 at the old time and weeks 2–4
+- [x] Device: same with calendar on → Calendar shows week 1 at the old time and weeks 2–4
       at 08:30, no duplicates; with week 3 cancelled beforehand, week 3 does not appear.
 
 ---
@@ -864,8 +864,8 @@ series for each row and record the result in this plan:
 
 ### Verification
 #### Automated
-- [ ] Test command passes.
+- [x] Test command passes. (140 passed.)
 
 #### Manual
 - [ ] Device checklist above complete with notes.
-- [ ] `BACKLOG.md` renders: row 5 gone from P1, present in Done.
+- [x] `BACKLOG.md`: row 5 gone from P1, present in Done (PR link to add when the PR is opened).

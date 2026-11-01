@@ -16,11 +16,14 @@ P1 reporting features (rows 1–4, 9, 10) were addressed in
 [#34](https://github.com/madacgrav/trainme/pull/34); see the [Done](#done) table and
 `thoughts/qrspi/2026-10-26-p1-reporting/` for the design and plan.
 
+Series edit/cancel (row 5) was addressed for [#7](https://github.com/madacgrav/trainme/issues/7);
+see the [Done](#done) table and `thoughts/qrspi/GH-7-series-edit-cancel-calendar/` for the
+design and plan.
+
 ## P1 — features
 
 | # | Item | Why / PRD ref | Evidence | Issue |
 |---|------|---------------|----------|-------|
-| 5 | Series edit/cancel and shared calendar event update/removal | decisions #3/#4 | `SessionRunViewModel.setStatus` and `delete` skip calendar work for series | [#7](https://github.com/madacgrav/trainme/issues/7) |
 | 6 | Week view on Schedule | PRD §5.4 | `ScheduleView` is a month picker plus one-day list | [#8](https://github.com/madacgrav/trainme/issues/8) |
 | 7 | Inline "create exercise" from the workout picker | PRD §4.3 | `ExercisePickerView` has no create action | [#9](https://github.com/madacgrav/trainme/issues/9) |
 | 8 | Browse and unarchive archived clients | PRD §5.1 | No list uses `allIncludingArchived`; unarchive only from an open detail screen | [#10](https://github.com/madacgrav/trainme/issues/10) |
@@ -83,3 +86,9 @@ Addressed in [#36](https://github.com/madacgrav/trainme/pull/36) (one commit per
 | 30 | Self-use client | `Client.isSelf`, `SchemaV2` lightweight migration (SchemaV1 keeps a frozen model snapshot), "About You" sheet | [#36](https://github.com/madacgrav/trainme/pull/36) |
 | 31 | Icon appearance variants | Bolder layers, explicit dark and tinted specializations in `icon.json` | [#36](https://github.com/madacgrav/trainme/pull/36) |
 | 32 | Previews for every screen | `PreviewFixtures` (seeded in-memory container) and a `#Preview` per feature screen | [#36](https://github.com/madacgrav/trainme/pull/36) |
+
+Addressed for [#7](https://github.com/madacgrav/trainme/issues/7) (one commit per phase).
+
+| # | Item | Resolution | Issue |
+|---|------|------------|-------|
+| 5 | Series edit/cancel and shared calendar event update/removal | "This session only" / "This and following" for edit, cancel and delete (`SeriesActions`); one-session edits detach from the series with their own event; "following" ends the recurring event before the date and edits start a new series segment; occurrences with logged sets keep their own event; no schema change | [#7](https://github.com/madacgrav/trainme/issues/7) |
