@@ -715,7 +715,7 @@ Under [Unreleased] › Added: "User guide, privacy policy and support pages at m
 - [x] `scripts/check-guide-labels.sh` exits 0. Fix the guide wording, not the app, on a miss.
 
 #### Manual
-- [ ] Read the guide start to finish against the app running with `-demoData`. Every step works as described.
+- [x] Read the guide start to finish against the app running with `-demoData`. Every step works as described.
 
 ---
 
@@ -775,9 +775,9 @@ macOS ships bash 3.2, which has no associative arrays. Use `case "$field" in Nam
 
 ### Verification
 #### Automated
-- [ ] `scripts/check-metadata-lengths.sh` exits 0.
-- [ ] `scripts/check-docs-links.sh` exits 0 (`app-store/` is excluded from the check).
-- [ ] TEST and WATCH both still pass, as a final regression.
+- [x] `scripts/check-metadata-lengths.sh` exits 0.
+- [x] `scripts/check-docs-links.sh` exits 0 (`app-store/` is excluded from the check).
+- [x] TEST and WATCH both still pass, as a final regression.
 
 #### Manual
 - [ ] Read `metadata.md` as a buyer would. The description matches the app's actual features, and nothing claims iCloud, iPad, or medical advice.
@@ -794,3 +794,7 @@ macOS ships bash 3.2, which has no associative arrays. Use `case "$field" in Nam
 - **Phase 5:** the watch privacy manifest is resolved as **not needed** (no required-reason APIs in `Watch/` or `Shared/`).
 - **Phase 6:** simulators are pinned to the ones installed here (`iPhone 18 Pro Max`, `Apple Watch Ultra 4 (49mm)`) and can be overridden with env vars.
 - **Phase 7:** added `scripts/check-guide-labels.sh`, which implements the structure's "label spot-check".
+- **Phase 4/6 (implementation):** today's demo sessions are anchored just after launch time (reports flag past sessions still marked scheduled); `-lastExportAt` is "one hour ago" rather than year 2100; screenshots wait 25 s and retry blank frames because the simulator draws the first frame slowly after a relaunch.
+- **Phase 5 (implementation):** fixed a shipped bug where the watch never showed a running timer (`TimelineView(.explicit([endAt]))` rendered its first frame at `endAt`), committed separately.
+- **Phase 7:** dropped the claim that workout entries can be reordered (BACKLOG row 16: no Edit button).
+- **Phase 8:** review notes point to `docs/app-store/TrainMe Review Sample.json` (the demo dataset exported in the app's own format: 6 clients, 44 sessions, 436 sets) instead of the thin `Tests/Fixtures/export-v2.json`; the length checker is Python (macOS bash 3.2 has no associative arrays).
