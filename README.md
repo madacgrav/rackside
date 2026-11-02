@@ -1,8 +1,8 @@
-# TrainMe
+# Rackside
 
 ![CI](https://github.com/madacgrav/rackside/actions/workflows/ci.yml/badge.svg)
 
-TrainMe is a client and session log for independent personal trainers, on iPhone
+Rackside is a client and session log for independent personal trainers, on iPhone
 and Apple Watch. Keep clients' goals, injuries, health screening, assessments and
 waivers in one place; build reusable workouts; schedule and record sessions set by
 set with a rest timer on your phone or wrist; and track each client's progress over

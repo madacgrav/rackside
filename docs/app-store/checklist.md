@@ -1,10 +1,10 @@
-# App Store submission checklist — TrainMe 1.0.0
+# App Store submission checklist — Rackside 1.0.0
 
 Steps only the owner can do. Work through them in order.
 
 ## Decisions
 
-- [ ] **Licence.** TrainMe is GPL v3. Apple's App Store terms add usage restrictions that are widely considered incompatible with GPL distribution, which matters most if other people contribute code. Choose one: keep GPL v3 and accept the risk (you own all the code), dual-license (GPL for the source, a separate licence for the App Store build), or relicense (e.g. MIT, or all rights reserved). Update `LICENSE`, the README and Settings › About to match.
+- [ ] **Licence.** Rackside is GPL v3. Apple's App Store terms add usage restrictions that are widely considered incompatible with GPL distribution, which matters most if other people contribute code. Choose one: keep GPL v3 and accept the risk (you own all the code), dual-license (GPL for the source, a separate licence for the App Store build), or relicense (e.g. MIT, or all rights reserved). Update `LICENSE`, the README and Settings › About to match.
 - [ ] **Copyright name.** Replace `2026 Adam (madacgrav)` in `metadata.md` with your legal or business name.
 
 ## Publish the website
@@ -18,7 +18,7 @@ Steps only the owner can do. Work through them in order.
 ## App Store Connect setup
 
 - [ ] **Agreements, Tax and Banking:** accept the **Paid Apps Agreement** and complete tax forms and bank details. A paid app can't go on sale until this is active (it can take a few days).
-- [ ] **Apps › + › New App:** platform iOS, name *TrainMe*, primary language English (U.S.), bundle ID `com.madacgrav.trainme`, SKU `trainme-ios`.
+- [ ] **Apps › + › New App:** platform iOS, name *Rackside*, primary language English (U.S.), bundle ID `com.madacgrav.trainme`, SKU `rackside-ios`.
 - [ ] **Pricing and Availability:** USD 0.99, all territories.
 - [ ] **App Information:** subtitle, categories (Health & Fitness / Business), age rating questionnaire, copyright — from `metadata.md`.
 - [ ] **App Privacy:** Data Not Collected. Privacy Policy URL from `metadata.md`.
@@ -26,7 +26,7 @@ Steps only the owner can do. Work through them in order.
 ## Build and upload
 
 - [ ] Confirm `project.yml` has the version you're releasing (`MARKETING_VERSION: "1.0.0"`) and a build number higher than any previous upload (`CURRENT_PROJECT_VERSION`).
-- [ ] `xcodegen generate`, open `TrainMe.xcodeproj`, choose **Any iOS Device**, then **Product › Archive** (Release).
+- [ ] `xcodegen generate`, open `Rackside.xcodeproj`, choose **Any iOS Device**, then **Product › Archive** (Release).
 - [ ] In the Organizer: **Validate App**, then **Distribute App › App Store Connect**.
 
 ## Version page
@@ -35,7 +35,7 @@ Steps only the owner can do. Work through them in order.
 - [ ] Screenshots: the six iPhone 6.9" images and the two Apple Watch images from `screenshots/`, in the order listed in `metadata.md`.
 - [ ] What's New — from `whats-new/1.0.0.md`.
 - [ ] Select the uploaded build. Export compliance: no non-exempt encryption (already declared in the build).
-- [ ] **App Review Information:** contact details, *Sign-in required* off, review notes from `metadata.md`, and attach `TrainMe Review Sample.json`.
+- [ ] **App Review Information:** contact details, *Sign-in required* off, review notes from `metadata.md`, and attach `Rackside Review Sample.json`.
 - [ ] **Submit for Review.**
 
 ## After approval

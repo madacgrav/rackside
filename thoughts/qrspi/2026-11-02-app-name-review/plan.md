@@ -254,17 +254,17 @@ Replace the product name "TrainMe" with "Rackside" in prose. Keep: historical Gi
 
 ### Verification
 #### Automated
-- [ ] `scripts/check-metadata-lengths.sh` passes
-- [ ] `scripts/check-docs-links.sh` passes
-- [ ] `scripts/check-guide-labels.sh` passes
-- [ ] Re-running `scripts/sync-changelog.sh` after the commit leaves `git status` clean for `docs/changelog.md`
-- [ ] Final sweep returns only the allowed exceptions:
+- [x] `scripts/check-metadata-lengths.sh` passes
+- [x] `scripts/check-docs-links.sh` passes
+- [x] `scripts/check-guide-labels.sh` passes
+- [x] Re-running `scripts/sync-changelog.sh` after the commit leaves `git status` clean for `docs/changelog.md`
+- [x] Final sweep returns only the allowed exceptions:
   ```bash
   grep -rnIi trainme --exclude-dir={build,thoughts,.git,Rackside.xcodeproj} . | grep -v -e 'com\.madacgrav\.trainme' -e TrainMeMigrationPlan -e 'github\.com/madacgrav/trainme/\(pull\|issues\|compare\|releases\)'
   ```
   Expected leftovers: `BACKLOG.md` historical row mentioning `Sources/TrainMe.entitlements`, `CHANGELOG.md`/`docs/changelog.md` released-version prose, and the new changelog line that names the old name. Anything else is a miss.
-- [ ] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` still passes
+- [x] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` still passes
 
 #### Manual
 - [ ] Skim `docs/index.md`, `docs/guide/index.md` and `metadata.md` description: reads naturally with "Rackside"
-- [ ] `ls docs/app-store/` shows `Rackside Review Sample.json`, no TrainMe file
+- [x] `ls docs/app-store/` shows `Rackside Review Sample.json`, no TrainMe file

@@ -3,15 +3,15 @@ title: User Guide
 permalink: /guide/
 ---
 
-# TrainMe User Guide
+# Rackside User Guide
 
-TrainMe keeps your clients, workouts and training sessions on your iPhone, with a rest timer on your Apple Watch. This guide walks through every part of the app.
+Rackside keeps your clients, workouts and training sessions on your iPhone, with a rest timer on your Apple Watch. This guide walks through every part of the app.
 
 ![The Schedule in week view](images/01-schedule-week.png){: width="300"}
 
-## TrainMe at a glance
+## Rackside at a glance
 
-TrainMe has five tabs along the bottom of the screen:
+Rackside has five tabs along the bottom of the screen:
 
 | Tab | What it's for |
 |---|---|

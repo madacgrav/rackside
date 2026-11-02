@@ -12,7 +12,7 @@ Open a client and tap `View progress`.
 
 Choose a `Window` at the top — 4 weeks, 12 weeks or all time.
 
-- **Consistency:** the share of sessions completed, with counts of cancelled sessions and no-shows. TrainMe also flags past sessions still marked as scheduled, so you can tidy them up.
+- **Consistency:** the share of sessions completed, with counts of cancelled sessions and no-shows. Rackside also flags past sessions still marked as scheduled, so you can tidy them up.
 - **Weekly volume:** total weight × reps per week.
 - **Sessions:** each completed session and its volume.
 - **Top exercises:** the client's most-trained exercises. Tap one for its detail.
