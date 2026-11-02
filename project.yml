@@ -32,9 +32,14 @@ targets:
     type: application
     platform: watchOS
     deploymentTarget: "26.0"
-    sources: [Watch, Shared]
+    sources:
+      - Watch
+      - Shared
+      - path: Sources/AppIcon.icon
+        buildPhase: resources
     settings:
       base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         DEVELOPMENT_TEAM: ZD9JLCY7TF
         CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: com.madacgrav.trainme.watchkitapp

@@ -476,10 +476,10 @@ Under [Unreleased], add nothing; this is not user-visible.
 - [x] `strings "$(find ~/Library/Developer/Xcode/DerivedData -path '*Release-iphonesimulator/TrainMe.app/TrainMe' | head -1)" | grep -c -E 'demoData|Jordan Lee'` prints `0`.
 
 #### Manual
-- [ ] `xcrun simctl boot "iPhone 18 Pro Max"`, then install the Debug app.
-- [ ] `xcrun simctl launch booted com.madacgrav.trainme -demoData -demoScreen report -hasSeenBackupNotice YES -lastExportAt 4102444800` opens a populated, unlocked report with no alerts.
-- [ ] Repeat for `session` (TimerBar counting down), `client`, `assessment`, `builder`, and `schedule` with `-scheduleMode week`.
-- [ ] A normal launch with no args still shows the lock screen and the real data store (unchanged).
+- [x] `xcrun simctl boot "iPhone 18 Pro Max"`, then install the Debug app.
+- [x] `xcrun simctl launch booted com.madacgrav.trainme -demoData -demoScreen report -hasSeenBackupNotice YES -lastExportAt 4102444800` opens a populated, unlocked report with no alerts.
+- [x] Repeat for `session` (TimerBar counting down), `client`, `assessment`, `builder`, and `schedule` with `-scheduleMode week`.
+- [x] A normal launch with no args still shows the lock screen and the real data store (unchanged).
 
 ---
 
@@ -551,9 +551,9 @@ Research found no `UserDefaults` or other required-reason API in `Watch/` or `Sh
 
 ### Verification
 #### Automated
-- [ ] WATCH passes. TEST passes.
-- [ ] `grep -rn UserDefaults Watch Shared` returns nothing, which confirms no manifest is needed.
-- [ ] The built watch app contains `Assets.car` with an AppIcon entry.
+- [x] WATCH passes. TEST passes.
+- [x] `grep -rn UserDefaults Watch Shared` returns nothing, which confirms no manifest is needed.
+- [x] The built watch app contains `Assets.car` with an AppIcon entry.
 
 #### Manual
 - [ ] Install on `Apple Watch Ultra 4 (49mm)`, then `xcrun simctl launch <watch-udid> com.madacgrav.trainme.watchkitapp -demoData -demoWatch running`. The Rest ring counts down from about 1:02.
