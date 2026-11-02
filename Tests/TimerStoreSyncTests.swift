@@ -5,6 +5,10 @@ import Testing
 actor FakeWatchSync: WatchSyncing {
     private(set) var sent: [TimerSnapshot] = []
     private(set) var activated = false
+    nonisolated let commands: AsyncStream<TimerCommand>
+    nonisolated let continuation: AsyncStream<TimerCommand>.Continuation
+
+    init() { (commands, continuation) = AsyncStream.makeStream() }
 
     func activate() async { activated = true }
     func send(_ snapshot: TimerSnapshot) async { sent.append(snapshot) }

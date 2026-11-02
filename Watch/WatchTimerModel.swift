@@ -21,4 +21,40 @@ final class WatchTimerModel {
         if let current = snapshot, current.sentAt > snap.sentAt { return }
         snapshot = snap
     }
+
+    func startRest(seconds: Int) { adopt(TimerMath.make(kind: .rest, seconds: seconds, now: .now)) }
+
+    func startUpNext() {
+        guard let next = snapshot?.upNext else { return }
+        adopt(TimerMath.make(kind: .timedSet(plannedEntryId: next.plannedEntryId, instanceId: next.instanceId),
+                             seconds: next.seconds, now: .now))
+    }
+
+    func extend() {
+        guard let timer = snapshot?.timer else { return }
+        adopt(TimerMath.extended(timer, by: TimerMath.extendStep, now: .now))
+    }
+
+    func skip() {
+        guard let timer = snapshot?.timer else { return }
+        updateLocal(timer: nil)
+        link.send(.skip(timerId: timer.id))
+    }
+
+    // MARK: - Private
+
+    /// Shows the timer right away; the phone's next snapshot confirms or corrects it.
+    private func adopt(_ timer: ActiveTimer) {
+        guard TimerMath.canReplace(snapshot?.timer, with: timer, now: .now) else { return }
+        updateLocal(timer: timer)
+        link.send(.adopt(timer))
+    }
+
+    private func updateLocal(timer: ActiveTimer?) {
+        var snap = snapshot ?? TimerSnapshot(timer: nil, upNext: nil, defaultRest: TimerMath.defaultRest,
+                                             quickPicks: TimerMath.quickPicks, sentAt: .now)
+        snap.timer = timer
+        snap.sentAt = .now
+        snapshot = snap
+    }
 }

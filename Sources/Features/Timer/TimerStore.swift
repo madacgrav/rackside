@@ -93,6 +93,28 @@ final class TimerStore {
         }
     }
 
+    func setUpNext(_ next: UpNext?) {
+        guard next != upNext else { return }
+        upNext = next
+        pushSnapshot()
+    }
+
+    /// Applies a watch command. Rejected or stale commands still push a
+    /// snapshot so the watch converges on the phone's state.
+    func apply(_ command: TimerCommand) {
+        switch command {
+        case .adopt(let timer):
+            if TimerMath.isComplete(timer, now: now()) || !start(timer) { pushSnapshot() }
+        case .skip(let id):
+            if active?.id == id { skip() } else { pushSnapshot() }
+        }
+    }
+
+    /// Consumes watch commands for the life of the app.
+    func listen() async {
+        for await command in sync.commands { apply(command) }
+    }
+
     /// Activates WatchConnectivity and sends the current state to the watch.
     func activateSync() async {
         await sync.activate()

@@ -135,6 +135,8 @@ struct SessionRunView: View {
         .onChange(of: viewModel.lastLoggedSetId) { _, id in
             if id != nil { timers.startRest(seconds: defaultRestSeconds) }
         }
+        .onChange(of: viewModel.upNext, initial: true) { _, next in timers.setUpNext(next) }
+        .onDisappear { timers.setUpNext(nil) }
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {

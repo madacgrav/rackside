@@ -1,7 +1,8 @@
 import Foundation
 import WatchConnectivity
 
-/// Watch side of WatchConnectivity: decodes timer snapshots from the phone.
+/// Watch side of WatchConnectivity: decodes timer snapshots from the phone and
+/// sends timer commands back.
 /// `WCSession` is documented thread-safe; `onSnapshot` is set once before `activate()`.
 final class PhoneLink: NSObject, WCSessionDelegate, @unchecked Sendable {
     var onSnapshot: (@Sendable (TimerSnapshot) -> Void)?
@@ -10,6 +11,17 @@ final class PhoneLink: NSObject, WCSessionDelegate, @unchecked Sendable {
         guard WCSession.isSupported() else { return }
         WCSession.default.delegate = self
         WCSession.default.activate()
+    }
+
+    /// Live when the phone app is reachable, otherwise queued until it is.
+    func send(_ command: TimerCommand) {
+        guard let payload = try? SyncCodec.encode(command, kind: "command") else { return }
+        let session = WCSession.default
+        if session.isReachable {
+            session.sendMessage(payload, replyHandler: nil) { _ in session.transferUserInfo(payload) }
+        } else {
+            session.transferUserInfo(payload)
+        }
     }
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {

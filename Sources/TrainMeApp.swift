@@ -83,7 +83,10 @@ struct TrainMeApp: App {
                     )
                 }
             }
-            .task { await timers.activateSync() }
+            .task {
+                await timers.activateSync()
+                await timers.listen()
+            }
             .onChange(of: scenePhase) { _, phase in
                 // Not .inactive: Face ID drops the app to .inactive (LockGateView.swift:3-4).
                 if phase == .active { timers.refresh() }

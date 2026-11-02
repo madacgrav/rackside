@@ -4,17 +4,26 @@ import WatchConnectivity
 protocol WatchSyncing: Sendable {
     func activate() async
     func send(_ snapshot: TimerSnapshot) async
+    var commands: AsyncStream<TimerCommand> { get }
 }
 
 struct NoopWatchSync: WatchSyncing {
     func activate() async {}
     func send(_ snapshot: TimerSnapshot) async {}
+    var commands: AsyncStream<TimerCommand> { AsyncStream { $0.finish() } }
 }
 
 /// Pushes timer snapshots to the companion watch app. `WCSession` is documented
 /// thread-safe; this class holds no mutable state of its own.
 final class WCSessionWatchSync: NSObject, WatchSyncing, WCSessionDelegate, @unchecked Sendable {
     private let session: WCSession? = WCSession.isSupported() ? .default : nil
+    let commands: AsyncStream<TimerCommand>
+    private let continuation: AsyncStream<TimerCommand>.Continuation
+
+    override init() {
+        (commands, continuation) = AsyncStream.makeStream()
+        super.init()
+    }
 
     func activate() async {
         session?.delegate = self
@@ -38,6 +47,20 @@ final class WCSessionWatchSync: NSObject, WatchSyncing, WCSessionDelegate, @unch
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {
         if let error { Log.sync.error("activation failed: \(error.localizedDescription)") }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        receive(message)
+    }
+
+    /// Queued commands sent while the phone app was not reachable.
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
+        receive(userInfo)
+    }
+
+    private nonisolated func receive(_ payload: [String: Any]) {
+        guard let command = SyncCodec.decode(TimerCommand.self, from: payload, kind: "command") else { return }
+        continuation.yield(command)
     }
 
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
