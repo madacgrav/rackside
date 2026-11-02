@@ -8,6 +8,8 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
 targets:
   TrainMe:
     type: application
@@ -23,6 +25,7 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_ENTITLEMENTS: Sources/TrainMe.entitlements
+        TARGETED_DEVICE_FAMILY: "1"
     dependencies:
       - target: TrainMeWatch
   TrainMeWatch:
@@ -39,8 +42,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: TrainMe
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.madacgrav.trainme
         INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp: NO
-        MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
   TrainMeTests:
     type: bundle.unit-test
     platform: iOS

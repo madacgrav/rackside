@@ -48,7 +48,6 @@ is on branch `2026-11-01-nasm-movement-assessment`; see the [Done](#done) table 
 | 16 | Reorder workout entries via edit mode | PRD §5.3 P1 | `.onMove` is wired but no `EditButton` exists | [#18](https://github.com/madacgrav/trainme/issues/18) |
 | 17 | Session notes on Schedule and client-detail rows | PRD §5.5 | Notes visible only inside the run screen | [#19](https://github.com/madacgrav/trainme/issues/19) |
 | 33 | Snapshot tests for themed screens (swift-snapshot-testing, CI baseline) | UI refresh verification | Previews + manual screenshots only; see `thoughts/qrspi/2026-10-26-ui-refresh-and-icon/screenshots/` | — |
-| 34 | Quick timers for exercises: rest countdown between sets, countdown for timed sets that prefills duration | PRD §4.1 / §5.5 (requested 2026-10-29) | `SetTableView` has only a numeric duration stepper (15 s steps); no timer code | [#38](https://github.com/madacgrav/trainme/issues/38) |
 | 36 | NASM assessment form page 2 | Intake follow-up | Only page 1 of the form (`nasm-assessment-form-p1.jpeg`) was provided; blocked on the page | — |
 | 37 | Charts of assessment measurements over time | Intake follow-up | Assessments only diff against the previous one | — |
 | 38 | In-app e-signature for the waiver | Intake follow-up | Waiver is send-and-mark; the signed copy lives outside the app | — |
@@ -117,3 +116,9 @@ Client intake, on branch `2026-11-01-nasm-movement-assessment` (one commit per p
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|
 | 35 | Client intake from the NASM assessment form | `SchemaV3` (V2 frozen as nested copies, real on-disk V2→V3 migration test) and archive v2 (V1 decode + `migrate`, golden `export-v2.json`). Client profile fields; dated `HealthScreening` with clearance flag shown on detail and in sessions; dated `Assessment` (measurements, Overhead/Single Leg Squat option sets, diff vs previous); versioned `WaiverTemplate` + `WaiverRecord` snapshots, paginated PDF shared via a completion-reporting share sheet; guided `IntakeFlowView` | — |
+
+Addressed in [#42](https://github.com/madacgrav/trainme/pull/42) (one commit per phase).
+
+| # | Item | Resolution | Issue |
+|---|------|------------|-------|
+| 34 | Quick timers for exercises | Rest countdown after logging a set (`TimerStore`, `TimerBar`), timed-set countdown that prefills duration, timers survive background/lock/relaunch, Apple Watch app mirrors and controls the timer with a wrist cue at zero | [#38](https://github.com/madacgrav/trainme/issues/38) |
