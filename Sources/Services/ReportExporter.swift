@@ -74,7 +74,7 @@ struct ExerciseReportPage: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("TrainMe Progress Report").font(.title.bold())
+            Text("Rackside Progress Report").font(.title.bold())
             Text(clientName).font(.title2)
             Text(exerciseName).font(.headline).foregroundStyle(.secondary)
             if let pb = personalBest, let weight = pb.weight {
@@ -112,7 +112,7 @@ struct ClientOverviewPage: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("TrainMe Progress Report").font(.title.bold())
+            Text("Rackside Progress Report").font(.title.bold())
             Text(clientName).font(.title2)
             Text(window.title).font(.headline).foregroundStyle(.secondary)
             if let c = consistency, let rate = c.rate {

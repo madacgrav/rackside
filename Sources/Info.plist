@@ -19,15 +19,15 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundleDisplayName</key>
-	<string>TrainMe</string>
+	<string>Rackside</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>TrainMe adds your training sessions to your calendar and removes them when cancelled.</string>
+	<string>Rackside adds your training sessions to your calendar and removes them when cancelled.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>TrainMe locks your client data behind Face ID.</string>
+	<string>Rackside locks your client data behind Face ID.</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.healthcare-fitness</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

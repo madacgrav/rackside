@@ -213,11 +213,11 @@ struct SettingsView: View {
             }
             statusMessage = "Import complete."
         } catch ArchiveError.newerThanApp {
-            statusMessage = "This file was exported by a newer version of TrainMe. Update the app first."
+            statusMessage = "This file was exported by a newer version of Rackside. Update the app first."
         } catch ArchiveError.unreadable {
             statusMessage = "Import failed: the file couldn't be read."
         } catch ArchiveError.decodeFailed {
-            statusMessage = "Import failed: the file isn't a valid TrainMe export."
+            statusMessage = "Import failed: the file isn't a valid Rackside export."
         } catch let outcome as ImportOutcome {
             switch outcome {
             case .failedAndRestored:

@@ -44,7 +44,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: com.madacgrav.trainme.watchkitapp
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: TrainMe
+        INFOPLIST_KEY_CFBundleDisplayName: Rackside
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.madacgrav.trainme
         INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp: NO
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO

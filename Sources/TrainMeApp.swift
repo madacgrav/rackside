@@ -115,7 +115,7 @@ struct RecoveryView: View {
     var body: some View {
         HeroScreen(
             systemImage: "exclamationmark.triangle.fill",
-            title: "TrainMe couldn't open its data store",
+            title: "Rackside couldn't open its data store",
             message: message,
             tint: Theme.Colors.warning,
             primary: ("Restore last backup", onRestoreBackup)
