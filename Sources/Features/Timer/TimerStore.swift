@@ -11,20 +11,45 @@ enum TimerSettings {
 @MainActor
 @Observable
 final class TimerStore {
+    static let storageKey = "activeTimer"
+
     private(set) var active: ActiveTimer?
     /// Bumps on every natural completion; drives `.sensoryFeedback`.
     private(set) var completionTick = 0
 
+    @ObservationIgnored private let defaults: UserDefaults
+    @ObservationIgnored private let notifier: any TimerNotifying
     @ObservationIgnored private let now: @Sendable () -> Date
     @ObservationIgnored private let autoComplete: Bool
     @ObservationIgnored private var watcher: Task<Void, Never>?
+    /// Serialises async side effects so cancel/schedule never interleave.
+    @ObservationIgnored private var outbox: Task<Void, Never>?
 
-    init(autoComplete: Bool = true, now: @escaping @Sendable () -> Date = { Date() }) {
+    init(
+        defaults: UserDefaults = .standard,
+        notifier: any TimerNotifying = LocalTimerNotifier(),
+        autoComplete: Bool = true,
+        now: @escaping @Sendable () -> Date = { Date() }
+    ) {
+        self.defaults = defaults
+        self.notifier = notifier
         self.autoComplete = autoComplete
         self.now = now
+        // A timer that finished while the app was dead is dropped silently; its
+        // notification has already fired. A running one keeps its pending notification.
+        if let data = defaults.data(forKey: Self.storageKey),
+           let saved = try? JSONDecoder().decode(ActiveTimer.self, from: data),
+           !TimerMath.isComplete(saved, now: now()) {
+            active = saved
+            armWatcher()
+        } else {
+            defaults.removeObject(forKey: Self.storageKey)
+        }
     }
 
-    static var preview: TimerStore { TimerStore(autoComplete: false) }
+    static var preview: TimerStore {
+        TimerStore(defaults: UserDefaults(suiteName: "TimerPreview")!, notifier: NoopTimerNotifier(), autoComplete: false)
+    }
 
     func startRest(seconds: Int) {
         start(TimerMath.make(kind: .rest, seconds: seconds, now: now()))
@@ -37,11 +62,20 @@ final class TimerStore {
 
     func skip() { set(nil) }
 
-    /// Completes the timer if its end has passed. Called by the watcher and on `.active`.
+    /// Completes the timer if its end has passed, otherwise re-arms the watcher
+    /// (its sleep may have been suspended in the background). Called by the
+    /// watcher and on `.active`.
     func refresh() {
-        guard let active, TimerMath.isComplete(active, now: now()) else { return }
-        complete(active)
+        guard let active else { return }
+        if TimerMath.isComplete(active, now: now()) {
+            complete(active)
+        } else {
+            armWatcher()
+        }
     }
+
+    /// Test hook: waits for queued side effects.
+    func flush() async { await outbox?.value }
 
     // MARK: - Private
 
@@ -61,7 +95,28 @@ final class TimerStore {
     /// Single mutation point for the running timer.
     private func set(_ timer: ActiveTimer?) {
         active = timer
+        persist()
         armWatcher()
+        enqueue { [notifier] in
+            await notifier.cancelAll()
+            if let timer { await notifier.schedule(timer) }
+        }
+    }
+
+    private func enqueue(_ work: @escaping @Sendable () async -> Void) {
+        let previous = outbox
+        outbox = Task {
+            await previous?.value
+            await work()
+        }
+    }
+
+    private func persist() {
+        if let active, let data = try? JSONEncoder().encode(active) {
+            defaults.set(data, forKey: Self.storageKey)
+        } else {
+            defaults.removeObject(forKey: Self.storageKey)
+        }
     }
 
     private func armWatcher() {
