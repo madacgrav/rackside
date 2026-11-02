@@ -62,7 +62,7 @@ final class AppBootstrap {
 @main
 struct TrainMeApp: App {
     @State private var bootstrap = AppBootstrap()
-    @State private var timers = TimerStore()
+    @State private var timers = TimerStore(sync: WCSessionWatchSync())
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -83,6 +83,7 @@ struct TrainMeApp: App {
                     )
                 }
             }
+            .task { await timers.activateSync() }
             .onChange(of: scenePhase) { _, phase in
                 // Not .inactive: Face ID drops the app to .inactive (LockGateView.swift:3-4).
                 if phase == .active { timers.refresh() }

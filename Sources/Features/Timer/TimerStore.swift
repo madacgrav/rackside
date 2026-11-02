@@ -24,9 +24,12 @@ final class TimerStore {
     private(set) var completionTick = 0
     /// Set on natural completion only (skip never sets it).
     private(set) var lastCompletion: TimerCompletion?
+    /// The next timed set the run screen offers to the watch.
+    private(set) var upNext: UpNext?
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let notifier: any TimerNotifying
+    @ObservationIgnored private let sync: any WatchSyncing
     @ObservationIgnored private let now: @Sendable () -> Date
     @ObservationIgnored private let autoComplete: Bool
     @ObservationIgnored private var watcher: Task<Void, Never>?
@@ -36,11 +39,13 @@ final class TimerStore {
     init(
         defaults: UserDefaults = .standard,
         notifier: any TimerNotifying = LocalTimerNotifier(),
+        sync: any WatchSyncing = NoopWatchSync(),
         autoComplete: Bool = true,
         now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.defaults = defaults
         self.notifier = notifier
+        self.sync = sync
         self.autoComplete = autoComplete
         self.now = now
         // A timer that finished while the app was dead is dropped silently; its
@@ -88,6 +93,17 @@ final class TimerStore {
         }
     }
 
+    /// Activates WatchConnectivity and sends the current state to the watch.
+    func activateSync() async {
+        await sync.activate()
+        pushSnapshot()
+    }
+
+    func snapshot() -> TimerSnapshot {
+        TimerSnapshot(timer: active, upNext: upNext, defaultRest: defaultRest,
+                      quickPicks: TimerMath.quickPicks, sentAt: now())
+    }
+
     /// Test hook: waits for queued side effects.
     func flush() async { await outbox?.value }
 
@@ -116,6 +132,17 @@ final class TimerStore {
             await notifier.cancelAll()
             if let timer { await notifier.schedule(timer) }
         }
+        pushSnapshot()
+    }
+
+    private var defaultRest: Int {
+        let seconds = defaults.integer(forKey: TimerSettings.defaultRestKey)
+        return seconds > 0 ? seconds : TimerMath.defaultRest
+    }
+
+    private func pushSnapshot() {
+        let snap = snapshot()
+        enqueue { [sync] in await sync.send(snap) }
     }
 
     private func enqueue(_ work: @escaping @Sendable () async -> Void) {
