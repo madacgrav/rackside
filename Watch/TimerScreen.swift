@@ -30,6 +30,7 @@ struct TimerScreen: View {
                     .font(.title3.monospacedDigit())
             }
             .progressViewStyle(.circular)
+            .tint(WatchTheme.ring)
             HStack {
                 Button("+\(TimerMath.extendStep) s") { model.extend() }
                 Button("Skip", role: .destructive) { model.skip() }

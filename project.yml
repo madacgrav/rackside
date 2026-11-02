@@ -37,9 +37,12 @@ targets:
       - Shared
       - path: Sources/AppIcon.icon
         buildPhase: resources
+      - path: Sources/Assets.xcassets
+        buildPhase: resources
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         DEVELOPMENT_TEAM: ZD9JLCY7TF
         CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: com.madacgrav.trainme.watchkitapp

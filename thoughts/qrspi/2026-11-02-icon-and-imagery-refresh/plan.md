@@ -755,15 +755,15 @@ enum WatchTheme {
 
 ### Verification
 #### Automated
-- [ ] `xcodegen generate && xcodebuild -scheme TrainMeWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build 2>&1 | grep -E "error|warning: .*(asset|actool|AccentColor)" | head` prints nothing.
-- [ ] The test command passes.
-- [ ] Run `scripts/screenshots.sh --only w1-timer-running`, then `scripts/screenshots.sh --only w2-quick-start`. Each run prints "All screenshots OK."
+- [x] `xcodegen generate && xcodebuild -scheme TrainMeWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build 2>&1 | grep -E "error|warning: .*(asset|actool|AccentColor)" | head` prints nothing.
+- [x] The test command passes.
+- [x] Run `scripts/screenshots.sh --only w1-timer-running`, then `scripts/screenshots.sh --only w2-quick-start`. Each run prints "All screenshots OK."
 
 #### Manual
-- [ ] Open `docs/app-store/screenshots/w1-timer-running.png`. The ring is coral.
-- [ ] Open `w2-quick-start.png`. The up-next button is violet and the rest buttons are orange.
-- [ ] On the watch simulator, press the crown to reach the home screen and capture `p6-watch-icon.png` with `xcrun simctl io <watch-udid> screenshot`. The kettlebell is centered and not clipped by the circle.
-- [ ] Fallback if the shared catalog makes actool fail for watchOS: create `Watch/Assets.xcassets/` with copies of `AccentColor`, `BrandPrimary`, and `FillViolet` only, point the `project.yml` entry at it, and rebuild.
+- [x] Open `docs/app-store/screenshots/w1-timer-running.png`. The ring is coral. *(Rose, since BrandPrimary took the Phase 1 fallback.)*
+- [x] Open `w2-quick-start.png`. The up-next button is violet and the rest buttons are orange.
+- [x] (Not captured: `simctl`'s HOME press only returns the watch simulator to its face, and the app grid needs the Simulator app driven on screen. Verified by geometry instead: every kettlebell point lies within 0.73 of the circle radius; only the spark's outer two tips, at 1.08 radius, are trimmed by the circle.) On the watch simulator, press the crown to reach the home screen and capture `p6-watch-icon.png` with `xcrun simctl io <watch-udid> screenshot`. The kettlebell is centered and not clipped by the circle.
+- [x] (Not needed) Fallback if the shared catalog makes actool fail for watchOS: create `Watch/Assets.xcassets/` with copies of `AccentColor`, `BrandPrimary`, and `FillViolet` only, point the `project.yml` entry at it, and rebuild.
 
 ---
 
