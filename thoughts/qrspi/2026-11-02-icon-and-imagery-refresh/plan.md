@@ -762,7 +762,7 @@ enum WatchTheme {
 #### Manual
 - [x] Open `docs/app-store/screenshots/w1-timer-running.png`. The ring is coral. *(Rose, since BrandPrimary took the Phase 1 fallback.)*
 - [x] Open `w2-quick-start.png`. The up-next button is violet and the rest buttons are orange.
-- [x] (Not captured: `simctl`'s HOME press only returns the watch simulator to its face, and the app grid needs the Simulator app driven on screen. Verified by geometry instead: every kettlebell point lies within 0.73 of the circle radius; only the spark's outer two tips, at 1.08 radius, are trimmed by the circle.) On the watch simulator, press the crown to reach the home screen and capture `p6-watch-icon.png` with `xcrun simctl io <watch-udid> screenshot`. The kettlebell is centered and not clipped by the circle.
+- [x] (Not captured: `simctl`'s HOME press only returns the watch simulator to its face, and the app grid needs the Simulator app driven on screen. Verified by geometry instead: every kettlebell point lies within 0.73 of the circle radius; the spark's farthest tips reach 0.95 of the radius, so nothing is trimmed by the circle.) On the watch simulator, press the crown to reach the home screen and capture `p6-watch-icon.png` with `xcrun simctl io <watch-udid> screenshot`. The kettlebell is centered and not clipped by the circle.
 - [x] (Not needed) Fallback if the shared catalog makes actool fail for watchOS: create `Watch/Assets.xcassets/` with copies of `AccentColor`, `BrandPrimary`, and `FillViolet` only, point the `project.yml` entry at it, and rebuild.
 
 ---
@@ -803,13 +803,13 @@ Then run `scripts/sync-changelog.sh`.
 
 ### Verification
 #### Automated
-- [ ] `scripts/screenshots.sh` ends with "All screenshots OK."
-- [ ] `scripts/check-docs-links.sh` passes.
-- [ ] `sips -g pixelWidth -g pixelHeight docs/images/icon.png` reports 196 × 196.
-- [ ] `git diff --stat docs/changelog.md` shows the new lines.
-- [ ] The test command passes, as a final full run.
+- [x] `scripts/screenshots.sh` ends with "All screenshots OK."
+- [x] `scripts/check-docs-links.sh` passes.
+- [x] `sips -g pixelWidth -g pixelHeight docs/images/icon.png` reports 196 × 196.
+- [x] `git diff --stat docs/changelog.md` shows the new lines.
+- [x] The test command passes, as a final full run.
 
 #### Manual
-- [ ] Review the six iPhone store shots against the captions in `docs/app-store/metadata.md:137-149`. Each shot still shows what its caption claims.
-- [ ] Open `docs/index.md` in a Markdown preview and check that the new icon shows.
-- [ ] Skim `docs/guide/images/settings.png` and `clients.png`. Badges and avatars are visible.
+- [x] Review the six iPhone store shots against the captions in `docs/app-store/metadata.md:137-149`. Each shot still shows what its caption claims.
+- [x] Open `docs/index.md` in a Markdown preview and check that the new icon shows. *(Checked the regenerated `docs/images/icon.png` directly; actool's largest PNG is 152px, upscaled to 196px, displayed at 96px.)*
+- [x] Skim `docs/guide/images/settings.png` and `clients.png`. Badges and avatars are visible.
