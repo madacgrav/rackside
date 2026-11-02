@@ -71,7 +71,7 @@ final class AppBootstrap {
 }
 
 @main
-struct TrainMeApp: App {
+struct RacksideApp: App {
     @State private var bootstrap = AppBootstrap()
     @State private var timers = TimerStore(sync: WCSessionWatchSync())
     @Environment(\.scenePhase) private var scenePhase

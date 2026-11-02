@@ -144,11 +144,11 @@ xcodegen generate   # creates Rackside.xcodeproj (gitignored)
 
 ### Verification
 #### Automated
-- [ ] `ls Rackside.xcodeproj` exists; `ls TrainMe.xcodeproj` fails
-- [ ] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` passes
-- [ ] `xcodebuild -scheme RacksideWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build` succeeds
-- [ ] `grep -n 'com.madacgrav.trainme' project.yml` still shows lines 22, 45, 48
-- [ ] `grep -rn 'TrainMe' Sources Watch Tests .github scripts project.yml` returns only `TrainMeMigrationPlan` refs and the `Log.swift` subsystem
+- [x] `ls Rackside.xcodeproj` exists; `ls TrainMe.xcodeproj` fails
+- [x] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` passes
+- [x] `xcodebuild -scheme RacksideWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build` succeeds
+- [x] `grep -n 'com.madacgrav.trainme' project.yml` still shows lines 22, 45, 48
+- [x] `grep -rn 'TrainMe' Sources Watch Tests .github scripts project.yml` returns only `TrainMeMigrationPlan` refs and the `Log.swift` subsystem
 
 #### Manual (owner's iPhone "madphone", UDID `00008140-001E31AE21DB001C`)
 - [ ] Build and install over the existing app:

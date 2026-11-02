@@ -1,6 +1,6 @@
 import EventKit
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func calendarErrorIsEquatable() {
     #expect(CalendarError.noWritableCalendar == .noWritableCalendar)

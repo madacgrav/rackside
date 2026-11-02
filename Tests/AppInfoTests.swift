@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func versionWithBuild() {
     #expect(AppInfo.versionString(["CFBundleShortVersionString": "1.0.0", "CFBundleVersion": "7"]) == "1.0.0 (7)")

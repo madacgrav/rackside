@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int = 7) -> Date {
     Calendar.current.date(from: DateComponents(year: year, month: month, day: day, hour: hour))!

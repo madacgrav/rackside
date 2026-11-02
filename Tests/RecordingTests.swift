@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private struct Env {
     let sessions: SwiftDataSessionRepository

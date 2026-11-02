@@ -1,6 +1,6 @@
 import Testing
 import UserNotifications
-@testable import TrainMe
+@testable import Rackside
 
 @Test func onlyAuthorizedOrProvisionalCanSchedule() {
     #expect(canScheduleAlerts(.authorized))

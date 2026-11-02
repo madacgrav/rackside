@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 /// Delegates to a real actor but fails importArchive(url:) on demand.
 actor FlakyArchive: DataArchiving {

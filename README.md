@@ -20,23 +20,23 @@ For developers: product requirements in [PRD.md](PRD.md); roadmap and known gaps
 
 The Xcode project file is **generated, not committed**. The project is defined by
 [`project.yml`](project.yml); [XcodeGen](https://github.com/yonaskolb/XcodeGen)
-turns it into `TrainMe.xcodeproj`.
+turns it into `Rackside.xcodeproj`.
 
 After a fresh clone — or whenever files are added/removed outside Xcode — run:
 
 ```bash
 brew install xcodegen   # first time only
 xcodegen generate
-open TrainMe.xcodeproj
+open Rackside.xcodeproj
 ```
 
-Then select the **TrainMe** scheme, pick an iPhone simulator, and ⌘R.
+Then select the **Rackside** scheme, pick an iPhone simulator, and ⌘R.
 
 ### Command-line build & test
 
 ```bash
 xcodegen generate
-xcodebuild -scheme TrainMe -destination 'platform=iOS Simulator,name=iPhone 17' test
+xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test
 ```
 
 If `xcodebuild` complains that it "requires Xcode" even though Xcode is installed,

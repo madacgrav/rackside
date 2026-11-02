@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func session(hoursFromNow: Double, name: String = "Sam") -> (id: UUID, startAt: Date, clientName: String) {
     (UUID(), Date.now.addingTimeInterval(hoursFromNow * 3600), name)

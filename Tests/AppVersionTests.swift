@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 /// The app's Info.plist must resolve the version build settings, not keep literals.
 @Test func bundleVersionIsSemanticAndResolved() {

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test(arguments: [false, true], [false, true])
 func phoneOwnsCueUnlessWatchCertain(installed: Bool, paired: Bool) {

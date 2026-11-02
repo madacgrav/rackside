@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 import UserNotifications
-@testable import TrainMe
+@testable import Rackside
 
 actor FakeNotifications: NotificationScheduling {
     private(set) var rescheduleCalls: [[UUID]] = []

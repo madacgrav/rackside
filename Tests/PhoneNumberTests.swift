@@ -1,5 +1,5 @@
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func normalizesTenDigitUSNumbers() {
     #expect(normalizeE164("555-123-4567") == "+15551234567")

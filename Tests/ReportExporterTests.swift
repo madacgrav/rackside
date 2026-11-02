@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 import UIKit
-@testable import TrainMe
+@testable import Rackside
 
 private func samplePoints() -> [ProgressPoint] {
     [ProgressPoint(date: .now.addingTimeInterval(-86_400 * 7), topSetWeight: 185, est1RM: 215, totalReps: 10),
