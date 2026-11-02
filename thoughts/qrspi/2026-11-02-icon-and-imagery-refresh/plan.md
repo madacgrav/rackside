@@ -336,17 +336,17 @@ The first layer in the array draws on top. This matches the existing order, wher
 
 ### Verification
 #### Automated
-- [ ] `mkdir -p /tmp/p2-out && xcrun actool --compile /tmp/p2-out --platform iphonesimulator --minimum-deployment-target 26.0 --app-icon AppIcon --output-partial-info-plist /tmp/p2-out/p.plist Sources/AppIcon.icon Sources/Assets.xcassets 2>&1 | grep -ci error` prints `0`.
-- [ ] `grep -c "dumbbell.svg\|line.svg" Sources/AppIcon.icon/icon.json` prints `0`.
-- [ ] The test command passes.
+- [x] `mkdir -p /tmp/p2-out && xcrun actool --compile /tmp/p2-out --platform iphonesimulator --minimum-deployment-target 26.0 --app-icon AppIcon --output-partial-info-plist /tmp/p2-out/p.plist Sources/AppIcon.icon Sources/Assets.xcassets 2>&1 | grep -ci error` prints `0`.
+- [x] `grep -c "dumbbell.svg\|line.svg" Sources/AppIcon.icon/icon.json` prints `0`.
+- [x] The test command passes.
 
 #### Manual
-- [ ] Install, press Home, long-press, choose Edit, then Customize.
-- [ ] Capture `p2-icon-default.png`, `p2-icon-dark.png`, `p2-icon-tinted.png`, and `p2-icon-clear.png`.
-- [ ] The kettlebell (handle window, body, base) is clearly readable at home-screen size in all four.
-- [ ] The default is visibly brighter than the neighboring system icons, and the spark is visible.
-- [ ] Fallback if the glass renders muddy: set `"glass": false` on `kettlebell`, re-run actool, and re-capture.
-- [ ] Fallback if actool rejects the file twice: restore `icon.json` from git and swap only the SVG contents, reusing the old layer names and file names.
+- [x] Install, press Home, long-press, choose Edit, then Customize.
+- [x] Capture `p2-icon-default.png`, `p2-icon-dark.png`, `p2-icon-tinted.png`, and `p2-icon-clear.png`.
+- [x] The kettlebell (handle window, body, base) is clearly readable at home-screen size in all four.
+- [x] The default is visibly brighter than the neighboring system icons, and the spark is visible.
+- [x] (Not needed) Fallback if the glass renders muddy: set `"glass": false` on `kettlebell`, re-run actool, and re-capture.
+- [x] (Not needed) Fallback if actool rejects the file twice: restore `icon.json` from git and swap only the SVG contents, reusing the old layer names and file names.
 
 ---
 
