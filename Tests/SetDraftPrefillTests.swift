@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func draft(_ metrics: MetricSet, weight: Double? = nil, reps: Int? = nil, duration: Int? = nil) -> SetDraft {
     let entry = PlannedEntryDTO(id: UUID(), exerciseId: UUID(), order: 0, targetSets: 3,

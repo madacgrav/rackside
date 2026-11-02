@@ -1,5 +1,5 @@
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private struct Boom: Error {}
 

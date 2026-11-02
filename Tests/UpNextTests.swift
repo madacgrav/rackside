@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func exercise(_ name: String, _ metrics: MetricSet) -> ExerciseDTO {
     ExerciseDTO(id: UUID(), name: name, category: .bodyweight, metrics: metrics, defaultUnit: .sec,

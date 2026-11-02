@@ -12,10 +12,10 @@ enum AppInfo {
 
 /// Public pages on the GitHub Pages docs site (docs/).
 enum AppLinks {
-    private static let base = URL(string: "https://madacgrav.github.io/trainme/")!
+    private static let base = URL(string: "https://madacgrav.github.io/rackside/")!
     static let guide = base.appending(path: "guide/")
     static let privacy = base.appending(path: "privacy/")
     static let support = base.appending(path: "support/")
     static let changelog = base.appending(path: "changelog/")
-    static let license = URL(string: "https://github.com/madacgrav/trainme/blob/main/LICENSE")!
+    static let license = URL(string: "https://github.com/madacgrav/rackside/blob/main/LICENSE")!
 }

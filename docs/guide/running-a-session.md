@@ -32,7 +32,7 @@ Logging a set starts a rest countdown at the bottom of the screen (the length is
 - tap `Skip` to end it,
 - tap `Change` (the timer icon) to pick a different length.
 
-When no timer is running, tap `Rest` to start one manually. TrainMe alerts you when time is up, even if your phone is locked. The timer also appears on your [Apple Watch](apple-watch.md).
+When no timer is running, tap `Rest` to start one manually. Rackside alerts you when time is up, even if your phone is locked. The timer also appears on your [Apple Watch](apple-watch.md).
 
 ## Timed sets
 

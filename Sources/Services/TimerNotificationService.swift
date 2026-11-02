@@ -13,7 +13,7 @@ func timerNotificationIdentifiers(from pending: [String]) -> [String] {
 func timerNotificationText(for kind: TimerKind) -> (title: String, body: String) {
     switch kind {
     case .rest: ("Rest over", "Time for the next set.")
-    case .timedSet: ("Timed set done", "Log the set in TrainMe.")
+    case .timedSet: ("Timed set done", "Log the set in Rackside.")
     }
 }
 

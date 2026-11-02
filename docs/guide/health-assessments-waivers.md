@@ -14,7 +14,7 @@ From a client's page, tap `New screening` (or `Latest screening` to review the m
 
 **Any YES answer means medical clearance is recommended before training.** The client's page and every session show a warning until you turn on `Clearance received` and record the date.
 
-The screening is not a diagnosis, and TrainMe does not give medical advice.
+The screening is not a diagnosis, and Rackside does not give medical advice.
 
 ## Assessments
 
@@ -35,7 +35,7 @@ Open an assessment to see **Changes since** the previous one: compensations that
 ### Send a waiver
 
 1. On the client's page, in **Waiver**, tap `Send waiver…`.
-2. TrainMe prepares the waiver as a PDF with the client's name. Choose how to send it — Messages, Mail, AirDrop or anything else on the share sheet.
+2. Rackside prepares the waiver as a PDF with the client's name. Choose how to send it — Messages, Mail, AirDrop or anything else on the share sheet.
 3. The client signs it outside the app and returns it to you.
 
 The waiver is only marked as sent if you actually share it.

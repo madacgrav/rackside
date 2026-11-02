@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private let now = Date(timeIntervalSince1970: 1_800_000_000)
 private func daysAgo(_ days: Int) -> Date { now.addingTimeInterval(-Double(days) * 86_400) }

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func makeRepo() throws -> SwiftDataClientRepository {
     let container = try PersistenceController.makeContainer(inMemory: true)

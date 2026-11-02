@@ -45,7 +45,7 @@ struct LockGateView<Content: View>: View {
     private var lockScreen: some View {
         HeroScreen(
             systemImage: "lock.fill",
-            title: "TrainMe is locked",
+            title: "Rackside is locked",
             primary: ("Unlock", { Task { await lock.authenticate() } })
         )
     }

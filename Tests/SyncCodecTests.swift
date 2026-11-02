@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func snapshot(timer: ActiveTimer?) -> TimerSnapshot {
     TimerSnapshot(timer: timer, upNext: nil, defaultRest: 90, quickPicks: [60, 90, 120],

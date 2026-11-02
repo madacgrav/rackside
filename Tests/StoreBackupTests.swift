@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func makeStoreDir() throws -> URL {
     let fm = FileManager.default

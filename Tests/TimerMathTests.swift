@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private let t0 = Date(timeIntervalSince1970: 1_800_000_000)
 

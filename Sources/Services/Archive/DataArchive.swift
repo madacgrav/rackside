@@ -33,7 +33,7 @@ actor DataArchiveActor: DataArchiving {
         // ones are swept before each export and after sharing) and are written
         // with complete file protection, matching the Face ID lock on the app.
         let day = Date.now.formatted(.iso8601.year().month().day().dateSeparator(.dash))
-        let url = Self.exportsDirectory.appending(path: "TrainMe Export \(day).json")
+        let url = Self.exportsDirectory.appending(path: "Rackside Export \(day).json")
         Self.removeExports()
         try FileManager.default.createDirectory(at: Self.exportsDirectory, withIntermediateDirectories: true)
         try data.write(to: url, options: [.atomic, .completeFileProtection])

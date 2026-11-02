@@ -21,7 +21,7 @@ struct WatchNotifier: Sendable {
         // Same wording as the phone's alert; Sources/ isn't compiled into the watch.
         let content = UNMutableNotificationContent()
         content.title = timer.isRest ? "Rest over" : "Timed set done"
-        content.body = timer.isRest ? "Time for the next set." : "Log the set in TrainMe."
+        content.body = timer.isRest ? "Time for the next set." : "Log the set in Rackside."
         content.sound = .default
         let request = UNNotificationRequest(
             identifier: Self.prefix + timer.id.uuidString,

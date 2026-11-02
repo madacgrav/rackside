@@ -71,7 +71,7 @@ final class AppBootstrap {
 }
 
 @main
-struct TrainMeApp: App {
+struct RacksideApp: App {
     @State private var bootstrap = AppBootstrap()
     @State private var timers = TimerStore(sync: WCSessionWatchSync())
     @Environment(\.scenePhase) private var scenePhase
@@ -115,7 +115,7 @@ struct RecoveryView: View {
     var body: some View {
         HeroScreen(
             systemImage: "exclamationmark.triangle.fill",
-            title: "TrainMe couldn't open its data store",
+            title: "Rackside couldn't open its data store",
             message: message,
             fill: Theme.Colors.warning, symbol: Theme.Colors.surface,
             primary: ("Restore last backup", onRestoreBackup)

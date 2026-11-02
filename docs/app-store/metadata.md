@@ -1,11 +1,11 @@
-# App Store listing — TrainMe 1.0.0
+# App Store listing — Rackside 1.0.0
 
 Paste each field into App Store Connect. Each field is the fenced block under its heading; `scripts/check-metadata-lengths.sh` checks the limits.
 
 ## Name
 
 ```text
-TrainMe
+Rackside
 ```
 
 ## Subtitle
@@ -23,7 +23,7 @@ Schedule sessions, log every set, run rest timers from your Apple Watch and show
 ## Description
 
 ```text
-TrainMe is the client and session log for independent personal trainers. Keep everything about your clients in one place, run sessions set by set, and show clients how far they've come — without accounts, subscriptions or the cloud.
+Rackside is the client and session log for independent personal trainers. Keep everything about your clients in one place, run sessions set by set, and show clients how far they've come — without accounts, subscriptions or the cloud.
 
 CLIENTS AND INTAKE
 • Client profiles with goals, injuries, emergency contact and physician
@@ -60,7 +60,7 @@ PRIVATE BY DESIGN
 • Face ID lock
 • Export everything to a file for backup, and import it on a new phone
 
-TrainMe is a record-keeping tool for fitness professionals. It does not provide medical advice, and its health screening is not a diagnosis.
+Rackside is a record-keeping tool for fitness professionals. It does not provide medical advice, and its health screening is not a diagnosis.
 ```
 
 ## Keywords
@@ -75,9 +75,9 @@ See `whats-new/1.0.0.md`.
 
 ## URLs
 
-- **Support URL:** https://madacgrav.github.io/trainme/support/
-- **Marketing URL:** https://madacgrav.github.io/trainme/
-- **Privacy Policy URL:** https://madacgrav.github.io/trainme/privacy/
+- **Support URL:** https://madacgrav.github.io/rackside/support/
+- **Marketing URL:** https://madacgrav.github.io/rackside/
+- **Privacy Policy URL:** https://madacgrav.github.io/rackside/privacy/
 
 ## Copyright
 
@@ -99,11 +99,11 @@ See `whats-new/1.0.0.md`.
 
 ## Age Rating
 
-Answer **None / No** to every content question, including *Medical or Treatment Information* (TrainMe stores the trainer's own records and gives no medical advice) and *Unrestricted Web Access*. Expected rating: **4+**.
+Answer **None / No** to every content question, including *Medical or Treatment Information* (Rackside stores the trainer's own records and gives no medical advice) and *Unrestricted Web Access*. Expected rating: **4+**.
 
 ## App Privacy
 
-**Data Not Collected.** TrainMe has no server, analytics, advertising or tracking; all data stays on the device, and anything that leaves it (calendar events, shared PDFs, text messages, export files) is sent by the user through iOS. This matches `Sources/PrivacyInfo.xcprivacy` (no collected data types, no tracking).
+**Data Not Collected.** Rackside has no server, analytics, advertising or tracking; all data stays on the device, and anything that leaves it (calendar events, shared PDFs, text messages, export files) is sent by the user through iOS. This matches `Sources/PrivacyInfo.xcprivacy` (no collected data types, no tracking).
 
 ## Export Compliance
 
@@ -112,16 +112,16 @@ Uses no non-exempt encryption (`ITSAppUsesNonExemptEncryption` = NO in both apps
 ## Review Notes
 
 ```text
-TrainMe has no login or account; all data is stored locally on the device.
+Rackside has no login or account; all data is stored locally on the device.
 
 To see the app with realistic data:
-1. Download the attached file "TrainMe Review Sample.json" (also available at https://github.com/madacgrav/trainme/tree/main/docs/app-store) and save it to Files.
-2. In TrainMe, open Settings > Import from file…, choose the file, then choose "Replace ALL data".
+1. Download the attached file "Rackside Review Sample.json" (also available at https://github.com/madacgrav/rackside/tree/main/docs/app-store) and save it to Files.
+2. In Rackside, open Settings > Import from file…, choose the file, then choose "Replace ALL data".
 3. Open the Clients tab > Jordan Lee to see a client with intake, assessments and progress reports (View progress).
 
-Face ID: TrainMe locks behind Face ID when it is set up; if Face ID is unavailable, the device passcode is used.
+Face ID: Rackside locks behind Face ID when it is set up; if Face ID is unavailable, the device passcode is used.
 
-Apple Watch: open any session marked Scheduled on the iPhone (Schedule tab, or a client's Upcoming Sessions) and tap the ✓ on a set row to log it. A rest timer starts on the iPhone and appears in the TrainMe watch app, where it can be extended or skipped.
+Apple Watch: open any session marked Scheduled on the iPhone (Schedule tab, or a client's Upcoming Sessions) and tap the ✓ on a set row to log it. A rest timer starts on the iPhone and appears in the Rackside watch app, where it can be extended or skipped.
 
 Permissions are optional: Notifications (session reminders) and Calendar (only when the trainer turns on "Add to iPhone calendar" for a session).
 ```
