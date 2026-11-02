@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test @MainActor func remainingFractionCountsDown() {
     let start = Date(timeIntervalSince1970: 0)

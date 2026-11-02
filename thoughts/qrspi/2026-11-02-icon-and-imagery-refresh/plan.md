@@ -12,6 +12,7 @@ Give TrainMe a warm, energetic "electric sunset" identity in six places:
 Light and dark mode both keep legible contrast.
 
 ## Conventions (read first)
+- **Rename note (merged from main after implementation):** the app is now Rackside. Read `TrainMe` in the scheme names below as `Rackside` (`-scheme Rackside`, `-scheme RacksideWatch`) and the test module as `Rackside`. Bundle ids are unchanged.
 - **Test command** (every phase): `xcodegen generate && xcodebuild -scheme TrainMe -destination 'platform=iOS Simulator,name=iPhone 17' CODE_SIGNING_ALLOWED=NO test 2>&1 | tail -5`. It must end in `** TEST SUCCEEDED **`.
 - **Build-only command**: the same command with `build` in place of `test`.
 - **Capture recipe.**

@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The iPhone and Apple Watch apps now share one version number.
 - A brand-new app icon: a bold kettlebell on a coral-to-violet sunset gradient, with dark, tinted and clear variants on iPhone and Apple Watch.
 - A brighter, warmer look throughout: colored badges on empty screens, settings and client rows, client initials avatars, and a gradient progress bar during sessions and rest timers.
-- The Apple Watch timer ring and quick-start buttons now use TrainMe's colors.
+- The Apple Watch timer ring and quick-start buttons now use Rackside's colors.
 
 ### Fixed
 - The Apple Watch now shows the running rest or timed-set countdown instead of the quick-start buttons.

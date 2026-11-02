@@ -1,7 +1,7 @@
 import SwiftUI
 import Testing
 import UIKit
-@testable import TrainMe
+@testable import Rackside
 
 private func named(_ name: String, _ style: UIUserInterfaceStyle) throws -> UIColor {
     let bundle = Bundle(identifier: "com.madacgrav.trainme") ?? .main
