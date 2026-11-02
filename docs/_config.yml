@@ -1,0 +1,7 @@
+title: TrainMe
+description: Client, workout and session log for independent personal trainers — iPhone and Apple Watch.
+theme: jekyll-theme-primer
+baseurl: /trainme
+url: https://madacgrav.github.io
+exclude:
+  - app-store

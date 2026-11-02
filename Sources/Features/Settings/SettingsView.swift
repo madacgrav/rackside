@@ -122,6 +122,17 @@ struct SettingsView: View {
                     Text("Session reminders fire 24 hours and 1 hour before each session. Calendar access is only needed when you add a session to your calendar.")
                 }
 
+                Section {
+                    LabeledContent("Version", value: AppInfo.versionString())
+                    Link("User guide", destination: AppLinks.guide)
+                    Link("What's new", destination: AppLinks.changelog)
+                    Link("Privacy policy", destination: AppLinks.privacy)
+                    Link("Support", destination: AppLinks.support)
+                    Link("License (GPL v3)", destination: AppLinks.license)
+                } header: {
+                    Text("About")
+                }
+
                 if let statusMessage {
                     Section {
                         Text(statusMessage).foregroundStyle(.secondary)
