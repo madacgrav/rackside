@@ -220,7 +220,7 @@ In docs pages, write internal links as relative `.md` paths (for example `[Priva
 - [x] `grep -c "madacgrav@gmail.com" docs/privacy.md docs/support.md` returns ≥ 1 for each.
 
 #### Manual
-- [ ] Preview `docs/privacy.md` in GitHub's markdown preview or the IDE. Every outbound path in research Q4 is covered, and nothing claims cloud sync.
+- [x] Preview `docs/privacy.md` in GitHub's markdown preview or the IDE. Every outbound path in research Q4 is covered, and nothing claims cloud sync.
 
 ---
 
@@ -282,7 +282,7 @@ Under `[Unreleased]` › Added, add: "Settings › About: version, user guide, w
 
 ### Verification
 #### Automated
-- [ ] TEST passes (AppInfoTests and the existing ArchiveRoundTripTests).
+- [x] TEST passes (AppInfoTests and the existing ArchiveRoundTripTests).
 
 #### Manual
 - [ ] Simulator: Settings › scroll to the bottom › About shows "1.0.0 (1)". Tapping "Privacy policy" opens Safari at the URL; a 404 is expected until Pages is enabled.

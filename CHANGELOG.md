@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased] — 1.0.0
 
+### Added
+- Settings › About: version, user guide, what's new, privacy policy, support and license.
+
 ### Changed
 - TrainMe is now an iPhone-only app (with its Apple Watch companion).
 - The iPhone and Apple Watch apps now share one version number.
