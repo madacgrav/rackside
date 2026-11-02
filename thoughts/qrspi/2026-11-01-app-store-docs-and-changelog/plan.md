@@ -125,7 +125,7 @@ If implementing in a worktree, tags are shared repo-wide, which is fine.
 - [x] `git tag -l 'v0.*'` lists 6 tags.
 
 #### Manual
-- [ ] Read CHANGELOG.md: dates are in order, wording is user-facing, and no internal jargon such as "SchemaV3" or "WAL".
+- [x] Read CHANGELOG.md: dates are in order, wording is user-facing, and no internal jargon such as "SchemaV3" or "WAL".
 
 ---
 
@@ -215,9 +215,9 @@ In docs pages, write internal links as relative `.md` paths (for example `[Priva
 
 ### Verification
 #### Automated
-- [ ] `scripts/sync-changelog.sh && git diff --stat docs/changelog.md` regenerates the page without error.
-- [ ] `scripts/check-docs-links.sh` exits 0.
-- [ ] `grep -c "madacgrav@gmail.com" docs/privacy.md docs/support.md` returns ≥ 1 for each.
+- [x] `scripts/sync-changelog.sh && git diff --stat docs/changelog.md` regenerates the page without error.
+- [x] `scripts/check-docs-links.sh` exits 0.
+- [x] `grep -c "madacgrav@gmail.com" docs/privacy.md docs/support.md` returns ≥ 1 for each.
 
 #### Manual
 - [ ] Preview `docs/privacy.md` in GitHub's markdown preview or the IDE. Every outbound path in research Q4 is covered, and nothing claims cloud sync.
