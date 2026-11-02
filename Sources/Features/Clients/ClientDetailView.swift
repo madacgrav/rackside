@@ -89,8 +89,10 @@ struct ClientDetailView: View {
                     }
                     .foregroundStyle(.primary)
                 }
-                Button("New screening", systemImage: "plus") {
+                Button {
                     screeningSheet = ScreeningSheet(existing: nil)
+                } label: {
+                    Label { Text("New screening") } icon: { IconBadge(systemImage: "stethoscope", color: Theme.Fills.coral) }
                 }
             }
             .themedRows()
@@ -99,8 +101,10 @@ struct ClientDetailView: View {
                     .themedRows()
             }
             Section("Assessments") {
-                Button("New assessment", systemImage: "plus") {
+                Button {
                     assessmentSheet = AssessmentSheet(existing: nil)
+                } label: {
+                    Label { Text("New assessment") } icon: { IconBadge(systemImage: "figure.strengthtraining.traditional", color: Theme.Fills.violet) }
                 }
                 ForEach(Array(viewModel.assessments.enumerated()), id: \.element.id) { index, assessment in
                     let previous = viewModel.assessments.indices.contains(index + 1) ? viewModel.assessments[index + 1] : nil
@@ -139,12 +143,14 @@ struct ClientDetailView: View {
             }
             .themedRows()
             Section("Progress Reports") {
-                NavigationLink("View progress") {
+                NavigationLink {
                     ClientReportView(viewModel: ClientReportViewModel(
                         reporting: viewModel.reporting,
                         exerciseRepo: viewModel.exerciseRepo,
                         client: viewModel.client
                     ))
+                } label: {
+                    Label { Text("View progress") } icon: { IconBadge(systemImage: "chart.line.uptrend.xyaxis", color: Theme.Fills.teal) }
                 }
             }
             .themedRows()

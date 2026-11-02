@@ -54,3 +54,10 @@ func areaFillsCarryWhiteSymbols(area: Theme.Area) throws {
     #expect(keys.map(Theme.avatarIndex) == keys.map(Theme.avatarIndex))
     #expect(Set(keys.map(Theme.avatarIndex)).count == Theme.Fills.all.count)
 }
+
+@Test @MainActor func avatarInitials() {
+    #expect(ClientAvatar.initials("Priya Shah") == "PS")
+    #expect(ClientAvatar.initials("Jordan") == "J")
+    #expect(ClientAvatar.initials("Mary Ann  Lee") == "ML")
+    #expect(ClientAvatar.initials("") == "?")
+}

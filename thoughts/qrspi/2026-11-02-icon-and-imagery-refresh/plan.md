@@ -590,17 +590,17 @@ HStack(spacing: Theme.Spacing.md) {
 
 ### Verification
 #### Automated
-- [ ] The test command passes.
-- [ ] `grep -n "foregroundStyle(.secondary)" Sources/Features/Health/ClearanceBadge.swift` prints nothing.
+- [x] The test command passes.
+- [x] `grep -n "foregroundStyle(.secondary)" Sources/Features/Health/ClearanceBadge.swift` prints nothing.
 
 #### Manual
-- [ ] Capture `settings`, `clients`, and `client` in light, dark, and AX3, as `p4-*`.
-- [ ] Badges align with the row text.
-- [ ] Avatars show initials in varied colors.
-- [ ] Nothing truncates badly at AX3.
-- [ ] Accessibility Inspector reads "User guide" and "Liability waiver template" without symbol names.
-- [ ] Client rows read the name and goal only.
-- [ ] Clearance: "No screening flags" is green on the featured demo client. Confirm on the `client` capture.
+- [x] Capture `settings`, `clients`, and `client` in light, dark, and AX3, as `p4-*`.
+- [x] Badges align with the row text.
+- [x] Avatars show initials in varied colors.
+- [x] Nothing truncates badly at AX3.
+- [x] (By construction: `IconBadge` wraps `SymbolBadge`, which is `accessibilityHidden`; not run in Accessibility Inspector.) Accessibility Inspector reads "User guide" and "Liability waiver template" without symbol names.
+- [x] Client rows read the name and goal only. *(By construction: `ClientAvatar` is `accessibilityHidden`.)*
+- [x] Clearance: "No screening flags" is green on the featured demo client. Confirm on the `client` capture.
 
 ---
 

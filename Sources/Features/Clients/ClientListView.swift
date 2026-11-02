@@ -26,7 +26,10 @@ struct ClientListView: View {
                         client: client
                     ))
                 } label: {
-                    TitleCaptionRow(title: client.name, caption: client.goal)
+                    HStack(spacing: Theme.Spacing.md) {
+                        ClientAvatar(name: client.name, id: client.id)
+                        TitleCaptionRow(title: client.name, caption: client.goal)
+                    }
                 }
                 .themedRows()
             }

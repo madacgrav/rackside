@@ -6,6 +6,7 @@ struct StatusChip: View {
     var body: some View {
         if let spec {
             Label(spec.text, systemImage: spec.symbol)
+                .symbolRenderingMode(.hierarchical)
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, Theme.Spacing.sm)
                 .padding(.vertical, Theme.Spacing.xs)
