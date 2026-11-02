@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - TrainMe is now an iPhone-only app (with its Apple Watch companion).
 - The iPhone and Apple Watch apps now share one version number.
 
+### Fixed
+- The Apple Watch now shows the running rest or timed-set countdown instead of the quick-start buttons.
+
 ## [0.6.0] — 2026-11-02
 
 ### Added

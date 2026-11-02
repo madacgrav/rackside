@@ -5,7 +5,9 @@ struct TimerScreen: View {
 
     var body: some View {
         if let timer = model.snapshot?.timer {
-            TimelineView(.explicit([timer.endAt])) { context in
+            // An explicit schedule renders its first frame at its first date, so `now` must
+            // lead; with only `endAt`, the running timer would render as already finished.
+            TimelineView(.explicit([Date.now, timer.endAt])) { context in
                 if context.date < timer.endAt {
                     running(timer)
                 } else {
