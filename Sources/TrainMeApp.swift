@@ -13,6 +13,17 @@ final class AppBootstrap {
     private static let storeURL = URL.applicationSupportDirectory.appending(path: "default.store")
 
     init() {
+        #if DEBUG
+        // Screenshot mode: sample data in memory; the on-disk store is never opened.
+        if DemoLaunch.current.enabled {
+            do {
+                state = .ready(try DemoData.container())
+            } catch {
+                state = .failed(error.localizedDescription)
+            }
+            return
+        }
+        #endif
         // A snapshot left behind means the app died mid-import; it is stale now.
         SafeImporter.removeSnapshot()
         do {

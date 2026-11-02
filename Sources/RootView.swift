@@ -21,52 +21,90 @@ struct RootView: View {
             clientRepo: SwiftDataClientRepository(modelContainer: container),
             notifications: LocalNotificationService()
         ))
+        #if DEBUG
+        if DemoLaunch.current.enabled {
+            _selectedTab = State(initialValue: DemoLaunch.current.screen?.tab ?? 0)
+        }
+        #endif
+    }
+
+    private var isDemo: Bool {
+        #if DEBUG
+        DemoLaunch.current.enabled
+        #else
+        false
+        #endif
     }
 
     private var backupNoticeBinding: Binding<Bool> {
-        Binding(get: { !hasSeenBackupNotice }, set: { hasSeenBackupNotice = !$0 })
+        Binding(get: { !hasSeenBackupNotice && !isDemo }, set: { hasSeenBackupNotice = !$0 })
+    }
+
+    /// Debug screenshot routes replace a tab's root; release builds always show `content`.
+    @ViewBuilder
+    private func demoOr<Content: View>(_ tab: Int, @ViewBuilder _ content: () -> Content) -> some View {
+        #if DEBUG
+        if let demo = DemoRoute.view(for: DemoLaunch.current, tab: tab, container: container,
+                                     reminders: reminders, intake: intake) {
+            demo
+        } else {
+            content()
+        }
+        #else
+        content()
+        #endif
     }
 
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("Schedule", systemImage: "calendar", value: 0) {
-                ScheduleView(
-                    viewModel: ScheduleViewModel(
-                        sessionRepo: SwiftDataSessionRepository(modelContainer: container),
-                        clientRepo: SwiftDataClientRepository(modelContainer: container),
-                        workoutRepo: SwiftDataWorkoutRepository(modelContainer: container),
-                        exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
-                        reminders: reminders,
-                        healthRepo: intake.health
-                    ),
-                    openSettings: { selectedTab = 4 }
-                )
+                demoOr(0) {
+                    ScheduleView(
+                        viewModel: ScheduleViewModel(
+                            sessionRepo: SwiftDataSessionRepository(modelContainer: container),
+                            clientRepo: SwiftDataClientRepository(modelContainer: container),
+                            workoutRepo: SwiftDataWorkoutRepository(modelContainer: container),
+                            exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
+                            reminders: reminders,
+                            healthRepo: intake.health
+                        ),
+                        openSettings: { selectedTab = 4 }
+                    )
+                }
             }
             Tab("Clients", systemImage: "person.2.fill", value: 1) {
-                ClientListView(viewModel: ClientListViewModel(
-                    repo: SwiftDataClientRepository(modelContainer: container),
-                    exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
-                    sessionRepo: SwiftDataSessionRepository(modelContainer: container),
-                    reporting: SwiftDataReportingQueries(modelContainer: container),
-                    reminders: reminders,
-                    intake: intake
-                ))
+                demoOr(1) {
+                    ClientListView(viewModel: ClientListViewModel(
+                        repo: SwiftDataClientRepository(modelContainer: container),
+                        exerciseRepo: SwiftDataExerciseRepository(modelContainer: container),
+                        sessionRepo: SwiftDataSessionRepository(modelContainer: container),
+                        reporting: SwiftDataReportingQueries(modelContainer: container),
+                        reminders: reminders,
+                        intake: intake
+                    ))
+                }
             }
             Tab("Workouts", systemImage: "list.clipboard.fill", value: 2) {
-                WorkoutListView(viewModel: WorkoutListViewModel(
-                    workoutRepo: SwiftDataWorkoutRepository(modelContainer: container),
-                    exerciseRepo: SwiftDataExerciseRepository(modelContainer: container)
-                ))
+                demoOr(2) {
+                    WorkoutListView(viewModel: WorkoutListViewModel(
+                        workoutRepo: SwiftDataWorkoutRepository(modelContainer: container),
+                        exerciseRepo: SwiftDataExerciseRepository(modelContainer: container)
+                    ))
+                }
             }
             Tab("Exercises", systemImage: "dumbbell.fill", value: 3, role: .search) {
-                ExerciseListView(viewModel: ExerciseListViewModel(repo: SwiftDataExerciseRepository(modelContainer: container)))
+                demoOr(3) {
+                    ExerciseListView(viewModel: ExerciseListViewModel(repo: SwiftDataExerciseRepository(modelContainer: container)))
+                }
             }
             Tab("Settings", systemImage: "gearshape.fill", value: 4) {
-                SettingsView(
-                    archive: DataArchiveActor(modelContainer: container),
-                    reminders: reminders,
-                    waivers: intake.waivers
-                )
+                demoOr(4) {
+                    SettingsView(
+                        archive: DataArchiveActor(modelContainer: container),
+                        reminders: reminders,
+                        waivers: intake.waivers
+                    )
+                }
             }
             .badge(exportDue ? Text("!") : nil)
         }
@@ -113,6 +151,8 @@ struct RootView: View {
                 }
             }.value
             seedFailed = !seeded
+            // Demo screenshots must not show the notification prompt or the export badge.
+            if isDemo { return }
             await reminders.requestAuthorization()
             exportDue = await reminders.exportReminderIsDue()
         }

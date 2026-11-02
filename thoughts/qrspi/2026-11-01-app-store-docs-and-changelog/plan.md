@@ -285,7 +285,7 @@ Under `[Unreleased]` › Added, add: "Settings › About: version, user guide, w
 - [x] TEST passes (AppInfoTests and the existing ArchiveRoundTripTests).
 
 #### Manual
-- [ ] Simulator: Settings › scroll to the bottom › About shows "1.0.0 (1)". Tapping "Privacy policy" opens Safari at the URL; a 404 is expected until Pages is enabled.
+- [x] Simulator: Settings › scroll to the bottom › About shows "1.0.0 (1)". Tapping "Privacy policy" opens Safari at the URL; a 404 is expected until Pages is enabled.
 
 ---
 
@@ -471,9 +471,9 @@ Under [Unreleased], add nothing; this is not user-visible.
 
 ### Verification
 #### Automated
-- [ ] TEST passes, including DemoDataTests.
-- [ ] `xcodebuild -scheme TrainMe -configuration Release -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build` succeeds.
-- [ ] `strings "$(find ~/Library/Developer/Xcode/DerivedData -path '*Release-iphonesimulator/TrainMe.app/TrainMe' | head -1)" | grep -c -E 'demoData|Jordan Lee'` prints `0`.
+- [x] TEST passes, including DemoDataTests.
+- [x] `xcodebuild -scheme TrainMe -configuration Release -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build` succeeds.
+- [x] `strings "$(find ~/Library/Developer/Xcode/DerivedData -path '*Release-iphonesimulator/TrainMe.app/TrainMe' | head -1)" | grep -c -E 'demoData|Jordan Lee'` prints `0`.
 
 #### Manual
 - [ ] `xcrun simctl boot "iPhone 18 Pro Max"`, then install the Debug app.

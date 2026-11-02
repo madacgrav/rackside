@@ -9,13 +9,18 @@ struct LockGateView<Content: View>: View {
 
     var body: some View {
         ZStack {
-            if lock.isUnlocked {
+            if isUnlocked {
                 content()
             } else {
                 lockScreen
             }
         }
-        .task { await lock.authenticate() }
+        .task {
+            #if DEBUG
+            if DemoLaunch.current.enabled { return }
+            #endif
+            await lock.authenticate()
+        }
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .background:
@@ -28,6 +33,13 @@ struct LockGateView<Content: View>: View {
                 break
             }
         }
+    }
+
+    private var isUnlocked: Bool {
+        #if DEBUG
+        if DemoLaunch.current.enabled { return true }
+        #endif
+        return lock.isUnlocked
     }
 
     private var lockScreen: some View {
