@@ -1,6 +1,6 @@
 # TrainMe
 
-![CI](https://github.com/madacgrav/trainme/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/madacgrav/rackside/actions/workflows/ci.yml/badge.svg)
 
 TrainMe is a client and session log for independent personal trainers, on iPhone
 and Apple Watch. Keep clients' goals, injuries, health screening, assessments and
@@ -8,8 +8,8 @@ waivers in one place; build reusable workouts; schedule and record sessions set 
 set with a rest timer on your phone or wrist; and track each client's progress over
 time. Everything stays on the iPhone — no account, no cloud, no tracking.
 
-- **[User guide](https://madacgrav.github.io/trainme/guide/)** ([source](docs/guide/index.md))
-- [Privacy policy](https://madacgrav.github.io/trainme/privacy/) · [Support](https://madacgrav.github.io/trainme/support/)
+- **[User guide](https://madacgrav.github.io/rackside/guide/)** ([source](docs/guide/index.md))
+- [Privacy policy](https://madacgrav.github.io/rackside/privacy/) · [Support](https://madacgrav.github.io/rackside/support/)
 - [Changelog](CHANGELOG.md)
 - License: [GPL v3](LICENSE)
 

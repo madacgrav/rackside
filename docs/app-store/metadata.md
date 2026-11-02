@@ -75,9 +75,9 @@ See `whats-new/1.0.0.md`.
 
 ## URLs
 
-- **Support URL:** https://madacgrav.github.io/trainme/support/
-- **Marketing URL:** https://madacgrav.github.io/trainme/
-- **Privacy Policy URL:** https://madacgrav.github.io/trainme/privacy/
+- **Support URL:** https://madacgrav.github.io/rackside/support/
+- **Marketing URL:** https://madacgrav.github.io/rackside/
+- **Privacy Policy URL:** https://madacgrav.github.io/rackside/privacy/
 
 ## Copyright
 
@@ -115,7 +115,7 @@ Uses no non-exempt encryption (`ITSAppUsesNonExemptEncryption` = NO in both apps
 TrainMe has no login or account; all data is stored locally on the device.
 
 To see the app with realistic data:
-1. Download the attached file "TrainMe Review Sample.json" (also available at https://github.com/madacgrav/trainme/tree/main/docs/app-store) and save it to Files.
+1. Download the attached file "TrainMe Review Sample.json" (also available at https://github.com/madacgrav/rackside/tree/main/docs/app-store) and save it to Files.
 2. In TrainMe, open Settings > Import from file…, choose the file, then choose "Replace ALL data".
 3. Open the Clients tab > Jordan Lee to see a client with intake, assessments and progress reports (View progress).
 

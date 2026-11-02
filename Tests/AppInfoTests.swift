@@ -19,5 +19,5 @@ import Testing
     let links = [AppLinks.guide, AppLinks.privacy, AppLinks.support, AppLinks.changelog, AppLinks.license]
     #expect(links.allSatisfy { $0.scheme == "https" })
     #expect(Set(links).count == links.count)
-    #expect(AppLinks.privacy.absoluteString == "https://madacgrav.github.io/trainme/privacy/")
+    #expect(AppLinks.privacy.absoluteString == "https://madacgrav.github.io/rackside/privacy/")
 }

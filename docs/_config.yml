@@ -1,7 +1,7 @@
-title: TrainMe
+title: Rackside
 description: Client, workout and session log for independent personal trainers — iPhone and Apple Watch.
 theme: jekyll-theme-primer
-baseurl: /trainme
+baseurl: /rackside
 url: https://madacgrav.github.io
 exclude:
   - app-store

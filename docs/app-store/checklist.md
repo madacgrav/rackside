@@ -10,8 +10,9 @@ Steps only the owner can do. Work through them in order.
 ## Publish the website
 
 - [ ] Merge this branch to `main`.
+- [ ] GitHub › repo **Settings › General** › rename `trainme` to `rackside`, then locally: `git remote set-url origin https://github.com/madacgrav/rackside.git`.
 - [ ] GitHub › repo **Settings › Pages** › *Deploy from a branch* › branch `main`, folder `/docs` › Save.
-- [ ] After a few minutes, check these load: https://madacgrav.github.io/trainme/, `/guide/`, `/privacy/`, `/support/`, `/changelog/`.
+- [ ] After a few minutes, check these load: https://madacgrav.github.io/rackside/, `/guide/`, `/privacy/`, `/support/`, `/changelog/`.
 - [ ] Push the version tags: `git push origin v0.1.0 v0.2.0 v0.3.0 v0.4.0 v0.5.0 v0.6.0` (so the changelog's compare links work).
 
 ## App Store Connect setup

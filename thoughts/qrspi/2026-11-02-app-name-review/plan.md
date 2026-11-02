@@ -151,15 +151,15 @@ xcodegen generate   # creates Rackside.xcodeproj (gitignored)
 - [x] `grep -rn 'TrainMe' Sources Watch Tests .github scripts project.yml` returns only `TrainMeMigrationPlan` refs and the `Log.swift` subsystem
 
 #### Manual (owner's iPhone "madphone", UDID `00008140-001E31AE21DB001C`)
-- [ ] Build and install over the existing app:
+- [x] Build and install over the existing app:
   ```bash
   xcodebuild -project Rackside.xcodeproj -scheme Rackside -configuration Debug -destination 'id=00008140-001E31AE21DB001C' -derivedDataPath build/DerivedData -allowProvisioningUpdates build
   ```
   ```bash
   xcrun devicectl device install app --device 00008140-001E31AE21DB001C build/DerivedData/Build/Products/Debug-iphoneos/Rackside.app
   ```
-- [ ] Home screen shows one "Rackside" icon (it replaces TrainMe, not a second app)
-- [ ] Existing clients and sessions are present; no Face ID or calendar re-prompt
+- [x] Home screen shows one "Rackside" icon (it replaces TrainMe, not a second app)
+- [x] Existing clients and sessions are present; no Face ID or calendar re-prompt
 - [ ] Watch app installs and mirrors a rest timer started on the phone
 
 ---
@@ -208,9 +208,9 @@ Add to `docs/app-store/checklist.md` under "Publish the website", before the Pag
 
 ### Verification
 #### Automated
-- [ ] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` passes (AppInfoTests)
-- [ ] `scripts/check-docs-links.sh` passes
-- [ ] `grep -rn 'github.io/trainme\|madacgrav/trainme/\(actions\|blob\|tree\)\|madacgrav/trainme/issues"\?)\?$' Sources Tests docs README.md CHANGELOG.md scripts` returns nothing outside historical PR/issue/compare links
+- [x] `xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test` passes (AppInfoTests)
+- [x] `scripts/check-docs-links.sh` passes
+- [x] `grep -rn 'github.io/trainme\|madacgrav/trainme/\(actions\|blob\|tree\)\|madacgrav/trainme/issues"\?)\?$' Sources Tests docs README.md CHANGELOG.md scripts` returns nothing outside historical PR/issue/compare links
 
 #### Manual
 - [ ] Settings › About links open `madacgrav.github.io/rackside/...` (404 until Pages is enabled on the renamed repo is expected)

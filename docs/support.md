@@ -8,7 +8,7 @@ permalink: /support/
 Need help with TrainMe? Check the questions below or the [user guide](guide/). If you're still stuck, get in touch:
 
 - **Email:** [madacgrav@gmail.com](mailto:madacgrav@gmail.com)
-- **Report a bug or request a feature:** [GitHub issues](https://github.com/madacgrav/trainme/issues)
+- **Report a bug or request a feature:** [GitHub issues](https://github.com/madacgrav/rackside/issues)
 
 When reporting a problem, please include your iPhone model, iOS version, and the TrainMe version shown in **Settings › About**.
 
