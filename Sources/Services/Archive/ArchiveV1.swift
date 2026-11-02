@@ -20,9 +20,6 @@ enum ArchiveV1 {
     }
 }
 
-/// Repointed when a new archive version ships.
-typealias CurrentArchive = ArchiveV1.Envelope
-
 /// Decoded FIRST on import, before attempting the full envelope, so unknown
 /// newer formats fail with a clear error instead of a keyNotFound mess.
 struct VersionProbe: Decodable {

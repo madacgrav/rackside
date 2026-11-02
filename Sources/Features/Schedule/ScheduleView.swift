@@ -105,6 +105,7 @@ struct ScheduleView: View {
                 clientName: viewModel.clientNames[session.clientId] ?? "Client",
                 clientPhone: viewModel.clientPhones[session.clientId],
                 clientInjuries: viewModel.clientInjuries[session.clientId] ?? nil,
+                healthRepo: viewModel.healthRepo,
                 onStatusChanged: { await viewModel.load() }
             ), workoutRepo: viewModel.workoutRepo)
         } label: {

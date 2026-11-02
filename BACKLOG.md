@@ -25,6 +25,10 @@ Week view on Schedule (row 6) was addressed in [#40](https://github.com/madacgra
 see the [Done](#done) table and `thoughts/qrspi/GH-8-schedule-week-view/` for the design and
 plan.
 
+Client intake (row 35: profile, health screening, NASM assessments, liability waiver, guided flow)
+is on branch `2026-11-01-nasm-movement-assessment`; see the [Done](#done) table and
+`thoughts/qrspi/2026-11-01-nasm-movement-assessment/` for the design and plan.
+
 ## P1 — features
 
 | # | Item | Why / PRD ref | Evidence | Issue |
@@ -45,6 +49,10 @@ plan.
 | 17 | Session notes on Schedule and client-detail rows | PRD §5.5 | Notes visible only inside the run screen | [#19](https://github.com/madacgrav/trainme/issues/19) |
 | 33 | Snapshot tests for themed screens (swift-snapshot-testing, CI baseline) | UI refresh verification | Previews + manual screenshots only; see `thoughts/qrspi/2026-10-26-ui-refresh-and-icon/screenshots/` | — |
 | 34 | Quick timers for exercises: rest countdown between sets, countdown for timed sets that prefills duration | PRD §4.1 / §5.5 (requested 2026-10-29) | `SetTableView` has only a numeric duration stepper (15 s steps); no timer code | [#38](https://github.com/madacgrav/trainme/issues/38) |
+| 36 | NASM assessment form page 2 | Intake follow-up | Only page 1 of the form (`nasm-assessment-form-p1.jpeg`) was provided; blocked on the page | — |
+| 37 | Charts of assessment measurements over time | Intake follow-up | Assessments only diff against the previous one | — |
+| 38 | In-app e-signature for the waiver | Intake follow-up | Waiver is send-and-mark; the signed copy lives outside the app | — |
+| 39 | Compensation → overactive/underactive muscle suggestions | Intake follow-up | Sources were secondary and incomplete (research.md Q10) | — |
 
 ## Deferred by owner decision
 
@@ -103,3 +111,9 @@ Addressed in [#40](https://github.com/madacgrav/trainme/pull/40) (one commit per
 | # | Item | Resolution | Issue |
 |---|------|------------|-------|
 | 6 | Week view on Schedule | Day/Week segmented toggle; week of `selectedDate` (locale first weekday) as 7 day sections with `SessionRow`; chevrons + Today; mode persisted; `ScheduleViewModel` takes an injected `Calendar`; `ScheduleViewModelTests` | [#8](https://github.com/madacgrav/trainme/issues/8) |
+
+Client intake, on branch `2026-11-01-nasm-movement-assessment` (one commit per phase).
+
+| # | Item | Resolution | Issue |
+|---|------|------------|-------|
+| 35 | Client intake from the NASM assessment form | `SchemaV3` (V2 frozen as nested copies, real on-disk V2→V3 migration test) and archive v2 (V1 decode + `migrate`, golden `export-v2.json`). Client profile fields; dated `HealthScreening` with clearance flag shown on detail and in sessions; dated `Assessment` (measurements, Overhead/Single Leg Squat option sets, diff vs previous); versioned `WaiverTemplate` + `WaiverRecord` snapshots, paginated PDF shared via a completion-reporting share sheet; guided `IntakeFlowView` | — |

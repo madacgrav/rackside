@@ -16,7 +16,7 @@ final class AppBootstrap {
         // A snapshot left behind means the app died mid-import; it is stale now.
         SafeImporter.removeSnapshot()
         do {
-            try StoreBackup.backupIfVersionChanged(storeURL: Self.storeURL, currentVersion: SchemaV2.versionString)
+            try StoreBackup.backupIfVersionChanged(storeURL: Self.storeURL, currentVersion: SchemaV3.versionString)
         } catch {
             Log.persistence.error("Pre-open backup failed: \(error.localizedDescription)")
         }
