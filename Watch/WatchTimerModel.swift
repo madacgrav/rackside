@@ -1,11 +1,14 @@
 import Foundation
 import Observation
+import WatchKit
 
 @MainActor
 @Observable
 final class WatchTimerModel {
     private(set) var snapshot: TimerSnapshot?
     @ObservationIgnored private let link = PhoneLink()
+    @ObservationIgnored private let notifier = WatchNotifier()
+    @ObservationIgnored private var hapticTask: Task<Void, Never>?
 
     init(snapshot: TimerSnapshot? = nil) {
         self.snapshot = snapshot
@@ -14,12 +17,14 @@ final class WatchTimerModel {
     func activate() {
         link.onSnapshot = { [weak self] snap in Task { @MainActor in self?.apply(snap) } }
         link.activate()
+        Task { [notifier] in await notifier.requestAuthorization() }
     }
 
     /// Newest wins, so a late application context can't roll back a newer message.
     func apply(_ snap: TimerSnapshot) {
         if let current = snapshot, current.sentAt > snap.sentAt { return }
         snapshot = snap
+        timerChanged()
     }
 
     func startRest(seconds: Int) { adopt(TimerMath.make(kind: .rest, seconds: seconds, now: .now)) }
@@ -56,5 +61,20 @@ final class WatchTimerModel {
         snap.timer = timer
         snap.sentAt = .now
         snapshot = snap
+        timerChanged()
+    }
+
+    /// Re-plans both cues for the current timer: the wrist-down notification and
+    /// the haptic while the app is open.
+    private func timerChanged() {
+        let timer = snapshot?.timer
+        Task { [notifier] in await notifier.reschedule(timer) }
+        hapticTask?.cancel()
+        guard let timer else { return }
+        hapticTask = Task {
+            try? await Task.sleep(for: .seconds(max(0, timer.endAt.timeIntervalSinceNow)))
+            guard !Task.isCancelled else { return }
+            WKInterfaceDevice.current().play(.stop)
+        }
     }
 }

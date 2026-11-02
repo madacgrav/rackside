@@ -1,15 +1,31 @@
 import Foundation
 import WatchConnectivity
 
+struct CueState: Sendable, Equatable {
+    var watchAppInstalled: Bool
+    var paired: Bool
+    var reachable: Bool
+
+    static let noWatch = CueState(watchAppInstalled: false, paired: false, reachable: false)
+}
+
+/// The watch owns the zero cue only when it can certainly hear about the timer
+/// now; otherwise the phone notifies (and mirrors to a worn watch when locked).
+func phoneOwnsCue(_ cue: CueState) -> Bool {
+    !(cue.watchAppInstalled && cue.paired && cue.reachable)
+}
+
 protocol WatchSyncing: Sendable {
     func activate() async
     func send(_ snapshot: TimerSnapshot) async
+    func cueState() async -> CueState
     var commands: AsyncStream<TimerCommand> { get }
 }
 
 struct NoopWatchSync: WatchSyncing {
     func activate() async {}
     func send(_ snapshot: TimerSnapshot) async {}
+    func cueState() async -> CueState { .noWatch }
     var commands: AsyncStream<TimerCommand> { AsyncStream { $0.finish() } }
 }
 
@@ -43,6 +59,12 @@ final class WCSessionWatchSync: NSObject, WatchSyncing, WCSessionDelegate, @unch
                 Log.sync.debug("sendMessage failed: \(error.localizedDescription)")
             }
         }
+    }
+
+    func cueState() async -> CueState {
+        guard let session, session.activationState == .activated else { return .noWatch }
+        return CueState(watchAppInstalled: session.isWatchAppInstalled, paired: session.isPaired,
+                        reachable: session.isReachable)
     }
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {

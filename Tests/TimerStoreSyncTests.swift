@@ -8,10 +8,14 @@ actor FakeWatchSync: WatchSyncing {
     nonisolated let commands: AsyncStream<TimerCommand>
     nonisolated let continuation: AsyncStream<TimerCommand>.Continuation
 
+    private var cue = CueState.noWatch
+
     init() { (commands, continuation) = AsyncStream.makeStream() }
 
+    func setCue(_ newCue: CueState) { cue = newCue }
     func activate() async { activated = true }
     func send(_ snapshot: TimerSnapshot) async { sent.append(snapshot) }
+    func cueState() async -> CueState { cue }
 }
 
 @MainActor

@@ -150,9 +150,9 @@ final class TimerStore {
         active = timer
         persist()
         armWatcher()
-        enqueue { [notifier] in
+        enqueue { [notifier, sync] in
             await notifier.cancelAll()
-            if let timer { await notifier.schedule(timer) }
+            if let timer, phoneOwnsCue(await sync.cueState()) { await notifier.schedule(timer) }
         }
         pushSnapshot()
     }
