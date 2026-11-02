@@ -62,20 +62,34 @@ final class AppBootstrap {
 @main
 struct TrainMeApp: App {
     @State private var bootstrap = AppBootstrap()
+    @State private var timers = TimerStore(sync: WCSessionWatchSync())
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
-            switch bootstrap.state {
-            case .ready(let container):
-                LockGateView {
-                    RootView(container: container)
+            Group {
+                switch bootstrap.state {
+                case .ready(let container):
+                    LockGateView {
+                        RootView(container: container)
+                    }
+                    .environment(timers)
+                    .sensoryFeedback(.warning, trigger: timers.completionTick)
+                case .failed(let message):
+                    RecoveryView(
+                        message: message,
+                        onRestoreBackup: { bootstrap.restoreBackupAndRetry() },
+                        onReset: { bootstrap.resetStoreAndRetry() }
+                    )
                 }
-            case .failed(let message):
-                RecoveryView(
-                    message: message,
-                    onRestoreBackup: { bootstrap.restoreBackupAndRetry() },
-                    onReset: { bootstrap.resetStoreAndRetry() }
-                )
+            }
+            .task {
+                await timers.activateSync()
+                await timers.listen()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                // Not .inactive: Face ID drops the app to .inactive (LockGateView.swift:3-4).
+                if phase == .active { timers.refresh() }
             }
         }
     }

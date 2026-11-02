@@ -288,4 +288,5 @@ struct ClientDetailView: View {
             client: PreviewFixtures.client
         ))
     }
+    .environment(TimerStore.preview)
 }

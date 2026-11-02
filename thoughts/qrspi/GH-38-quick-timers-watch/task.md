@@ -1,0 +1,3 @@
+# Task: GH-38 Quick timers for exercises (with Apple Watch quick set)
+
+Add one-tap timers to the session run screen (GitHub issue #38): a rest countdown between sets (quick picks such as 60/90/120 s, haptic/sound cue at zero) and a countdown for timed sets that starts from the entry's `targetDuration` and prefills the set's duration on finish. Timers should keep running across exercise switches and brief backgrounding. The owner adds that these timers would be best started and watched from an Apple Watch ("quick set"), so the design should consider a watchOS companion — today the project has no watch target, extensions, background modes, or timer code.

@@ -6,6 +6,8 @@ struct SessionRunView: View {
     /// workout repository (client detail) pass nothing.
     var workoutRepo: (any WorkoutRepository)? = nil
     @Environment(\.dismiss) private var dismiss
+    @Environment(TimerStore.self) private var timers
+    @AppStorage(TimerSettings.defaultRestKey) private var defaultRestSeconds = TimerMath.defaultRest
     @State private var showingTextReminder = false
     @State private var pendingStatus: SessionStatus?
     @State private var showingEdit = false
@@ -98,7 +100,10 @@ struct SessionRunView: View {
                                 onLog: { draft in
                                     Task { await viewModel.record(draft: draft, instanceId: instance.id, exerciseId: entry.exerciseId) }
                                 },
-                                onDelete: { pendingDeleteSet = $0 }
+                                onDelete: { pendingDeleteSet = $0 },
+                                onStartTimer: { seconds in
+                                    timers.startTimedSet(plannedEntryId: entry.id, instanceId: instance.id, seconds: seconds)
+                                }
                             )
                         }
                         .themedRows()
@@ -132,6 +137,15 @@ struct SessionRunView: View {
             }
         }
         .sensoryFeedback(.success, trigger: viewModel.lastLoggedSetId)
+        .safeAreaInset(edge: .bottom) {
+            if viewModel.session.status == .scheduled { TimerBar() }
+        }
+        // A successful log starts the rest countdown (lastLoggedSetId changes only on success).
+        .onChange(of: viewModel.lastLoggedSetId) { _, id in
+            if id != nil { timers.startRest(seconds: defaultRestSeconds) }
+        }
+        .onChange(of: viewModel.upNext, initial: true) { _, next in timers.setUpNext(next) }
+        .onDisappear { timers.setUpNext(nil) }
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
@@ -321,4 +335,5 @@ struct SessionRunView: View {
             clientInjuries: "Left knee — avoid deep squats"
         ), workoutRepo: repos.workouts)
     }
+    .environment(TimerStore.preview)
 }

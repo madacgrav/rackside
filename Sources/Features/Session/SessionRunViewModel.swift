@@ -44,6 +44,12 @@ final class SessionRunViewModel {
         }
     }
 
+    /// Offered to the watch as a one-tap timed-set countdown.
+    var upNext: UpNext? {
+        guard session.status == .scheduled else { return nil }
+        return deriveUpNext(instances: session.instances, recorded: recordedSets, exercises: exercises, previous: previousSets)
+    }
+
     var progress: Double { plannedSetCount == 0 ? 0 : Double(loggedSetCount) / Double(plannedSetCount) }
 
     /// Part of a repeating series. Editing one occurrence detaches it first
