@@ -5,7 +5,7 @@ permalink: /changelog/
 
 # Changelog
 
-All notable changes to TrainMe are documented in this file.
+All notable changes to Rackside are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Versions before 1.0.0 were development builds and were not released on the App Store.
 
@@ -13,10 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - Settings › About: version, user guide, what's new, privacy policy, support and license.
-- A user guide, privacy policy and support pages at [madacgrav.github.io/trainme](https://madacgrav.github.io/trainme/).
+- A user guide, privacy policy and support pages at [madacgrav.github.io/rackside](https://madacgrav.github.io/rackside/).
 
 ### Changed
-- TrainMe is now an iPhone-only app (with its Apple Watch companion).
+- Rackside is now an iPhone-only app (with its Apple Watch companion).
+- Renamed the app from TrainMe to Rackside, because other fitness apps and a pending US trademark already use the TrainMe name.
 - The iPhone and Apple Watch apps now share one version number.
 
 ### Fixed

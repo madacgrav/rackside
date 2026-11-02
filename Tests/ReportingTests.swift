@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private struct Env {
     let sessions: SwiftDataSessionRepository
@@ -58,7 +58,7 @@ private func addSession(
     return dto.id
 }
 
-private func makeExercise(_ env: Env, name: String, unit: TrainMe.Unit) async throws -> UUID {
+private func makeExercise(_ env: Env, name: String, unit: Rackside.Unit) async throws -> UUID {
     try await env.exercises.create(ExerciseDTO(
         id: UUID(), name: name, category: .strength, metrics: [.weight, .reps, .sets],
         defaultUnit: unit, isCustom: true, createdAt: .now, updatedAt: .now

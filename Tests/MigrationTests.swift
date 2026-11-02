@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 /// Writes a store with the frozen V2 classes, then reopens it through the
 /// migration plan as V3 — the path an existing install takes on upgrade.

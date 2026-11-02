@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @MainActor
 @Test func demoContainerIsPopulated() throws {

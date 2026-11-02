@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private func session(hoursFromNow: Double, status: SessionStatus = .scheduled) -> SessionDTO {
     let start = Date.now.addingTimeInterval(hoursFromNow * 3600)

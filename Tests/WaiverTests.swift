@@ -2,7 +2,7 @@ import Foundation
 import PDFKit
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 private struct Env {
     let clients: SwiftDataClientRepository

@@ -2,7 +2,7 @@ import EventKit
 import Foundation
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 actor FakeCalendar: CalendarSyncing {
     private(set) var removed: [String] = []

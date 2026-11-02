@@ -1,15 +1,15 @@
-# TrainMe
+# Rackside
 
-![CI](https://github.com/madacgrav/trainme/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/madacgrav/rackside/actions/workflows/ci.yml/badge.svg)
 
-TrainMe is a client and session log for independent personal trainers, on iPhone
+Rackside is a client and session log for independent personal trainers, on iPhone
 and Apple Watch. Keep clients' goals, injuries, health screening, assessments and
 waivers in one place; build reusable workouts; schedule and record sessions set by
 set with a rest timer on your phone or wrist; and track each client's progress over
 time. Everything stays on the iPhone — no account, no cloud, no tracking.
 
-- **[User guide](https://madacgrav.github.io/trainme/guide/)** ([source](docs/guide/index.md))
-- [Privacy policy](https://madacgrav.github.io/trainme/privacy/) · [Support](https://madacgrav.github.io/trainme/support/)
+- **[User guide](https://madacgrav.github.io/rackside/guide/)** ([source](docs/guide/index.md))
+- [Privacy policy](https://madacgrav.github.io/rackside/privacy/) · [Support](https://madacgrav.github.io/rackside/support/)
 - [Changelog](CHANGELOG.md)
 - License: [GPL v3](LICENSE)
 
@@ -20,23 +20,23 @@ For developers: product requirements in [PRD.md](PRD.md); roadmap and known gaps
 
 The Xcode project file is **generated, not committed**. The project is defined by
 [`project.yml`](project.yml); [XcodeGen](https://github.com/yonaskolb/XcodeGen)
-turns it into `TrainMe.xcodeproj`.
+turns it into `Rackside.xcodeproj`.
 
 After a fresh clone — or whenever files are added/removed outside Xcode — run:
 
 ```bash
 brew install xcodegen   # first time only
 xcodegen generate
-open TrainMe.xcodeproj
+open Rackside.xcodeproj
 ```
 
-Then select the **TrainMe** scheme, pick an iPhone simulator, and ⌘R.
+Then select the **Rackside** scheme, pick an iPhone simulator, and ⌘R.
 
 ### Command-line build & test
 
 ```bash
 xcodegen generate
-xcodebuild -scheme TrainMe -destination 'platform=iOS Simulator,name=iPhone 17' test
+xcodebuild -scheme Rackside -destination 'platform=iOS Simulator,name=iPhone 17' test
 ```
 
 If `xcodebuild` complains that it "requires Xcode" even though Xcode is installed,

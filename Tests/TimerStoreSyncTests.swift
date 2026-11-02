@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 actor FakeWatchSync: WatchSyncing {
     private(set) var sent: [TimerSnapshot] = []

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func seedLoadsOnceAndIsIdempotent() async throws {
     let container = try PersistenceController.makeContainer(inMemory: true)

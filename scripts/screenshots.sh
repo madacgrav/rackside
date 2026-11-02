@@ -39,10 +39,10 @@ W=$(udid "$WATCH") || { echo "No simulator named '$WATCH'" >&2; exit 1; }
 echo "==> Building Debug app"
 DERIVED=build/ScreenshotsDerivedData
 xcodegen generate >/dev/null
-xcodebuild -scheme TrainMe -configuration Debug -destination "id=$P" -derivedDataPath "$DERIVED" \
+xcodebuild -scheme Rackside -configuration Debug -destination "id=$P" -derivedDataPath "$DERIVED" \
   CODE_SIGNING_ALLOWED=NO build -quiet
-APP="$DERIVED/Build/Products/Debug-iphonesimulator/TrainMe.app"
-WAPP="$APP/Watch/TrainMeWatch.app"
+APP="$DERIVED/Build/Products/Debug-iphonesimulator/Rackside.app"
+WAPP="$APP/Watch/RacksideWatch.app"
 
 boot() {
   xcrun simctl boot "$1" 2>/dev/null || true

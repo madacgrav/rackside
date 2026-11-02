@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct TrainMeWatchApp: App {
+struct RacksideWatchApp: App {
     @State private var model: WatchTimerModel = {
         #if DEBUG
         if let snapshot = WatchDemo.snapshot() { return WatchTimerModel(snapshot: snapshot) }

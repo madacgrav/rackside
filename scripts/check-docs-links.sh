@@ -13,7 +13,7 @@ for file in $files; do
   for link in $links; do
     link=${link%%#*}
     case "$link" in ''|http://*|https://*|mailto:*) continue ;; esac
-    if [[ "$link" == /trainme/* ]]; then target="docs/${link#/trainme/}"; else target="$dir/$link"; fi
+    if [[ "$link" == /rackside/* ]]; then target="docs/${link#/rackside/}"; else target="$dir/$link"; fi
     t=${target%/}
     if [[ ! -e "$t" && ! -e "$t.md" && ! -e "$t/index.md" ]]; then
       echo "BROKEN: $file -> $link"

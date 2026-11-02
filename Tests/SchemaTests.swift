@@ -1,6 +1,6 @@
 import SwiftData
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func schemaV1ListsAllModels() {
     #expect(SchemaV1.models.count == 8)

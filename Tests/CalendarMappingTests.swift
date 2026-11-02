@@ -1,7 +1,7 @@
 import EventKit
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func weeklyTueThuMapsToEKRule() {
     let rule = AppRecurrence(frequency: .weekly, interval: 1, weekdays: [3, 5], endDate: nil, occurrenceCount: nil)

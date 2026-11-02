@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @MainActor
 private func makeStore(_ clock: TestClock, _ sync: FakeWatchSync = FakeWatchSync()) -> TimerStore {

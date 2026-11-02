@@ -1,4 +1,4 @@
-# TrainMe Backlog
+# Rackside Backlog
 
 Everything the 2026-10-26 review found that is **not** fixed in the same change.
 Priorities follow the PRD (P1 strongly desired, P2 nice-to-have). Each row links the

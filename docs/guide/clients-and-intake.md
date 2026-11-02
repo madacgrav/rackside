@@ -16,7 +16,7 @@ title: Clients and intake
    - **Notes.**
 3. Tap `Save`.
 
-TrainMe then asks whether to start intake for the new client. Tap `Start intake` to do it now, or `Later` to do it from the client's page another time.
+Rackside then asks whether to start intake for the new client. Tap `Start intake` to do it now, or `Later` to do it from the client's page another time.
 
 ### Track your own training
 
@@ -42,7 +42,7 @@ To start intake for an existing client, open them and tap `More actions` › `St
 Tap a client to see:
 
 - **Contact** and **Profile** details.
-- **Health & Clearance** — the latest screening and whether medical clearance is recommended. TrainMe reminds you when a screening is more than 12 months old.
+- **Health & Clearance** — the latest screening and whether medical clearance is recommended. Rackside reminds you when a screening is more than 12 months old.
 - **Waiver** status and history.
 - **Assessments**, newest first.
 - **Upcoming Sessions** and **Recent Sessions** — tap one to open it.

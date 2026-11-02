@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func identifiersUsePrefix() {
     let id = UUID()

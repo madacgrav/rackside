@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 /// Gregorian in New York, so the 2026-11-01 DST change falls inside the test week.
 private func calendar(firstWeekday: Int) -> Calendar {

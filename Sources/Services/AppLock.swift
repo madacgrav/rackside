@@ -39,7 +39,7 @@ final class AppLock {
         }
         isUnlocked = (try? await context.evaluatePolicy(
             policy,
-            localizedReason: "Unlock TrainMe"
+            localizedReason: "Unlock Rackside"
         )) ?? false
     }
 

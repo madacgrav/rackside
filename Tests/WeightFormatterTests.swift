@@ -1,5 +1,5 @@
 import Testing
-@testable import TrainMe
+@testable import Rackside
 
 @Test func formatsLbAndKg() {
     #expect(WeightFormatter.string(185, unit: .lb) == "185 lb")

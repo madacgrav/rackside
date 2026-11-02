@@ -1,4 +1,4 @@
-# TrainMe — Product Requirements Document
+# Rackside — Product Requirements Document
 
 **Version:** 0.1 (draft for review)
 **Date:** 2026-07-08
@@ -9,7 +9,7 @@
 
 ## 1. Summary
 
-TrainMe is a mobile app that helps an independent personal trainer manage clients, build and reuse workouts, schedule and record training sessions, and track each client's progress over time. Version 1 targets **iOS only**, stores **all data locally on the device**, and is built for a **single trainer** (the app's owner) with the architecture kept clean enough to add cloud sync and multi-trainer accounts later.
+Rackside is a mobile app that helps an independent personal trainer manage clients, build and reuse workouts, schedule and record training sessions, and track each client's progress over time. Version 1 targets **iOS only**, stores **all data locally on the device**, and is built for a **single trainer** (the app's owner) with the architecture kept clean enough to add cloud sync and multi-trainer accounts later.
 
 The core loop the app optimizes: *build a workout → schedule a session for a client → run the session and record what actually happened → see the client improve over weeks.*
 
