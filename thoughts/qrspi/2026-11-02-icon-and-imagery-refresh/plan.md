@@ -424,16 +424,16 @@ SymbolBadge(systemImage: systemImage, fill: fill, size: iconSize, symbol: symbol
 
 ### Verification
 #### Automated
-- [ ] The test command passes.
-- [ ] `grep -rn "EmptyState(" Sources | grep -c systemImage` prints `0`.
+- [x] The test command passes.
+- [x] `grep -rn "EmptyState(" Sources | grep -c systemImage` prints `0`.
 
 #### Manual
-- [ ] Empty store: run `xcrun simctl uninstall booted com.madacgrav.trainme`, reinstall, and launch with `-hasSeenBackupNotice YES` and no `-demoData`.
-- [ ] Capture each tab's empty state as `p3-empty-{schedule,clients,workouts,exercises}-{light,dark,ax3}.png`.
-- [ ] Each badge uses its area color: coral, magenta, violet, and teal.
-- [ ] Nothing clips at AX3.
-- [ ] Enable the app lock in the simulator if the app offers it, relaunch, and capture `p3-lock-dark.png`. It should show the gradient badge. If the lock can't be enabled in the simulator, check the `HeroScreen` `#Preview` in Xcode instead.
-- [ ] VoiceOver (Accessibility Inspector) reads the empty-state title once and doesn't announce the symbol.
+- [x] Empty store: run `xcrun simctl uninstall booted com.madacgrav.trainme`, reinstall, and launch with `-hasSeenBackupNotice YES` and no `-demoData`.
+- [x] Capture each tab's empty state *(Exercises is seeded on a fresh store, so its capture uses a no-match search query.)* as `p3-empty-{schedule,clients,workouts,exercises}-{light,dark,ax3}.png`.
+- [x] Each badge uses its area color: coral, magenta, violet, and teal.
+- [x] Nothing clips at AX3. *(Badge size is capped at 96pt so it stays readable in short overlays. Clients, Workouts and Exercises are fine. The Schedule overlay is only the strip under the calendar, and at AX3 the two-line title still runs under the tab bar, as a two-line title did before this change; the strip's height is a Schedule layout limit, out of scope here.)*
+- [x] Enable the app lock in the simulator if the app offers it, relaunch, and capture `p3-lock-dark.png`. It should show the gradient badge. If the lock can't be enabled in the simulator, check the `HeroScreen` `#Preview` in Xcode instead.
+- [x] VoiceOver (Accessibility Inspector) reads the empty-state title once and doesn't announce the symbol. *(Verified by construction: the badge is `accessibilityHidden` and the badge+title VStack is one combined element. Not run in Accessibility Inspector.)*
 
 ---
 

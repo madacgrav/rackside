@@ -36,7 +36,7 @@ struct ClientListView: View {
                 } else if viewModel.clients.isEmpty {
                     EmptyState(
                         title: viewModel.query.isEmpty ? "No clients yet" : "No matches",
-                        systemImage: "person.2.fill",
+                        area: .clients,
                         action: viewModel.query.isEmpty && !viewModel.hasSelfClient
                             ? ("Add yourself", { showingSelf = true })
                             : nil

@@ -35,7 +35,7 @@ struct WorkoutListView: View {
                 if viewModel.isLoading && viewModel.workouts.isEmpty {
                     ProgressView()
                 } else if viewModel.workouts.isEmpty {
-                    EmptyState(title: "No workouts yet", systemImage: "list.clipboard.fill")
+                    EmptyState(title: "No workouts yet", area: .workouts)
                 }
             }
             .themedScreen()
