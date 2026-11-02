@@ -9,8 +9,11 @@ struct SetTableView: View {
     let previous: SetRecordDTO?
     let onLog: (SetDraft) -> Void
     let onDelete: (SetRecordDTO) -> Void
+    /// Starts a countdown of the given seconds for this entry; nil hides the control.
+    let onStartTimer: ((Int) -> Void)?
 
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(TimerStore.self) private var timers
     @State private var draft: SetDraft
     @State private var focusedMetric: Metric
     /// True once the trainer edits or logs the draft; a seeded-but-untouched draft is
@@ -22,13 +25,15 @@ struct SetTableView: View {
     }
 
     init(entry: PlannedEntryDTO, exercise: ExerciseDTO?, logged: [SetRecordDTO], previous: SetRecordDTO?,
-         onLog: @escaping (SetDraft) -> Void, onDelete: @escaping (SetRecordDTO) -> Void) {
+         onLog: @escaping (SetDraft) -> Void, onDelete: @escaping (SetRecordDTO) -> Void,
+         onStartTimer: ((Int) -> Void)? = nil) {
         self.entry = entry
         self.exercise = exercise
         self.logged = logged
         self.previous = previous
         self.onLog = onLog
         self.onDelete = onDelete
+        self.onStartTimer = onStartTimer
         let metrics = exercise?.metrics ?? [.weight, .reps]
         _draft = State(initialValue: Self.initialDraft(entry: entry, previous: previous, metrics: metrics))
         _focusedMetric = State(initialValue: Self.firstMetric(in: metrics))
@@ -39,6 +44,9 @@ struct SetTableView: View {
     private var columns: [Metric] { Metric.allCases.filter { metrics.contains(metricSet($0)) } }
     private var plannedCount: Int { max(entry.targetSets ?? 1, logged.count + 1) }
     private var stacked: Bool { typeSize >= .accessibility1 }
+    private var countdownRunningHere: Bool {
+        if case .timedSet(let id, _) = timers.active?.kind { id == entry.id } else { false }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -48,6 +56,7 @@ struct SetTableView: View {
                     loggedRow(logged[index], index: index)
                 } else if index == logged.count {
                     draftRow(index: index)
+                    if metrics.contains(.duration), let onStartTimer { countdownControl(onStartTimer) }
                     if !columns.isEmpty { stepperStrip }
                 } else {
                     placeholderRow(index: index)
@@ -58,6 +67,13 @@ struct SetTableView: View {
         // draft from them as long as the trainer has not touched it.
         .onChange(of: exercise?.id) { resetDraftIfUntouched() }
         .onChange(of: previous?.id) { resetDraftIfUntouched() }
+        // A finished countdown for this entry fills in the seconds; logging stays a tap.
+        .onChange(of: timers.lastCompletion) { _, completion in
+            guard let completion, case .timedSet(let id, _) = completion.kind, id == entry.id else { return }
+            draft = draft.prefilled(duration: completion.seconds, metrics: metrics)
+            draftTouched = true
+            focusedMetric = .duration
+        }
     }
 
     // MARK: - Rows
@@ -132,6 +148,21 @@ struct SetTableView: View {
             .accessibilityLabel("Log set \(index + 1)")
         }
         .font(Theme.Fonts.numeric)
+    }
+
+    @ViewBuilder
+    private func countdownControl(_ onStart: @escaping (Int) -> Void) -> some View {
+        let seconds = draft.duration ?? 0
+        Group {
+            if countdownRunningHere {
+                Button("Stop countdown", systemImage: "stop.fill") { timers.skip() }
+            } else {
+                Button("Start \(seconds) s countdown", systemImage: "timer") { onStart(seconds) }
+                    .disabled(seconds <= 0)
+            }
+        }
+        .buttonStyle(.bordered)
+        .frame(maxWidth: .infinity, minHeight: 44)
     }
 
     private func placeholderRow(index: Int) -> some View {
@@ -323,4 +354,5 @@ struct SetTableView: View {
         }
     }
     .themedScreen()
+    .environment(TimerStore.preview)
 }

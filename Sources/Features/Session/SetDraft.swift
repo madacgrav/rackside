@@ -20,4 +20,12 @@ struct SetDraft: Equatable, Sendable {
         duration = metrics.contains(.duration) ? record.duration : nil
         distance = metrics.contains(.distance) ? record.distance : nil
     }
+
+    /// Countdown result → draft; a no-op for exercises that don't track duration.
+    func prefilled(duration: Int, metrics: MetricSet) -> SetDraft {
+        guard metrics.contains(.duration) else { return self }
+        var copy = self
+        copy.duration = duration
+        return copy
+    }
 }

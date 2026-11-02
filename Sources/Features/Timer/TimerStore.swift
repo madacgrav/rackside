@@ -6,6 +6,12 @@ enum TimerSettings {
     static let restChoices = [30, 45, 60, 90, 120, 150, 180]
 }
 
+struct TimerCompletion: Equatable, Sendable {
+    let timerId: UUID
+    let kind: TimerKind
+    let seconds: Int
+}
+
 /// App-level owner of the single running timer. Lives above `LockGateView`
 /// (which tears down its content on background) so timers survive the lock.
 @MainActor
@@ -16,6 +22,8 @@ final class TimerStore {
     private(set) var active: ActiveTimer?
     /// Bumps on every natural completion; drives `.sensoryFeedback`.
     private(set) var completionTick = 0
+    /// Set on natural completion only (skip never sets it).
+    private(set) var lastCompletion: TimerCompletion?
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let notifier: any TimerNotifying
@@ -55,6 +63,12 @@ final class TimerStore {
         start(TimerMath.make(kind: .rest, seconds: seconds, now: now()))
     }
 
+    func startTimedSet(plannedEntryId: UUID, instanceId: UUID, seconds: Int) {
+        guard seconds > 0 else { return }
+        start(TimerMath.make(kind: .timedSet(plannedEntryId: plannedEntryId, instanceId: instanceId),
+                             seconds: seconds, now: now()))
+    }
+
     func extend(by seconds: Int = TimerMath.extendStep) {
         guard let active else { return }
         set(TimerMath.extended(active, by: seconds, now: now()))
@@ -89,6 +103,7 @@ final class TimerStore {
 
     private func complete(_ timer: ActiveTimer) {
         set(nil)
+        lastCompletion = TimerCompletion(timerId: timer.id, kind: timer.kind, seconds: timer.seconds)
         completionTick += 1
     }
 

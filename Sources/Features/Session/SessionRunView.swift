@@ -91,7 +91,10 @@ struct SessionRunView: View {
                                 onLog: { draft in
                                     Task { await viewModel.record(draft: draft, instanceId: instance.id, exerciseId: entry.exerciseId) }
                                 },
-                                onDelete: { pendingDeleteSet = $0 }
+                                onDelete: { pendingDeleteSet = $0 },
+                                onStartTimer: { seconds in
+                                    timers.startTimedSet(plannedEntryId: entry.id, instanceId: instance.id, seconds: seconds)
+                                }
                             )
                         }
                         .themedRows()

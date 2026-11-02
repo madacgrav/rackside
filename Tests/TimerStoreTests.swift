@@ -151,3 +151,63 @@ private func makeStore(
     await store.flush()
     #expect(await notifier.scheduled == [id, id])
 }
+
+// MARK: - Timed sets
+
+@MainActor
+@Test func timedSetCompletionCarriesEntryAndSeconds() {
+    let clock = TestClock()
+    let store = makeStore(clock)
+    let entry = UUID(), instance = UUID()
+    store.startTimedSet(plannedEntryId: entry, instanceId: instance, seconds: 45)
+    clock.advance(46)
+    store.refresh()
+    #expect(store.lastCompletion?.seconds == 45)
+    #expect(store.lastCompletion?.kind == .timedSet(plannedEntryId: entry, instanceId: instance))
+    #expect(store.completionTick == 1)
+}
+
+@MainActor
+@Test func extendedTimedSetReportsTotal() {
+    let clock = TestClock()
+    let store = makeStore(clock)
+    store.startTimedSet(plannedEntryId: UUID(), instanceId: UUID(), seconds: 45)
+    store.extend()
+    clock.advance(61)
+    store.refresh()
+    #expect(store.lastCompletion?.seconds == 60)
+}
+
+@MainActor
+@Test func skipTimedSetEmitsNoCompletion() {
+    let store = makeStore(TestClock())
+    store.startTimedSet(plannedEntryId: UUID(), instanceId: UUID(), seconds: 45)
+    store.skip()
+    #expect(store.lastCompletion == nil)
+}
+
+@MainActor
+@Test func restDuringTimedSetIsIgnored() {
+    let store = makeStore(TestClock())
+    store.startTimedSet(plannedEntryId: UUID(), instanceId: UUID(), seconds: 45)
+    let id = store.active?.id
+    store.startRest(seconds: 90)
+    #expect(store.active?.id == id)
+    #expect(store.active?.isRest == false)
+}
+
+@MainActor
+@Test func timedSetReplacesRunningRest() {
+    let store = makeStore(TestClock())
+    store.startRest(seconds: 90)
+    store.startTimedSet(plannedEntryId: UUID(), instanceId: UUID(), seconds: 45)
+    #expect(store.active?.isRest == false)
+    #expect(store.active?.seconds == 45)
+}
+
+@MainActor
+@Test func zeroSecondTimedSetIgnored() {
+    let store = makeStore(TestClock())
+    store.startTimedSet(plannedEntryId: UUID(), instanceId: UUID(), seconds: 0)
+    #expect(store.active == nil)
+}
