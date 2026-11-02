@@ -644,8 +644,8 @@ for f in docs/app-store/screenshots/w*.png; do s=$(sips -g pixelWidth -g pixelHe
 
 ### Verification
 #### Automated
-- [ ] `scripts/screenshots.sh` exits 0, which includes the size checks.
-- [ ] `ls docs/app-store/screenshots | wc -l` returns ≥ 8, and `ls docs/guide/images | wc -l` returns ≥ 13.
+- [x] `scripts/screenshots.sh` exits 0, which includes the size checks.
+- [x] `ls docs/app-store/screenshots | wc -l` returns ≥ 8, and `ls docs/guide/images | wc -l` returns ≥ 13.
 
 #### Manual
 - [ ] Open each PNG. Check that:

@@ -229,7 +229,7 @@ enum DemoData {
                          performedAt: now, createdAt: now, updatedAt: now)
         }
         data.todaySession = jordanToday
-        _ = add(marcus, lowerStrength, start: next.addingTimeInterval(3 * 3600), status: .scheduled, factor: 0.6,
+        _ = add(marcus, lowerStrength, start: next.addingTimeInterval(3600), status: .scheduled, factor: 0.6,
                 weeksAgo: 0, series: marcusSeries)
         return data
     }
