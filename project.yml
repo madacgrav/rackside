@@ -11,7 +11,7 @@ targets:
   TrainMe:
     type: application
     platform: iOS
-    sources: [Sources]
+    sources: [Sources, Shared]
     settings:
       base:
         DEVELOPMENT_TEAM: ZD9JLCY7TF

@@ -62,6 +62,7 @@ final class AppBootstrap {
 @main
 struct TrainMeApp: App {
     @State private var bootstrap = AppBootstrap()
+    @State private var timers = TimerStore()
 
     var body: some Scene {
         WindowGroup {
@@ -70,6 +71,8 @@ struct TrainMeApp: App {
                 LockGateView {
                     RootView(container: container)
                 }
+                .environment(timers)
+                .sensoryFeedback(.warning, trigger: timers.completionTick)
             case .failed(let message):
                 RecoveryView(
                     message: message,

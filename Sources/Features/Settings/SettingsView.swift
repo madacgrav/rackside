@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("lastExportAt") private var lastExportAt: Double = 0
     @AppStorage("defaultWeightUnit") private var defaultWeightUnit: String = Unit.lb.rawValue
+    @AppStorage(TimerSettings.defaultRestKey) private var defaultRestSeconds = TimerMath.defaultRest
     @State private var exportURL: URL?
     @State private var showingExporter = false
     @State private var showingImporter = false
@@ -59,6 +60,16 @@ struct SettingsView: View {
                     Text("Units")
                 } footer: {
                     Text("Each exercise keeps its own unit; change it from the Exercises tab. Existing weights are never converted.")
+                }
+
+                Section {
+                    Picker("Default rest", selection: $defaultRestSeconds) {
+                        ForEach(TimerSettings.restChoices, id: \.self) { Text("\($0) s").tag($0) }
+                    }
+                } header: {
+                    Text("Timers")
+                } footer: {
+                    Text("Logging a set starts a rest countdown of this length.")
                 }
 
                 Section {

@@ -190,6 +190,7 @@ struct SessionRow: View {
         exerciseRepo: repos.exercises,
         reminders: repos.reminders
     ))
+    .environment(TimerStore.preview)
 }
 
 #Preview("Schedule — Week") {
@@ -204,6 +205,7 @@ struct SessionRow: View {
     )
     viewModel.mode = .week
     return ScheduleView(viewModel: viewModel)
+        .environment(TimerStore.preview)
 }
 
 #Preview("Session row") {
