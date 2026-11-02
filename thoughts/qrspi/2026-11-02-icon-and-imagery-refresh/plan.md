@@ -695,14 +695,14 @@ import Testing
 
 ### Verification
 #### Automated
-- [ ] The test command passes. `TimerMathTests`, `TimerStoreTests`, and `SessionRunViewModelTests` are unchanged.
-- [ ] `grep -n "ProgressView" Sources/Features/Timer/TimerBar.swift` prints nothing.
+- [x] The test command passes. `TimerMathTests`, `TimerStoreTests`, and `SessionRunViewModelTests` are unchanged.
+- [x] `grep -n "ProgressView" Sources/Features/Timer/TimerBar.swift` prints nothing.
 
 #### Manual
-- [ ] Launch `-demoScreen session`. The top bar shows the gradient at partial progress.
-- [ ] Log a set to start the rest timer. The bottom bar shows the gradient shrinking smoothly.
-- [ ] Capture `p5-session-{light,dark,ax3}.png` with the timer running.
-- [ ] VoiceOver on the top bar reads "Session progress, 2 of N sets".
+- [x] Launch `-demoScreen session`. The top bar shows the gradient at partial progress.
+- [x] Log a set to start the rest timer. *(The session demo route already starts a rest timer; captured at 1:28 and again at 1:21 to confirm the bar shrinks.)* The bottom bar shows the gradient shrinking smoothly.
+- [x] Capture `p5-session-{light,dark,ax3}.png` with the timer running.
+- [x] (By construction: the existing `accessibilityLabel`/`accessibilityValue` modifiers are kept on the new bar; not run with VoiceOver.) VoiceOver on the top bar reads "Session progress, 2 of N sets".
 
 ---
 
