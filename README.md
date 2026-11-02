@@ -2,10 +2,19 @@
 
 ![CI](https://github.com/madacgrav/trainme/actions/workflows/ci.yml/badge.svg)
 
-A local-only iOS app for an independent personal trainer: manage clients, build
-reusable workouts, schedule and record training sessions, and track each client's
-progress over time. See [PRD.md](PRD.md) for the full product requirements.
-Roadmap and known gaps: see [BACKLOG.md](BACKLOG.md).
+TrainMe is a client and session log for independent personal trainers, on iPhone
+and Apple Watch. Keep clients' goals, injuries, health screening, assessments and
+waivers in one place; build reusable workouts; schedule and record sessions set by
+set with a rest timer on your phone or wrist; and track each client's progress over
+time. Everything stays on the iPhone — no account, no cloud, no tracking.
+
+- **[User guide](https://madacgrav.github.io/trainme/guide/)** ([source](docs/guide/index.md))
+- [Privacy policy](https://madacgrav.github.io/trainme/privacy/) · [Support](https://madacgrav.github.io/trainme/support/)
+- [Changelog](CHANGELOG.md)
+- License: [GPL v3](LICENSE)
+
+For developers: product requirements in [PRD.md](PRD.md); roadmap and known gaps in
+[BACKLOG.md](BACKLOG.md).
 
 ## Building
 
@@ -64,4 +73,7 @@ pull request (`.github/workflows/ci.yml`).
 - `Sources/Features/` — SwiftUI views + view models per feature (Schedule, Clients, Workouts, Exercises, Session, Reports, Settings)
 - `Sources/AppIcon.icon/` — Icon Composer package (edit `icon.json`/`Assets/*.svg` as text, or open in Icon Composer); `Sources/Assets.xcassets/` holds `AccentColor`
 - `Tests/` — Swift Testing suite (runs against in-memory containers); `Tests/Fixtures/export-v1.json` is the frozen export-format compatibility fixture — never regenerate it
+- `Watch/` — Apple Watch app (rest timer mirror and quick start); `Shared/` — timer and sync code used by both apps
+- `docs/` — GitHub Pages site: user guide, privacy policy, support, changelog; `docs/app-store/` — App Store submission kit and screenshots
+- `scripts/` — `screenshots.sh` (regenerates App Store/guide screenshots from DEBUG demo data via `-demoData`), `sync-changelog.sh`, and doc checks
 - `thoughts/qrspi/` — design/research/plan artifacts from the initial build

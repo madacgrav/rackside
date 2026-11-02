@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - Settings › About: version, user guide, what's new, privacy policy, support and license.
+- A user guide, privacy policy and support pages at [madacgrav.github.io/trainme](https://madacgrav.github.io/trainme/).
 
 ### Changed
 - TrainMe is now an iPhone-only app (with its Apple Watch companion).

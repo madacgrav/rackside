@@ -648,7 +648,7 @@ for f in docs/app-store/screenshots/w*.png; do s=$(sips -g pixelWidth -g pixelHe
 - [x] `ls docs/app-store/screenshots | wc -l` returns ≥ 8, and `ls docs/guide/images | wc -l` returns ≥ 13.
 
 #### Manual
-- [ ] Open each PNG. Check that:
+- [x] Open each PNG. Check that:
   - the data is populated
   - no system or app alerts appear
   - the status bar shows 9:41 with a full battery
@@ -711,8 +711,8 @@ Under [Unreleased] › Added: "User guide, privacy policy and support pages at m
 
 ### Verification
 #### Automated
-- [ ] `scripts/check-docs-links.sh` exits 0, which covers images, cross-links and README.
-- [ ] `scripts/check-guide-labels.sh` exits 0. Fix the guide wording, not the app, on a miss.
+- [x] `scripts/check-docs-links.sh` exits 0, which covers images, cross-links and README.
+- [x] `scripts/check-guide-labels.sh` exits 0. Fix the guide wording, not the app, on a miss.
 
 #### Manual
 - [ ] Read the guide start to finish against the app running with `-demoData`. Every step works as described.
