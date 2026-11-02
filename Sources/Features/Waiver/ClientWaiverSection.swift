@@ -9,8 +9,10 @@ struct ClientWaiverSection: View {
     var body: some View {
         Section {
             statusRow
-            Button("Send waiver…", systemImage: "square.and.arrow.up") {
+            Button {
                 Task { await viewModel.preparePDF() }
+            } label: {
+                Label { Text("Send waiver…") } icon: { IconBadge(systemImage: "doc.text.fill", color: Theme.Fills.magenta) }
             }
             if let record = viewModel.awaitingSignature {
                 Button("Mark signed & returned…", systemImage: "checkmark.seal") {
@@ -20,6 +22,7 @@ struct ClientWaiverSection: View {
             }
             if let message = viewModel.errorMessage {
                 Label(message, systemImage: "exclamationmark.octagon.fill")
+                    .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(Theme.Colors.danger)
             }
             if !viewModel.records.isEmpty {
@@ -77,12 +80,15 @@ struct ClientWaiverSection: View {
         switch viewModel.status {
         case .none:
             Label("No waiver sent", systemImage: "doc.text")
+                .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.secondary)
         case .sent(let date):
             Label("Sent \(Self.day(date)) — awaiting signature", systemImage: "clock")
+                .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(Theme.Colors.warning)
         case .signed(let date):
             Label("Signed — returned \(Self.day(date))", systemImage: "checkmark.seal.fill")
+                .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(Theme.Colors.success)
         }
     }

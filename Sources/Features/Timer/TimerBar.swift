@@ -45,12 +45,8 @@ struct TimerBar: View {
                     .buttonStyle(.bordered)
                     .frame(minHeight: 44)
             }
-            ProgressView(timerInterval: timer.startedAt...timer.endAt, countsDown: true) {
-                EmptyView()
-            } currentValueLabel: {
-                EmptyView()
-            }
-            .tint(Theme.Colors.accent)
+            GradientProgressBar(countdown: timer.startedAt...timer.endAt)
+                .accessibilityHidden(true) // the combined label above already speaks the countdown
         }
     }
 

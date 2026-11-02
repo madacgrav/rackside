@@ -15,6 +15,7 @@ struct QuickStartView: View {
                         model.startUpNext()
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(WatchTheme.upNext)
                 }
                 ForEach(quickPicks, id: \.self) { seconds in
                     if seconds == defaultRest {

@@ -15,15 +15,15 @@
           "hidden": false,
           "image-name-specializations": [
             {
-              "value": "dumbbell.svg"
+              "value": "spark.svg"
             }
           ],
-          "name": "dumbbell",
+          "name": "spark",
           "position": {
-            "scale": 0.78,
+            "scale": 1,
             "translation-in-points": [
               0,
-              20
+              0
             ]
           }
         },
@@ -32,23 +32,15 @@
           "hidden": false,
           "image-name-specializations": [
             {
-              "value": "line.svg"
-            },
-            {
-              "appearance": "dark",
-              "value": "line.svg"
-            },
-            {
-              "appearance": "tinted",
-              "value": "line-mono.svg"
+              "value": "kettlebell.svg"
             }
           ],
-          "name": "rising line",
+          "name": "kettlebell",
           "position": {
-            "scale": 0.82,
+            "scale": 0.86,
             "translation-in-points": [
               0,
-              -60
+              0
             ]
           }
         }

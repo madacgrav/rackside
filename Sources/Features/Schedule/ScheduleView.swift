@@ -55,7 +55,7 @@ struct ScheduleView: View {
                         if viewModel.isLoading && viewModel.sessionsForDay.isEmpty {
                             ProgressView()
                         } else if viewModel.sessionsForDay.isEmpty {
-                            EmptyState(title: "No sessions this day", systemImage: "calendar")
+                            EmptyState(title: "No sessions this day", area: .schedule)
                         }
                     }
                     .themedScreen()

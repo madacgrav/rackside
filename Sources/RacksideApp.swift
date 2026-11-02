@@ -117,7 +117,7 @@ struct RecoveryView: View {
             systemImage: "exclamationmark.triangle.fill",
             title: "Rackside couldn't open its data store",
             message: message,
-            tint: Theme.Colors.warning,
+            fill: Theme.Colors.warning, symbol: Theme.Colors.surface,
             primary: ("Restore last backup", onRestoreBackup)
         ) {
             Button("Start fresh (then import an export file)", role: .destructive) {

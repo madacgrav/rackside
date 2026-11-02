@@ -5,28 +5,28 @@ struct HeroScreen<Extra: View>: View {
     let systemImage: String
     let title: String
     var message: String? = nil
-    var tint: Color = .secondary
+    let fill: AnyShapeStyle
+    let symbol: Color
     let primary: (title: String, run: () -> Void)
     @ViewBuilder var extra: () -> Extra
-    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 44
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 96
 
-    init(systemImage: String, title: String, message: String? = nil, tint: Color = .secondary,
+    init(systemImage: String, title: String, message: String? = nil,
+         fill: some ShapeStyle = Theme.Gradients.brand, symbol: Color = .white,
          primary: (title: String, run: () -> Void),
          @ViewBuilder extra: @escaping () -> Extra = { EmptyView() }) {
         self.systemImage = systemImage
         self.title = title
         self.message = message
-        self.tint = tint
+        self.fill = AnyShapeStyle(fill)
+        self.symbol = symbol
         self.primary = primary
         self.extra = extra
     }
 
     var body: some View {
         VStack(spacing: Theme.Spacing.lg) {
-            Image(systemName: systemImage)
-                .font(.system(size: iconSize))
-                .foregroundStyle(tint)
-                .accessibilityHidden(true)
+            SymbolBadge(systemImage: systemImage, fill: fill, size: iconSize, symbol: symbol)
             Text(title)
                 .font(Theme.Fonts.display(.title2))
                 .multilineTextAlignment(.center)

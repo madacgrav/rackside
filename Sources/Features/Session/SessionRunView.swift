@@ -129,8 +129,7 @@ struct SessionRunView: View {
         .navigationTitle(viewModel.clientName)
         .safeAreaInset(edge: .top) {
             if viewModel.session.status == .scheduled, viewModel.plannedSetCount > 0 {
-                ProgressView(value: viewModel.progress)
-                    .tint(Theme.Colors.success)
+                GradientProgressBar(value: viewModel.progress)
                     .padding(.horizontal)
                     .accessibilityLabel("Session progress")
                     .accessibilityValue("\(viewModel.loggedSetCount) of \(viewModel.plannedSetCount) sets")

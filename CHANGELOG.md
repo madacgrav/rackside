@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Rackside is now an iPhone-only app (with its Apple Watch companion).
 - Renamed the app from TrainMe to Rackside, because other fitness apps and a pending US trademark already use the TrainMe name.
 - The iPhone and Apple Watch apps now share one version number.
+- A brand-new app icon: a bold kettlebell on a coral-to-violet sunset gradient, with dark, tinted and clear variants on iPhone and Apple Watch.
+- A brighter, warmer look throughout: colored badges on empty screens, settings and client rows, client initials avatars, and a gradient progress bar during sessions and rest timers.
+- The Apple Watch timer ring and quick-start buttons now use Rackside's colors.
 
 ### Fixed
 - The Apple Watch now shows the running rest or timed-set countdown instead of the quick-start buttons.

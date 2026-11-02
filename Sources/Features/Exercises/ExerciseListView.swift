@@ -28,7 +28,7 @@ struct ExerciseListView: View {
                 if viewModel.isLoading && viewModel.filtered.isEmpty {
                     ProgressView()
                 } else if viewModel.filtered.isEmpty {
-                    EmptyState(title: "No exercises", systemImage: "dumbbell.fill")
+                    EmptyState(title: "No exercises", area: .exercises)
                 }
             }
             .themedScreen()

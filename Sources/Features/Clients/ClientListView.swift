@@ -26,7 +26,10 @@ struct ClientListView: View {
                         client: client
                     ))
                 } label: {
-                    TitleCaptionRow(title: client.name, caption: client.goal)
+                    HStack(spacing: Theme.Spacing.md) {
+                        ClientAvatar(name: client.name, id: client.id)
+                        TitleCaptionRow(title: client.name, caption: client.goal)
+                    }
                 }
                 .themedRows()
             }
@@ -36,7 +39,7 @@ struct ClientListView: View {
                 } else if viewModel.clients.isEmpty {
                     EmptyState(
                         title: viewModel.query.isEmpty ? "No clients yet" : "No matches",
-                        systemImage: "person.2.fill",
+                        area: .clients,
                         action: viewModel.query.isEmpty && !viewModel.hasSelfClient
                             ? ("Add yourself", { showingSelf = true })
                             : nil

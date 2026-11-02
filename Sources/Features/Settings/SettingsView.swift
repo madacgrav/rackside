@@ -64,8 +64,10 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    NavigationLink("Liability waiver template") {
+                    NavigationLink {
                         WaiverTemplateEditView(repo: waivers)
+                    } label: {
+                        Label { Text("Liability waiver template") } icon: { IconBadge(systemImage: "doc.text.fill", color: Theme.Fills.magenta) }
                     }
                 } header: {
                     Text("Client intake")
@@ -74,8 +76,10 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Picker("Default rest", selection: $defaultRestSeconds) {
+                    Picker(selection: $defaultRestSeconds) {
                         ForEach(TimerSettings.restChoices, id: \.self) { Text("\($0) s").tag($0) }
+                    } label: {
+                        Label { Text("Default rest") } icon: { IconBadge(systemImage: "timer", color: Theme.Fills.violet) }
                     }
                 } header: {
                     Text("Timers")
@@ -84,7 +88,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Button("Export all data…", systemImage: "square.and.arrow.up") {
+                    Button {
                         Task {
                             do {
                                 exportURL = try await archive.export()
@@ -94,11 +98,17 @@ struct SettingsView: View {
                                 statusMessage = "Export failed. Please try again."
                             }
                         }
+                    } label: {
+                        Label { Text("Export all data…") } icon: { IconBadge(systemImage: "square.and.arrow.up", color: Theme.Fills.teal) }
                     }
-                    Button("Import from file…", systemImage: "square.and.arrow.down") {
+                    Button {
                         showingImporter = true
+                    } label: {
+                        Label { Text("Import from file…") } icon: { IconBadge(systemImage: "square.and.arrow.down", color: Theme.Fills.teal) }
                     }
-                    LabeledContent("Last export", value: lastExportText)
+                    LabeledContent { Text(lastExportText) } label: {
+                        Label { Text("Last export") } icon: { IconBadge(systemImage: "clock.fill", color: Theme.Fills.gray) }
+                    }
                 } header: {
                     Text("Backup")
                 } footer: {
@@ -108,11 +118,15 @@ struct SettingsView: View {
                 Section {
                     PermissionRow(
                         title: "Notifications",
+                        systemImage: "bell.fill",
+                        color: Theme.Fills.coral,
                         status: notificationStatusText,
                         isDenied: reminders.notificationStatus == .denied
                     )
                     PermissionRow(
                         title: "Calendar",
+                        systemImage: "calendar",
+                        color: Theme.Fills.coral,
                         status: calendarStatusText,
                         isDenied: calendarStatus == .denied || calendarStatus == .restricted
                     )
@@ -123,12 +137,24 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LabeledContent("Version", value: AppInfo.versionString())
-                    Link("User guide", destination: AppLinks.guide)
-                    Link("What's new", destination: AppLinks.changelog)
-                    Link("Privacy policy", destination: AppLinks.privacy)
-                    Link("Support", destination: AppLinks.support)
-                    Link("License (GPL v3)", destination: AppLinks.license)
+                    LabeledContent { Text(AppInfo.versionString()) } label: {
+                        Label { Text("Version") } icon: { IconBadge(systemImage: "info.circle.fill", color: Theme.Fills.gray) }
+                    }
+                    Link(destination: AppLinks.guide) {
+                        Label { Text("User guide") } icon: { IconBadge(systemImage: "book.fill", color: Theme.Fills.violet) }
+                    }
+                    Link(destination: AppLinks.changelog) {
+                        Label { Text("What's new") } icon: { IconBadge(systemImage: "sparkles", color: Theme.Fills.magenta) }
+                    }
+                    Link(destination: AppLinks.privacy) {
+                        Label { Text("Privacy policy") } icon: { IconBadge(systemImage: "hand.raised.fill", color: Theme.Fills.teal) }
+                    }
+                    Link(destination: AppLinks.support) {
+                        Label { Text("Support") } icon: { IconBadge(systemImage: "questionmark.bubble.fill", color: Theme.Fills.coral) }
+                    }
+                    Link(destination: AppLinks.license) {
+                        Label { Text("License (GPL v3)") } icon: { IconBadge(systemImage: "doc.plaintext.fill", color: Theme.Fills.gray) }
+                    }
                 } header: {
                     Text("About")
                 }
@@ -235,12 +261,16 @@ struct SettingsView: View {
 /// One row of the Permissions section: status text plus a deep link when denied.
 struct PermissionRow: View {
     let title: String
+    let systemImage: String
+    let color: Color
     let status: String
     let isDenied: Bool
 
     var body: some View {
         HStack {
-            LabeledContent(title, value: status)
+            LabeledContent { Text(status) } label: {
+                Label { Text(title) } icon: { IconBadge(systemImage: systemImage, color: color) }
+            }
             if isDenied, let url = URL(string: UIApplication.openSettingsURLString) {
                 Link("Open Settings", destination: url)
                     .font(.footnote)
